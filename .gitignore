@@ -4,3 +4,16 @@
 *.jar
 *.war
 *.ear
+
+# PAX Runner #
+/runner
+
+# Maven Generated Artifacts #
+target/
+
+# Eclipse Project Files, can be generated again through "mvn pax:eclipse" #
+**/.project
+**/.classpath
+.settings/
+build.properties
+META-INF/

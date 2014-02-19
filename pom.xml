@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!--
+   | put company details here
+  <organization>
+    <name>...</name>
+    <url>http://...</url>
+  </organization>
+  -->
+
+  <!--
+   | put license details here
+  <licenses>
+    <license>
+      <name>...</name>
+      <url>http://...</url>
+      <comments>
+      </comments>
+    </license>
+  </licenses>
+  -->
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>okeanos</groupId>
+  <artifactId>okeanos</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <name>okeanos (OSGi project)</name>
+
+  <!--
+   | describe your project here
+  -->
+
+  <description>Generated using Pax-Construct</description>
+
+  <properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sonar.language>java</sonar.language>
+    <org.osgi.service.http.port>8080</org.osgi.service.http.port>
+    <org.osgi.service.http.port.secure>8443</org.osgi.service.http.port.secure>
+    <gemini-version>1.0.2.RELEASE</gemini-version>
+  </properties>
+
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>poms</module>
+    <module>provision</module>
+    <module>okeanos.platform</module>
+    <module>okeanos.platform.impl</module>
+    <module>okeanos.core</module>
+    <module>okeanos.core.impl</module>
+    <module>okeanos.control</module>
+    <module>okeanos.control.impl</module>
+    <module>okeanos.model</module>
+    <module>okeanos.model.impl</module>
+    <module>okeanos.runner</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.ops4j</groupId>
+        <artifactId>maven-pax-plugin</artifactId>
+        <version>1.5</version>
+        <configuration>
+          <!--
+           | some example Pax-Runner settings
+          -->
+          <provision>
+            <param>--platform=equinox</param>
+          </provision>
+        </configuration>
+        <executions>
+          <!--
+           | uncomment to auto-generate IDE files
+          <execution>
+            <id>ide-support</id>
+            <goals>
+              <goal>eclipse</goal>
+            </goals>
+          </execution>
+          -->
+        </executions>
+      </plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+    </plugins>
+  </build>
+
+</project>
