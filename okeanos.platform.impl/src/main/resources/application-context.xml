@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"                               
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"                 
-   xsi:schemaLocation="http://www.springframework.org/schema/beans   
-       http://www.springframework.org/schema/beans/spring-beans.xsd                      
-       http://www.eclipse.org/gemini/blueprint/schema/blueprint 
-       http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
 
-<bean id="platformService" class="okeanos.platform.internal.PlatformServiceImpl" />
+	<import resource="classpath:de/dailab/jiactng/agentcore/conf/AgentNode.xml" />
+	<import resource="classpath:de/dailab/jiactng/agentcore/conf/Agent.xml" />
 
-    <osgi:service id="platformServiceOsgi" ref="platformService"                             
-      interface="okeanos.platform.PlatformService" />
+	<context:annotation-config />
+	<context:component-scan base-package="okeanos" />
+
+	<osgi:service id="platformServiceOsgi" ref="platformServiceImpl"
+		interface="okeanos.platform.PlatformService" />
+	<osgi:service id="communicationServiceOsgi" ref="communicationServiceImpl"
+		interface="okeanos.platform.services.CommunicationService" />
+	<osgi:service id="entityManagementServiceOsgi" ref="entityManagementServiceImpl"
+		interface="okeanos.platform.services.EntityManagementService" />
+	<osgi:service id="knowledgeBaseServiceOsgi" ref="knowledgeBaseServiceImpl"
+		interface="okeanos.platform.services.KnowledgeBaseService" />
+	<osgi:service id="loggingServiceOsgi" ref="loggingServiceImpl"
+		interface="okeanos.platform.services.LoggingService" />
+	<osgi:service id="platformManagementServiceOsgi" ref="platformManagementServiceImpl"
+		interface="okeanos.platform.services.PlatformManagementService" />
+	<osgi:service id="pricingServiceOsgi" ref="pricingServiceImpl"
+		interface="okeanos.platform.services.PricingService" />
+	<osgi:service id="timeServiceOsgi" ref="timeServiceImpl"
+		interface="okeanos.platform.services.TimeService" />
+	<osgi:service id="weatherServiceOsgi" ref="weatherServiceImpl"
+		interface="okeanos.platform.services.WeatherService" />
 </beans>

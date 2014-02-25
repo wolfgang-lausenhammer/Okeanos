@@ -1,39 +1,17 @@
 package okeanos.runner.internal;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import okeanos.platform.PlatformService;
+import okeanos.platform.services.PlatformManagementService;
 
-/**
- * Internal implementation of our example OSGi service
- */
-public class Runner
-{
+import org.springframework.stereotype.Component;
 
-private PlatformService platformService;
+@Component
+public class Runner {
+	@Inject
+	private PlatformService platformService;
 
-public PlatformService getPlatformService() {
-return platformService;
+	@Inject
+	private PlatformManagementService platformManagementService;
 }
-
-public void setPlatformService(PlatformService plat) {
-platformService = plat;
-System.out.println("Hurray 1!");
-System.out.println(platformService.scramble("ABCDEFGHIJKLMOPQRSTUVWXYZ"));
-System.out.println("Hurray 2!");
-}
-
-@PostConstruct
-public void main() {
-System.out.println("Hurray 1!");
-System.out.println(platformService);
-System.out.println("Hurray 2!");
-
-}
-
-}
-

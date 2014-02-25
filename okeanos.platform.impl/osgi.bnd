@@ -5,4 +5,3 @@
 #Bundle-Activator: ${bundle.namespace}.internal.PlatformActivator
 
 Spring-Context: application-context.xml
-
