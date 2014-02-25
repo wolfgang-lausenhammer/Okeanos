@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>okeanos.build</groupId>
+	<artifactId>individual-wrapper-bundle-settings</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>okeanos - individual bundle wrapper instructions</name>
+
+	<description>Simple OSGi wrapper around each third-party jar(s)</description>
+
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>okeanos.build</groupId>
+		<artifactId>shared-plugin-settings</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.activemq.protobuf</groupId>
+			<artifactId>activemq-protobuf</artifactId>
+			<version>${activemq-protobuf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sercho.masp.space</groupId>
+			<artifactId>SimpleSpaceCore</artifactId>
+			<version>${simple-space-core-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sercho.masp.utilities</groupId>
+			<artifactId>GetterSetterFinder</artifactId>
+			<version>${getter-setter-finder-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sercho.masp.utilities</groupId>
+			<artifactId>FieldUtil</artifactId>
+			<version>${field-util-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sercho.masp.utilities</groupId>
+			<artifactId>ReflectiveTest</artifactId>
+			<version>${reflective-test-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.objectweb.howl</groupId>
+			<artifactId>howl</artifactId>
+			<version>${howl-version}</version>
+		</dependency>
+		<!-- END Agent Framework -->
+
+		<!-- Annotations -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>${javax-annotation-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>${javax-inject-version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<directory>../../target</directory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>wrap-my-dependency</id>
+						<goals>
+							<goal>wrap</goal>
+						</goals>
+						<configuration>
+							<wrapImportPackage>;</wrapImportPackage>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

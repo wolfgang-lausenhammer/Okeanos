@@ -1,53 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>okeanos</groupId>
+	<artifactId>okeanos.platform.impl</artifactId>
+	<version>${okeanos-platform-impl-version}</version>
+	<name>${bundle.symbolicName}</name>
+	<packaging>bundle</packaging>
 
-  <parent>
-    <relativePath>../poms/compiled/</relativePath>
-    <groupId>okeanos.build</groupId>
-    <artifactId>compiled-bundle-settings</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<relativePath>../poms/compiled/</relativePath>
+		<groupId>okeanos.build</groupId>
+		<artifactId>compiled-bundle-settings</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-  <properties>
-    <bundle.symbolicName>okeanos.platform.impl</bundle.symbolicName>
-    <bundle.namespace>okeanos.platform</bundle.namespace>
-  </properties>
+	<properties>
+		<bundle.symbolicName>okeanos.platform.impl</bundle.symbolicName>
+		<bundle.namespace>okeanos.platform</bundle.namespace>
+	</properties>
 
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>okeanos</groupId>
-  <artifactId>okeanos.platform.impl</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-
-  <name>${bundle.symbolicName}</name>
-
-  <packaging>bundle</packaging>
-
-  <dependencies>
-    <!--
-     | uncomment to add all imported (non-local) bundles to your compilation classpath
-    <dependency>
-      <type>pom</type>
-      <groupId>${parent.groupId}</groupId>
-      <artifactId>provision</artifactId>
-      <optional>true</optional>
-    </dependency>
-    -->
-    <dependency>
-      <groupId>okeanos</groupId>
-      <artifactId>okeanos.platform</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>osgi_R4_core</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>osgi_R4_compendium</artifactId>
-      <optional>true</optional>
-    </dependency>
-  </dependencies>
-
+	<dependencies>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.platform</artifactId>
+			<version>${okeanos-platform-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.core</artifactId>
+			<version>${okeanos-core-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>osgi_R4_core</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>osgi_R4_compendium</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-shade-plugin</artifactId> <executions> <execution> <phase>package</phase> 
+		<goals> <goal>shade</goal> </goals> <configuration> <finalName>${artifactId}-${version}</finalName> 
+		</configuration> </execution> </executions> </plugin> </plugins> </build> -->
 </project>
