@@ -41,6 +41,13 @@
 		<url>https://landsteiner.fh-salzburg.ac.at/youtrack</url>
 	</issueManagement>
 
+	<scm>
+		<connection>scm:git:https://github.com/wolfgang-lausenhammer/Okeanos.git</connection>
+		<developerConnection>scm:git:https://github.com/wolfgang-lausenhammer/Okeanos.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/wolfgang-lausenhammer/Okeanos.git</url>
+	</scm>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
