@@ -1,4 +1,4 @@
 language: java
-script: mvn -f okeanos/pom.xml install
+script: mvn integration-test
 jdk:
   - jdk: oraclejdk7
