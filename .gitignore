@@ -14,6 +14,8 @@ target/
 # Eclipse Project Files, can be generated again through "mvn pax:eclipse" #
 **/.project
 **/.classpath
+.project
+.classpath
 .settings/
 build.properties
 META-INF/
