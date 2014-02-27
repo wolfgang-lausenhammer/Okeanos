@@ -34,21 +34,5 @@
 			<version>${okeanos-core-version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>osgi_R4_core</artifactId>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>osgi_R4_compendium</artifactId>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
 	</dependencies>
-	<!-- <build> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
-		<artifactId>maven-shade-plugin</artifactId> <executions> <execution> <phase>package</phase> 
-		<goals> <goal>shade</goal> </goals> <configuration> <finalName>${artifactId}-${version}</finalName> 
-		</configuration> </execution> </executions> </plugin> </plugins> </build> -->
 </project>

@@ -28,16 +28,26 @@
 			<version>${okeanos-platform-version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>osgi_R4_core</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>osgi_R4_compendium</artifactId>
-			<optional>true</optional>
-		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.ops4j.pax.exam</groupId>
+				<artifactId>exam-maven-plugin</artifactId>
+				<version>3.4.0</version>
+				<configuration>
+					<configClass>okeanos.runner.it.ServerConfiguration</configClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>start-container</goal>
+							<goal>stop-container</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
