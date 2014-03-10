@@ -1,6 +1,7 @@
 package okeanos.management.internal.services;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
@@ -54,8 +55,8 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 			agentNode.cleanup();
 		}
 
-		log.debug("Stopped %i agents on agent node [node={}]", agentNode
-				.findAgents().size());
+		log.debug("Stopped {} agents on agent node [node={}]", agentNode
+				.findAgents().size(), agentNode);
 		log.debug("Stopped agent node [node={}]", agentNode);
 	}
 
@@ -66,6 +67,10 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 
 	@Override
 	public IAgentNode getDefaultAgentNode() {
-		return managedAgentNodes.values().iterator().next();
+		try {
+			return managedAgentNodes.values().iterator().next();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 	}
 }
