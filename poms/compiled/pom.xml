@@ -76,6 +76,44 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.core</artifactId>
+			<version>${spring-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.context</artifactId>
+			<version>${spring-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.context.support</artifactId>
+			<version>${spring-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.aop</artifactId>
+			<version>${spring-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.beans</artifactId>
+			<version>${spring-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.expression</artifactId>
+			<version>${spring-version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Agent Framework -->
 		<dependency>
 			<groupId>okeanos.build</groupId>
@@ -129,7 +167,7 @@
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
-			<artifactId>pax-exam-container-native</artifactId>
+			<artifactId>pax-exam-container-forked</artifactId>
 			<version>${pax-exam-version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -156,9 +194,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.framework</artifactId>
-			<version>4.2.1</version>
+			<groupId>org.eclipse.tycho</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<version>3.9.1.v20130814-1242</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -166,6 +204,27 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.test</artifactId>
+			<version>${spring-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.kubek2k</groupId>
+			<artifactId>springockito</artifactId>
+			<version>${springockito-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.kubek2k</groupId>
+			<artifactId>springockito-annotations</artifactId>
+			<version>${springockito-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

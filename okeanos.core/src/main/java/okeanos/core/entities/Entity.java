@@ -1,7 +1,13 @@
 package okeanos.core.entities;
 
-public interface Entity {
-	int getId();
+import de.dailab.jiactng.agentcore.IAgent;
 
-	void setId();
+public interface Entity {
+	String getId();
+
+	void setId(String id);
+
+	IAgent getAgent();
+
+	void setAgent(IAgent agent);
 }

@@ -1,19 +1,31 @@
 package okeanos.core.internal.entities;
 
+import de.dailab.jiactng.agentcore.IAgent;
 import okeanos.core.entities.Entity;
 
 public class EntityImpl implements Entity {
 
+	private String id;
+	private IAgent agent;
+
 	@Override
-	public int getId() {
-		// TODO Auto-generated method stub
-		return 0;
+	public String getId() {
+		return id;
 	}
 
 	@Override
-	public void setId() {
-		// TODO Auto-generated method stub
-		
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@Override
+	public IAgent getAgent() {
+		return agent;
+	}
+
+	@Override
+	public void setAgent(IAgent agent) {
+		this.agent = agent;
 	}
 
 }

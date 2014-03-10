@@ -24,8 +24,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>okeanos</groupId>
-			<artifactId>okeanos.platform</artifactId>
-			<version>${okeanos-platform-version}</version>
+			<artifactId>okeanos.management</artifactId>
+			<version>${okeanos-management-version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -35,7 +35,7 @@
 			<plugin>
 				<groupId>org.ops4j.pax.exam</groupId>
 				<artifactId>exam-maven-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>${pax-exam-version}</version>
 				<configuration>
 					<configClass>okeanos.runner.it.ServerConfiguration</configClass>
 				</configuration>

@@ -10,10 +10,7 @@
 	<context:annotation-config />
 	<context:component-scan base-package="okeanos" />
 
-	<osgi:reference id="platformService" interface="okeanos.platform.PlatformService"
-		availability="mandatory" />
-
-	<osgi:reference id="platformManagementService"
-		interface="okeanos.platform.services.PlatformManagementService"
+	<osgi:reference id="managementManagementService"
+		interface="okeanos.management.services.PlatformManagementService"
 		availability="mandatory" />
 </beans>
