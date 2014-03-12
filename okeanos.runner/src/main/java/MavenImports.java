@@ -1,4 +1,3 @@
-package okeanos.management.internal;
 
 import javax.management.NotificationBroadcasterSupport;
 import javax.security.auth.Destroyable;

@@ -28,6 +28,12 @@
 			<version>${okeanos-management-version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.core</artifactId>
+			<version>${okeanos-core-version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

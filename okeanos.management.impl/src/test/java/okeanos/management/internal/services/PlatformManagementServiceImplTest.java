@@ -94,7 +94,7 @@ public class PlatformManagementServiceImplTest {
 		IAgentNode node = managementManagementService.getAgentNode(UUID);
 
 		assertThat(node, notNullValue());
-		assertThat(node, equalTo(agentNode));
+		assertThat(node, sameInstance(agentNode));
 	}
 
 	@Test
@@ -104,7 +104,8 @@ public class PlatformManagementServiceImplTest {
 
 		IAgentNode node = managementManagementService.getDefaultAgentNode();
 
-		assertThat(node, nullValue());
+		assertThat(node, notNullValue());
+		assertThat(node, sameInstance((IAgentNode) mockAgentNode));
 	}
 
 	@Test
@@ -117,7 +118,7 @@ public class PlatformManagementServiceImplTest {
 		IAgentNode node = managementManagementService.getDefaultAgentNode();
 
 		assertThat(node, notNullValue());
-		assertThat(node, equalTo(agentNode));
+		assertThat(node, sameInstance(agentNode));
 	}
 
 	@Test
@@ -135,7 +136,8 @@ public class PlatformManagementServiceImplTest {
 		IAgentNode node = managementManagementService.getDefaultAgentNode();
 
 		assertThat(node, notNullValue());
-		assertThat(node, anyOf(equalTo(agentNode1), equalTo(agentNode2)));
+		assertThat(node,
+				anyOf(sameInstance(agentNode1), sameInstance(agentNode2)));
 	}
 
 }

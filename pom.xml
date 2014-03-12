@@ -81,7 +81,7 @@
     <okeanos-runner-version>0.0.1-SNAPSHOT</okeanos-runner-version>
     <pax-confman-propsloader-version>0.2.3</pax-confman-propsloader-version>
     <org-apache-felix-configadmin-version>1.8.0</org-apache-felix-configadmin-version>
-    <pax-exam-version>3.0.0</pax-exam-version>
+    <pax-exam-version>3.4.0</pax-exam-version>
     <ops4j-url-version>1.5.2</ops4j-url-version>
     <slf4j-version>1.7.6</slf4j-version>
     <springockito-version>1.0.9</springockito-version>

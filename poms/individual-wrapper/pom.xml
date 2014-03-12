@@ -25,26 +25,6 @@
 			<version>${activemq-protobuf-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.sercho.masp.space</groupId>
-			<artifactId>SimpleSpaceCore</artifactId>
-			<version>${simple-space-core-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sercho.masp.utilities</groupId>
-			<artifactId>GetterSetterFinder</artifactId>
-			<version>${getter-setter-finder-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sercho.masp.utilities</groupId>
-			<artifactId>FieldUtil</artifactId>
-			<version>${field-util-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sercho.masp.utilities</groupId>
-			<artifactId>ReflectiveTest</artifactId>
-			<version>${reflective-test-version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.objectweb.howl</groupId>
 			<artifactId>howl</artifactId>
 			<version>${howl-version}</version>

@@ -4,12 +4,21 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import okeanos.core.entities.Entity;
+import okeanos.core.entities.builder.EntityBuilder;
+import okeanos.management.internal.services.entitymanagement.EntitySerializer;
+import okeanos.management.internal.services.entitymanagement.OkeanosBasicAgent;
 import okeanos.management.services.EntityManagementService;
 import okeanos.management.services.PlatformManagementService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.IAgent;
@@ -19,62 +28,131 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 @Component
 public class EntityManagementServiceImpl implements EntityManagementService {
 
-	private PlatformManagementService managementManagementService;
+	private static final Logger log = LoggerFactory
+			.getLogger(EntityManagementServiceImpl.class);
 
-	private Map<String, Entity> managedEntities = new ConcurrentHashMap<>();
+	private Provider<OkeanosBasicAgent> agentProvider;
+	private Provider<EntityBuilder> entityBuilderProvider;
+
+	private Gson gson = new GsonBuilder()
+			.registerTypeAdapter(Entity.class, new EntitySerializer())
+			.serializeNulls().create();
+
+	private Map<String, IAgent> managedAgents = new ConcurrentHashMap<>();
+	private Map<String, Entity> managedEntitiesByAgentId = new ConcurrentHashMap<>();
+	private Map<String, Entity> managedEntitiesByEntityId = new ConcurrentHashMap<>();
+
+	private PlatformManagementService platformManagementService;
 
 	@Inject
 	public EntityManagementServiceImpl(
-			PlatformManagementService managementManagementService) {
-		this.managementManagementService = managementManagementService;
+			PlatformManagementService platformManagementService,
+			Provider<EntityBuilder> entityBuilderProvider,
+			Provider<OkeanosBasicAgent> agentProvider) {
+		this.platformManagementService = platformManagementService;
+		this.entityBuilderProvider = entityBuilderProvider;
+		this.agentProvider = agentProvider;
 	}
 
-	@Override
-	public Entity loadEntity(String pathToConfig) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Entity loadEntity() {
-		// TODO Auto-generated method stub
-		return null;
+	private OkeanosBasicAgent getDefaultAgent() {
+		OkeanosBasicAgent agent = agentProvider.get();
+		managedAgents.put(agent.getAgentId(), agent);
+		return agent;
 	}
 
 	@Override
 	public Entity getEntity(String id) {
-		return managedEntities.get(id);
+		return managedEntitiesByEntityId.get(id);
+	}
+
+	/**
+	 * Creates and returns an entity builder instance, which can be used to
+	 * configure and eventually create an entity.
+	 */
+	@Override
+	public EntityBuilder loadConfigurableEntity() {
+		return entityBuilderProvider.get();
+	}
+
+	/**
+	 * Creates a new entity with the default settings.
+	 */
+	@Override
+	public Entity loadEntity() {
+		log.debug("Loading entity with default configuration");
+		EntityBuilder builder = loadConfigurableEntity();
+		builder.agent(getDefaultAgent());
+		log.debug("Successfully loaded entity with default configuration");
+
+		return builder.build();
+	}
+
+	/**
+	 * Loads an entity from
+	 */
+	@Override
+	public Entity loadEntityFromJson(String entityAsJson) {
+		if (entityAsJson == null)
+			throw new NullPointerException("Json string must not be null");
+
+		log.debug("Loading entity from json [{}]", entityAsJson);
+		EntityBuilder builder = loadConfigurableEntity();
+		builder.fromJson(entityAsJson);
+		log.debug("Successfully loaded entity from json [{}]", entityAsJson);
+
+		return builder.build();
 	}
 
 	@Override
-	public Entity startEntity(Entity entity) {
+	public String saveEntityToJson(Entity entity) {
+		return gson.toJson(entity, Entity.class);
+	}
+
+	@Override
+	public Entity startEntity(Entity entity) throws LifecycleException {
 		return startEntity(entity,
-				managementManagementService.getDefaultAgentNode());
+				platformManagementService.getDefaultAgentNode());
 	}
 
 	@Override
-	public Entity startEntity(Entity entity, IAgentNode node) {
+	public Entity startEntity(Entity entity, IAgentNode node)
+			throws LifecycleException {
 		if (entity == null)
 			throw new NullPointerException("Entity entity must not be null");
 		if (node == null)
 			throw new NullPointerException("IAgentNode node must not be null");
 
-		node.addAgent(entity.getAgent());
+		log.debug("Starting entity [{}] by adding it to node [{}]", entity,
+				node);
+		IAgent agent = entity.getAgent();
+		node.addAgent(agent);
+		agent.init();
+		agent.start();
+		managedEntitiesByEntityId.put(entity.getId(), entity);
+		managedEntitiesByAgentId.put(agent.getAgentId(), entity);
+		managedAgents.put(agent.getAgentId(), agent);
+		log.debug("Successfully started entity [{}] on node [{}]", entity, node);
 
-		return null;
+		return entity;
 	}
 
 	@Override
 	public Entity stopEntity(Entity entity) throws LifecycleException {
+		log.debug("Sopping entity [{}]", entity);
 		entity.getAgent().stop();
+		log.debug("Successfully stopped entity [{}]", entity);
 
 		return entity;
 	}
 
 	@Override
 	public void unloadEntity(Entity entity) throws LifecycleException {
-		managedEntities.remove(entity.getId());
+		log.debug("Unloading entity [{}]", entity);
 		IAgent agent = entity.getAgent();
+
+		managedEntitiesByEntityId.remove(entity.getId());
+		managedEntitiesByAgentId.remove(agent.getAgentId());
+		managedAgents.remove(agent.getAgentId());
 
 		if (agent instanceof Agent) {
 			Agent myAgent = (Agent) agent;
@@ -88,6 +166,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 				agent.getAgentNode().removeAgent(agent);
 			}
 		}
+		log.debug("Successfully unloaded entity [{}]", entity);
 	}
 
 }

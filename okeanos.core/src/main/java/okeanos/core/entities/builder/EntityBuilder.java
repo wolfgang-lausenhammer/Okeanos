@@ -1,10 +1,11 @@
 package okeanos.core.entities.builder;
 
-import de.dailab.jiactng.agentcore.IAgent;
 import okeanos.core.entities.Entity;
+import de.dailab.jiactng.agentcore.IAgent;
 
 public interface EntityBuilder {
 	EntityBuilder agent(IAgent agent);
+	EntityBuilder fromJson(String entityAsJson);
 
 	Entity build();
 }

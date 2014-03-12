@@ -19,6 +19,26 @@
 	</parent>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.sercho.masp.space</groupId>
+			<artifactId>SimpleSpaceCore</artifactId>
+			<version>${simple-space-core-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sercho.masp.utilities</groupId>
+			<artifactId>GetterSetterFinder</artifactId>
+			<version>${getter-setter-finder-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sercho.masp.utilities</groupId>
+			<artifactId>FieldUtil</artifactId>
+			<version>${field-util-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sercho.masp.utilities</groupId>
+			<artifactId>ReflectiveTest</artifactId>
+			<version>${reflective-test-version}</version>
+		</dependency>
 		<!-- Agent Framework -->
 		<dependency>
 			<groupId>de.dailab.jiactng</groupId>
@@ -112,6 +132,11 @@
 					<artifactId>junit</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>${javax-annotation-version}</version>
 		</dependency>
 	</dependencies>
 

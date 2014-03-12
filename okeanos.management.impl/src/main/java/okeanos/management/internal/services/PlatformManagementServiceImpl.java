@@ -20,16 +20,38 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 @Component
 public class PlatformManagementServiceImpl implements PlatformManagementService {
-	private Map<String, IAgentNode> managedAgentNodes = new ConcurrentHashMap<>();
-	private Logger log = LoggerFactory
+	private static final Logger log = LoggerFactory
 			.getLogger(PlatformManagementServiceImpl.class);
 
 	private Provider<OkeanosBasicAgentNode> agentNodeProvider;
+
+	private Map<String, IAgentNode> managedAgentNodes = new ConcurrentHashMap<>();
 
 	@Inject
 	public PlatformManagementServiceImpl(
 			Provider<OkeanosBasicAgentNode> agentNodeProvider) {
 		this.agentNodeProvider = agentNodeProvider;
+	}
+
+	@Override
+	public IAgentNode getAgentNode(String id) {
+		return managedAgentNodes.get(id);
+	}
+
+	@Override
+	public IAgentNode getDefaultAgentNode() {
+		try {
+			if (managedAgentNodes.size() == 0) {
+				return startAgentNode();
+			} else {
+				return managedAgentNodes.values().iterator().next();
+			}
+		} catch (LifecycleException e) {
+			log.error(
+					"Encountered a LivecycleException when starting an agent node [{}]",
+					e);
+			return null;
+		}
 	}
 
 	@Override
@@ -58,19 +80,5 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 		log.debug("Stopped {} agents on agent node [node={}]", agentNode
 				.findAgents().size(), agentNode);
 		log.debug("Stopped agent node [node={}]", agentNode);
-	}
-
-	@Override
-	public IAgentNode getAgentNode(String id) {
-		return managedAgentNodes.get(id);
-	}
-
-	@Override
-	public IAgentNode getDefaultAgentNode() {
-		try {
-			return managedAgentNodes.values().iterator().next();
-		} catch (NoSuchElementException e) {
-			return null;
-		}
 	}
 }
