@@ -131,6 +131,16 @@
 			<version>${log4j-version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.logging</groupId>
+			<artifactId>pax-logging-service</artifactId>
+			<version>${pax-logging-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.logging</groupId>
+			<artifactId>pax-logging-api</artifactId>
+			<version>${pax-logging-version}</version>
+		</dependency>
 
 		<!-- Time -->
 		<dependency>
