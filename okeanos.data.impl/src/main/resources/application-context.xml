@@ -4,8 +4,8 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-		http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
+		http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<import resource="classpath:de/dailab/jiactng/agentcore/conf/AgentNode.xml" />
 	<import resource="classpath:de/dailab/jiactng/agentcore/conf/Agent.xml" />
@@ -14,15 +14,17 @@
 	<context:component-scan base-package="okeanos" />
 
 	<osgi:service id="communicationServiceOsgi" ref="communicationServiceImpl"
-		interface="okeanos.management.services.CommunicationService" />
+		interface="okeanos.data.services.CommunicationService" />
 	<osgi:service id="knowledgeBaseServiceOsgi" ref="knowledgeBaseServiceImpl"
-		interface="okeanos.management.services.KnowledgeBaseService" />
+		interface="okeanos.data.services.KnowledgeBaseService" />
 	<osgi:service id="loggingServiceOsgi" ref="loggingServiceImpl"
-		interface="okeanos.management.services.LoggingService" />
+		interface="okeanos.data.services.LoggingService" />
 	<osgi:service id="pricingServiceOsgi" ref="pricingServiceImpl"
-		interface="okeanos.management.services.PricingService" />
+		interface="okeanos.data.services.PricingService" />
 	<osgi:service id="timeServiceOsgi" ref="timeServiceImpl"
-		interface="okeanos.management.services.TimeService" />
+		interface="okeanos.data.services.TimeService" />
 	<osgi:service id="weatherServiceOsgi" ref="weatherServiceImpl"
-		interface="okeanos.management.services.WeatherService" />
+		interface="okeanos.data.services.WeatherService" />
+	<osgi:service id="uuidGeneratorOsgi" ref="uuidGeneratorImpl"
+		interface="okeanos.data.services.UUIDGenerator" />
 </beans>

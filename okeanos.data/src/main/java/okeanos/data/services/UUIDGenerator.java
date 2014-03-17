@@ -1,4 +1,4 @@
-package okeanos.core.internal.services;
+package okeanos.data.services;
 
 public interface UUIDGenerator {
 

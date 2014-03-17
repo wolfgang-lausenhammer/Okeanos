@@ -7,8 +7,12 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd">
 
+	<import resource="classpath:de/dailab/jiactng/agentcore/conf/Agent.xml" />
+	<import resource="classpath:de/dailab/jiactng/agentcore/conf/AgentNode.xml" />
+	<import resource="classpath:de/dailab/jiactng/agentcore/conf/JMSMessaging.xml" />
+
 	<context:annotation-config />
-	<context:component-scan base-package="okeanos.internal.samples.twoagents" />
+	<context:component-scan base-package="okeanos.runner.internal.samples.twoagents" />
 
 	<osgi:reference id="platformManagementService"
 		interface="okeanos.management.services.PlatformManagementService"
@@ -17,4 +21,7 @@
 	<osgi:reference id="entityManagementService"
 		interface="okeanos.management.services.EntityManagementService"
 		availability="mandatory" />
+
+	<osgi:reference id="communicationService"
+		interface="okeanos.data.services.CommunicationService" availability="mandatory" />
 </beans>

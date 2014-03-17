@@ -138,6 +138,11 @@
 			<artifactId>jsr250-api</artifactId>
 			<version>${javax-annotation-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.jiac.additions</artifactId>
+			<version>${okeanos-jiac-additions-version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

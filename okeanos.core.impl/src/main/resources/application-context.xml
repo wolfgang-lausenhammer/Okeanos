@@ -13,4 +13,7 @@
 	<!-- OSGi published services -->
 	<osgi:service id="entityBuilderOsgi" ref="entityBuilderImpl"
 		interface="okeanos.core.entities.builder.EntityBuilder" />
+
+	<osgi:reference id="uuidGenerator" interface="okeanos.data.services.UUIDGenerator"
+		availability="mandatory" />
 </beans>

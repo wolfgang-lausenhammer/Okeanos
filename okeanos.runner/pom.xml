@@ -34,6 +34,12 @@
 			<version>${okeanos-core-version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.data</artifactId>
+			<version>${okeanos-data-version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

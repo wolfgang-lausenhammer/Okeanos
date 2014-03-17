@@ -1,0 +1,2 @@
+Fragment-Host: okeanos.build.wrapper-bundle-settings
+Export-Package: de.dailab.jiactng.agentcore;version="0.0.1.SNAPSHOT"

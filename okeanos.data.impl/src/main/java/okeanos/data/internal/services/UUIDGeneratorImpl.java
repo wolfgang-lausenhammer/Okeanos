@@ -1,14 +1,14 @@
-package okeanos.core.internal.services.impl;
+package okeanos.data.internal.services;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
-import okeanos.core.internal.services.UUIDGenerator;
+import okeanos.data.services.UUIDGenerator;
 
 import org.springframework.stereotype.Component;
 
-@Component("uuidGenerator")
+@Component("uuidGeneratorImpl")
 public class UUIDGeneratorImpl implements UUIDGenerator {
 	@Override
 	public String generateUUID() {

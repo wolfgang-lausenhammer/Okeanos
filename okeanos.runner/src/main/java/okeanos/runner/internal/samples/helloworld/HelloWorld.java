@@ -1,6 +1,7 @@
 package okeanos.runner.internal.samples.helloworld;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import okeanos.core.entities.Entity;
 import okeanos.management.services.EntityManagementService;
@@ -23,7 +24,8 @@ public class HelloWorld {
 
 	@Inject
 	public HelloWorld(PlatformManagementService platformManagementService,
-			EntityManagementService entityManagementService)
+			EntityManagementService entityManagementService,
+			Provider<HelloWorldBean> beanProvider)
 			throws LifecycleException {
 		this.platformManagementService = platformManagementService;
 		this.entityManagementService = entityManagementService;
@@ -32,7 +34,7 @@ public class HelloWorld {
 		Entity entity = startEntity(node);
 
 		log.debug("Adding Hello World functionality to entity [{}]", entity);
-		entity.addFunctionality(new HelloWorldBean());
+		entity.addFunctionality(beanProvider.get());
 		log.debug("Finished adding Hello World functionality to entity [{}]",
 				entity);
 	}

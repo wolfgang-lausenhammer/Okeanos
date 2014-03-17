@@ -2,9 +2,11 @@ package okeanos.runner.internal.samples.helloworld;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.AbstractAgentBean;
 
+@Component
 public class HelloWorldBean extends AbstractAgentBean {
 	private static final Logger log = LoggerFactory.getLogger(HelloWorldBean.class);
 	

@@ -4,5 +4,5 @@
 
 #Bundle-Activator: ${bundle.namespace}.internal.samples.TwoAgents
 #Spring-Context: application-context.xml
-#Spring-Context: sample-configurations/two-agents.xml
-Spring-Context: sample-configurations/hello-world.xml
+Spring-Context: sample-configurations/two-agents.xml
+#Spring-Context: sample-configurations/hello-world.xml
