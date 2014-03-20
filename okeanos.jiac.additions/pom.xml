@@ -10,6 +10,8 @@
 	<packaging>jar</packaging>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<bundle.symbolicName>okeanos.jiac.additions</bundle.symbolicName>
 		<bundle.namespace>okeanos.jiac.additions</bundle.namespace>
 		<jiac-version>5.1.5</jiac-version>

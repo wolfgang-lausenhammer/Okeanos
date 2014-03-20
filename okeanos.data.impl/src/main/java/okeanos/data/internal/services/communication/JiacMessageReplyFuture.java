@@ -96,10 +96,6 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 		log.trace("Trying to get item from Future");
 		IJiacMessage msg = reply.take();
 
-		if (callback != this) {
-			state = State.WAITING;
-		}
-
 		return msg;
 	}
 
@@ -111,10 +107,6 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 		final IJiacMessage replyOrNull = reply.poll(timeout, unit);
 		if (replyOrNull == null) {
 			throw new TimeoutException();
-		}
-
-		if (callback != this) {
-			state = State.WAITING;
 		}
 
 		return replyOrNull;
@@ -140,9 +132,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 				reply.put(wce.getObject());
 				state = State.DONE;
 
-				if (callback == this) {
-					cleanUp();
-				}
+				cleanUp();
 			} catch (InterruptedException e) {
 			}
 		}

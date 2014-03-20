@@ -17,8 +17,6 @@
 		interface="okeanos.data.services.CommunicationService" />
 	<osgi:service id="knowledgeBaseServiceOsgi" ref="knowledgeBaseServiceImpl"
 		interface="okeanos.data.services.KnowledgeBaseService" />
-	<osgi:service id="loggingServiceOsgi" ref="loggingServiceImpl"
-		interface="okeanos.data.services.LoggingService" />
 	<osgi:service id="pricingServiceOsgi" ref="pricingServiceImpl"
 		interface="okeanos.data.services.PricingService" />
 	<osgi:service id="timeServiceOsgi" ref="timeServiceImpl"

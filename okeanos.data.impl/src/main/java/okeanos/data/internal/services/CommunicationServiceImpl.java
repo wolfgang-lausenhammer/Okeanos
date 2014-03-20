@@ -28,6 +28,7 @@ import de.dailab.jiactng.agentcore.comm.ICommunicationBean;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.comm.message.JiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
+import de.dailab.jiactng.agentcore.knowledge.IMemory;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 import de.dailab.jiactng.agentcore.ontology.AgentDescription;
 import de.dailab.jiactng.agentcore.ontology.IAgentDescription;
@@ -75,7 +76,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 		if (communicationBean == null) {
 			try {
-				setCommunicationBeanIfNotSetOnAgent(sender);
+				communicationBean = setCommunicationBeanIfNotSetOnAgent(sender);
 			} catch (LifecycleException e) {
 				throw new RuntimeException(
 						"Error setting communication bean on agent \"" + sender
@@ -86,12 +87,12 @@ public class CommunicationServiceImpl implements CommunicationService {
 		return communicationBean;
 	}
 
-	private static void setCommunicationBeanIfNotSetOnAgent(IAgentBean agentBean)
-			throws LifecycleException {
+	private static ICommunicationBean setCommunicationBeanIfNotSetOnAgent(
+			IAgentBean agentBean) throws LifecycleException {
 		IAgent agent = AbstractAgentBeanProtectedMethodPublisher
 				.getAgent(getAbstractAgentBean(agentBean));
 		if (agent.getCommunication() != null) {
-			return;
+			return agent.getCommunication();
 		}
 
 		ICommunicationBean communicationBean = communicationBeanProvider.get();
@@ -101,6 +102,8 @@ public class CommunicationServiceImpl implements CommunicationService {
 		communicationBean.setMemory(AbstractAgentProtectedMethodPublisher
 				.getMemory((Agent) agent));
 		agent.setCommunication(communicationBean);
+
+		return communicationBean;
 	}
 
 	private UUIDGenerator uuidGenerator;
@@ -162,6 +165,14 @@ public class CommunicationServiceImpl implements CommunicationService {
 
 		// build future for reply
 		new JiacMessageReplyFuture(agentBean, listener, factToListenFor);
+	}
+
+	@Override
+	public void receiveMessageDetachCallback(IAgentBean agentBean,
+			SpaceObserver<IFact> listener) {
+		IMemory memory = AbstractAgentBeanProtectedMethodPublisher
+				.getMemory(((AbstractAgentBean) agentBean));
+		memory.detach(listener);
 	}
 
 	@Override
