@@ -13,6 +13,8 @@
 	<context:annotation-config />
 	<context:component-scan base-package="okeanos" />
 
+	<context:property-placeholder location="classpath:pricing-service.properties"/>
+
 	<osgi:service id="communicationServiceOsgi" ref="communicationServiceImpl"
 		interface="okeanos.data.services.CommunicationService" />
 	<osgi:service id="knowledgeBaseServiceOsgi" ref="knowledgeBaseServiceImpl"

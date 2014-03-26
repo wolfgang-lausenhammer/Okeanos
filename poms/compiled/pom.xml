@@ -121,6 +121,12 @@
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.jiac.additions</artifactId>
+			<version>${okeanos-jiac-additions-version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Logging -->
 		<dependency>
@@ -147,6 +153,14 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time-version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava-version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -231,6 +245,20 @@
 			<groupId>org.kubek2k</groupId>
 			<artifactId>springockito-annotations</artifactId>
 			<version>${springockito-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest-version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<version>${hamcrest-version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

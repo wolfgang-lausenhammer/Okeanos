@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import javax.inject.Provider;
 
+import okeanos.data.internal.services.communication.MyTestMessage;
 import okeanos.data.services.UUIDGenerator;
 
 import org.junit.Before;

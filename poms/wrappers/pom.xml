@@ -143,6 +143,25 @@
 			<artifactId>okeanos.jiac.additions</artifactId>
 			<version>${okeanos-jiac-additions-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.quartz.simulation.ready</artifactId>
+			<version>${quartz-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.quartz-scheduler</groupId>
+					<artifactId>quartz</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>c3p0</groupId>
+					<artifactId>c3p0</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 
 	<build>
