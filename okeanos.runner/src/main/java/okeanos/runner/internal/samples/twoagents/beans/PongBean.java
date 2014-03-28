@@ -61,7 +61,7 @@ public class PongBean extends AbstractAgentBean {
 		this.communicationService = communicationService;
 
 		setExecutionInterval(1000);
-		System.out.println("PongBean created");
+		log.info("PongBean created");
 	}
 
 	@Override

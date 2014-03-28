@@ -2,64 +2,90 @@ package okeanos.data.internal.services;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.annotation.PostConstruct;
+import okeanos.data.services.TimeService;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeUtils.MillisProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.util.concurrent.AtomicDouble;
 
-import okeanos.data.services.TimeService;
-
+/**
+ * An implementation of {@code TimeService}.
+ */
 @Component
 public class TimeServiceImpl implements TimeService, MillisProvider {
-	private AtomicDouble pace = new AtomicDouble();
-	private AtomicLong referenceMillis = new AtomicLong();
-	private AtomicLong lastSystemNano = new AtomicLong();
+	/** The Logger. */
+	private static final Logger log = LoggerFactory
+			.getLogger(TimeServiceImpl.class);
 
+	/** The pace. */
+	private AtomicDouble pace = new AtomicDouble();
+
+	/** The reference time in millis. */
+	private AtomicLong referenceMillis = new AtomicLong();
+
+	/**
+	 * The elapsed time since the last call to
+	 * {@link #setCurrentDateTime(DateTime)}. Used to calculate the delta
+	 * between the point in time ({@link #referenceMillis}) and the call to
+	 * {@link #getMillis()}.
+	 */
+	private AtomicLong referenceNano = new AtomicLong();
+
+	/**
+	 * Instantiates a new time service impl.
+	 */
 	public TimeServiceImpl() {
 		setCurrentDateTime(DateTime.now());
 		DateTimeUtils.setCurrentMillisProvider(this);
-		System.out.println("TimeServiceImpl constructor called");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#currentTimeMillis()
+	 */
 	@Override
 	public long currentTimeMillis() {
 		return getMillis();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.joda.time.DateTimeUtils.MillisProvider#getMillis()
+	 */
 	@Override
 	public long getMillis() {
-		long newSystemNano = System.nanoTime();
-		long oldSystemNano = lastSystemNano.getAndSet(newSystemNano);
-		long difference = newSystemNano - oldSystemNano;
+		long difference = System.nanoTime() - referenceNano.get();
 
 		return referenceMillis.get() + (long) (difference * pace.get() / 1000);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.data.services.TimeService#setCurrentDateTime(org.joda.time.DateTime
+	 * )
+	 */
 	@Override
 	public void setCurrentDateTime(DateTime dateTime) {
 		pace.set(1);
-		lastSystemNano.set(System.nanoTime());
+		referenceNano.set(System.nanoTime());
 		referenceMillis.set(dateTime.getMillis());
+		log.debug("new current date time set to [{}]", dateTime);
 	}
 
-	@PostConstruct
-	private void setMillisProvider() {
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		System.out.println("@PostConstruct setMillisProvider called");
-		//DateTimeUtils.setCurrentMillisProvider(this);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#setPace(double)
+	 */
 	@Override
 	public void setPace(double factor) {
 		setCurrentDateTime(DateTime.now());

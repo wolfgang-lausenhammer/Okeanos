@@ -14,6 +14,30 @@
 	<context:annotation-config />
 	<context:component-scan base-package="okeanos" />
 
+	<bean name="OkeanosActiveMQBroker"
+		class="de.dailab.jiactng.agentcore.comm.broker.OkeanosActiveMQBroker"
+		abstract="true">
+		<property name="persistent" value="false" />
+	</bean>
+
+	<bean name="OkeanosStandardJMSBroker" parent="OkeanosActiveMQBroker"
+		scope="singleton" lazy-init="true">
+		<property name="connectors">
+			<set>
+				<ref bean="StandardTCPConnector" />
+			</set>
+		</property>
+	</bean>
+
+	<bean name="OkeanosNodeWithDirectory" parent="Node" abstract="true">
+		<property name="agentNodeBeans">
+			<list>
+				<ref bean="OkeanosStandardJMSBroker" />
+				<ref bean="IDirectory" />
+			</list>
+		</property>
+	</bean>
+
 	<!-- OSGi published services -->
 	<osgi:service id="entityManagementServiceOsgi" ref="entityManagementServiceImpl"
 		interface="okeanos.management.services.EntityManagementService" />

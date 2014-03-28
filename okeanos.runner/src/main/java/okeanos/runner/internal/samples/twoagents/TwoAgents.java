@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import okeanos.core.entities.Entity;
+import okeanos.data.services.PricingService;
+import okeanos.data.services.TimeService;
 import okeanos.management.services.EntityManagementService;
 import okeanos.management.services.PlatformManagementService;
 import okeanos.runner.internal.samples.twoagents.beans.PingBean;
@@ -29,6 +31,9 @@ public class TwoAgents {
 	private EntityManagementService entityManagementService;
 
 	private PlatformManagementService platformManagementService;
+	
+	@Inject
+	private PricingService pricingService;
 
 	@Inject
 	public TwoAgents(PlatformManagementService platformManagementService,

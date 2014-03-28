@@ -1,1 +1,1 @@
-Spring-Context: application-context.xml
+Spring-Context: classpath:application-context.xml

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>okeanos.build</groupId>
 		<artifactId>shared-plugin-settings</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -118,7 +118,7 @@
 		<dependency>
 			<groupId>okeanos.build</groupId>
 			<artifactId>wrapper-bundle-settings</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${wrapper-bundle-settings-version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -141,11 +141,13 @@
 			<groupId>org.ops4j.pax.logging</groupId>
 			<artifactId>pax-logging-service</artifactId>
 			<version>${pax-logging-version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.logging</groupId>
 			<artifactId>pax-logging-api</artifactId>
 			<version>${pax-logging-version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Time -->
@@ -169,11 +171,13 @@
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
 			<version>${javax-annotation-version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>${javax-inject-version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Gson: Java to Json conversion -->

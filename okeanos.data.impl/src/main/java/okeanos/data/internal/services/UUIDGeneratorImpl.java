@@ -8,8 +8,19 @@ import okeanos.data.services.UUIDGenerator;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Implements several features for generating UUIDs. At the moment uses
+ * {@link UUID#randomUUID()} for the UUID and {@code SHA-256} for the hashing
+ * function.
+ */
 @Component("uuidGeneratorImpl")
 public class UUIDGeneratorImpl implements UUIDGenerator {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.UUIDGenerator#generateUUID()
+	 */
 	@Override
 	public String generateUUID() {
 		String uuidBasic = UUID.randomUUID().toString();

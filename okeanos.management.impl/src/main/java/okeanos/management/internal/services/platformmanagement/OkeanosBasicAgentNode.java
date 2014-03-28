@@ -11,5 +11,7 @@ import de.dailab.jiactng.agentcore.SimpleAgentNode;
 @ChildOf(parent = "NodeWithDirectory")
 @Scope("prototype")
 public class OkeanosBasicAgentNode extends SimpleAgentNode {
-
+	public OkeanosBasicAgentNode() {
+		super();
+	}
 }

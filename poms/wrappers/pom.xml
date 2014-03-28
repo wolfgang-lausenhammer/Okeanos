@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>okeanos.build</groupId>
 	<artifactId>wrapper-bundle-settings</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${wrapper-bundle-settings-version}</version>
 	<name>okeanos - wrapper instructions</name>
 
 	<description>Simple OSGi wrapper around third-party jar(s)</description>
@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>okeanos.build</groupId>
 		<artifactId>shared-plugin-settings</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<dependencies>
@@ -134,6 +134,49 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring-version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>aopalliance</groupId>
+					<artifactId>aopalliance</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.ejb</groupId>
+					<artifactId>ejb-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.resource</groupId>
+					<artifactId>connector-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jta_1.1_spec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.ibm.websphere</groupId>
+					<artifactId>uow</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
 			<version>${javax-annotation-version}</version>
@@ -171,15 +214,22 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
+					<noUses>true</noUses>
 					<instructions>
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Name>${project.artifactId}</Bundle-Name>
 						<Bundle-Version>1.0.0</Bundle-Version>
 						<Export-Package>*;-split-package:=merge-first</Export-Package>
 						<Import-Package>*;resolution:=optional</Import-Package>
-						<Embed-Transitive>true</Embed-Transitive>
-						<Embed-Dependency>*;inline=true</Embed-Dependency>
 					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 		</plugins>

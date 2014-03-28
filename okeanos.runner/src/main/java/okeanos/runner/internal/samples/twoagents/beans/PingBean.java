@@ -25,17 +25,17 @@ public class PingBean extends AbstractAgentBean {
 		this.communicationService = communicationService;
 
 		setExecutionInterval(1000);
-		System.out.println("PingBean created");
+		log.info("PingBean created");
 	}
 
 	@Override
 	public void execute() {
-		System.out.println("execute() on PingBean called");
+		log.info("execute() on PingBean called");
 		try {
 			log.info("PingAgent - sending ping");
 			IJiacMessage answer = communicationService.send(this, "PongAgent",
 					new Ping("ping"));
-			log.debug("got answer [answer={}]", answer);
+			log.info("got answer [answer={}]", answer);
 		} catch (CommunicationException e) {
 			log.error("error sending ping message");
 		}
