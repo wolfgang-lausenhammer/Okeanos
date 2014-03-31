@@ -3,6 +3,8 @@ package okeanos.runner.internal;
 import javax.management.NotificationBroadcasterSupport;
 import javax.security.auth.Destroyable;
 
+import okeanos.spring.misc.postprocessors.LoggingBeanFactoryPostProcessor;
+
 import org.eclipse.gemini.blueprint.service.exporter.support.OsgiServiceFactoryBean;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor;
@@ -31,6 +33,7 @@ public class MavenImports {
 	OsgiServiceFactoryBean osgiServiceFactoryBean;
 	GenericAgentProperties prop;
 	RequiredAnnotationBeanPostProcessor requiredAnnotationBeanPostProcessor;
+	LoggingBeanFactoryPostProcessor loggingBeanFactoryPostProcessor;
 	JMSMessageTransport transport;
 
 	NotificationBroadcasterSupport x;

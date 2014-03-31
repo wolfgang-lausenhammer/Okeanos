@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import okeanos.data.services.CommunicationService;
 import okeanos.runner.internal.samples.twoagents.beans.entities.Ping;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,8 @@ import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 @Component
 @Scope("prototype")
 public class PingBean extends AbstractAgentBean {
-	private static final Logger log = LoggerFactory.getLogger(PingBean.class);
+	@Logging
+	private Logger log;
 	private CommunicationService communicationService;
 
 	@Inject
@@ -25,19 +27,24 @@ public class PingBean extends AbstractAgentBean {
 		this.communicationService = communicationService;
 
 		setExecutionInterval(1000);
-		log.info("PingBean created");
+		if (log != null)
+			log.warn("PingBean created");
 	}
 
 	@Override
 	public void execute() {
-		log.info("execute() on PingBean called");
+		if (log != null)
+			log.info("execute() on PingBean called");
 		try {
-			log.info("PingAgent - sending ping");
+			if (log != null)
+				log.info("PingAgent - sending ping");
 			IJiacMessage answer = communicationService.send(this, "PongAgent",
 					new Ping("ping"));
-			log.info("got answer [answer={}]", answer);
+			if (log != null)
+				log.info("got answer [answer={}]", answer);
 		} catch (CommunicationException e) {
-			log.error("error sending ping message");
+			if (log != null)
+				log.error("error sending ping message");
 		}
 	}
 }

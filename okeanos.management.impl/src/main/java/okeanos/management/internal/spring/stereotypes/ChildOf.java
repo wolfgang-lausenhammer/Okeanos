@@ -1,4 +1,4 @@
-package okeanos.management.internal.spring.stereotype;
+package okeanos.management.internal.spring.stereotypes;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,17 +22,17 @@ import org.springframework.stereotype.Component;
 @Component
 public @interface ChildOf {
 	/**
+	 * The name of the parent bean - must NOT be null
+	 * 
+	 * @return the parent beanname
+	 */
+	String parent() default "";
+
+	/**
 	 * The value may indicate a suggestion for a logical component name, to be
 	 * turned into a Spring bean in case of an autodetected component.
 	 * 
 	 * @return the suggested component name, if any
 	 */
 	String value() default "";
-
-	/**
-	 * The name of the parent bean - must NOT be null
-	 * 
-	 * @return the parent beanname
-	 */
-	String parent() default "";
 }

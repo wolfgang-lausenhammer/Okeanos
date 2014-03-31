@@ -3,6 +3,9 @@ package okeanos.management.internal;
 import javax.management.NotificationBroadcasterSupport;
 import javax.security.auth.Destroyable;
 
+import okeanos.management.internal.spring.ChildOfBeanFactoryPostProcessor;
+import okeanos.spring.misc.postprocessors.LoggingBeanFactoryPostProcessor;
+
 import org.eclipse.gemini.blueprint.service.exporter.support.OsgiServiceFactoryBean;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor;
@@ -32,6 +35,8 @@ public class MavenImports {
 	RequiredAnnotationBeanPostProcessor requiredAnnotationBeanPostProcessor;
 	CommonAnnotationBeanPostProcessor commonAnnotationBeanPostProcessor;
 	OsgiServiceFactoryBean osgiServiceFactoryBean;
+	ChildOfBeanFactoryPostProcessor childOfBeanFactoryPostProcessor;
+	LoggingBeanFactoryPostProcessor loggingBeanFactoryPostProcessor;
 
 	Destroyable d;
 }

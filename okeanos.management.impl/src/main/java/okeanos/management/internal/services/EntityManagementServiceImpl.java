@@ -12,9 +12,9 @@ import okeanos.management.internal.services.entitymanagement.EntitySerializer;
 import okeanos.management.internal.services.entitymanagement.OkeanosBasicAgent;
 import okeanos.management.services.EntityManagementService;
 import okeanos.management.services.PlatformManagementService;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
@@ -27,16 +27,15 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 @Component
 public class EntityManagementServiceImpl implements EntityManagementService {
-
-	private static final Logger log = LoggerFactory
-			.getLogger(EntityManagementServiceImpl.class);
-
 	private Provider<OkeanosBasicAgent> agentProvider;
-	private Provider<EntityBuilder> entityBuilderProvider;
 
+	private Provider<EntityBuilder> entityBuilderProvider;
 	private Gson gson = new GsonBuilder()
 			.registerTypeAdapter(Entity.class, new EntitySerializer())
 			.serializeNulls().create();
+
+	@Logging
+	private Logger log;
 
 	private Map<String, IAgent> managedAgents = new ConcurrentHashMap<>();
 	private Map<String, Entity> managedEntitiesByAgentId = new ConcurrentHashMap<>();
@@ -79,10 +78,12 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 */
 	@Override
 	public Entity loadEntity() {
-		log.debug("Loading entity with default configuration");
+		if (log != null)
+			log.debug("Loading entity with default configuration");
 		EntityBuilder builder = loadConfigurableEntity();
 		builder.agent(getDefaultAgent());
-		log.debug("Successfully loaded entity with default configuration");
+		if (log != null)
+			log.debug("Successfully loaded entity with default configuration");
 
 		return builder.build();
 	}
@@ -95,10 +96,12 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		if (entityAsJson == null)
 			throw new NullPointerException("Json string must not be null");
 
-		log.debug("Loading entity from json [{}]", entityAsJson);
+		if (log != null)
+			log.debug("Loading entity from json [{}]", entityAsJson);
 		EntityBuilder builder = loadConfigurableEntity();
 		builder.fromJson(entityAsJson);
-		log.debug("Successfully loaded entity from json [{}]", entityAsJson);
+		if (log != null)
+			log.debug("Successfully loaded entity from json [{}]", entityAsJson);
 
 		return builder.build();
 	}
@@ -122,8 +125,9 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		if (node == null)
 			throw new NullPointerException("IAgentNode node must not be null");
 
-		log.debug("Starting entity [{}] by adding it to node [{}]", entity,
-				node);
+		if (log != null)
+			log.debug("Starting entity [{}] by adding it to node [{}]", entity,
+					node);
 		IAgent agent = entity.getAgent();
 		node.addAgent(agent);
 		agent.init();
@@ -131,23 +135,28 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		managedEntitiesByEntityId.put(entity.getId(), entity);
 		managedEntitiesByAgentId.put(agent.getAgentId(), entity);
 		managedAgents.put(agent.getAgentId(), agent);
-		log.debug("Successfully started entity [{}] on node [{}]", entity, node);
+		if (log != null)
+			log.debug("Successfully started entity [{}] on node [{}]", entity,
+					node);
 
 		return entity;
 	}
 
 	@Override
 	public Entity stopEntity(Entity entity) throws LifecycleException {
-		log.debug("Sopping entity [{}]", entity);
+		if (log != null)
+			log.debug("Sopping entity [{}]", entity);
 		entity.getAgent().stop();
-		log.debug("Successfully stopped entity [{}]", entity);
+		if (log != null)
+			log.debug("Successfully stopped entity [{}]", entity);
 
 		return entity;
 	}
 
 	@Override
 	public void unloadEntity(Entity entity) throws LifecycleException {
-		log.debug("Unloading entity [{}]", entity);
+		if (log != null)
+			log.debug("Unloading entity [{}]", entity);
 		IAgent agent = entity.getAgent();
 
 		managedEntitiesByEntityId.remove(entity.getId());
@@ -166,7 +175,8 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 				agent.getAgentNode().removeAgent(agent);
 			}
 		}
-		log.debug("Successfully unloaded entity [{}]", entity);
+		if (log != null)
+			log.debug("Successfully unloaded entity [{}]", entity);
 	}
 
 }

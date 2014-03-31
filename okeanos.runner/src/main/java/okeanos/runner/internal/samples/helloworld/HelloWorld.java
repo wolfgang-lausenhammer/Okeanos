@@ -6,9 +6,9 @@ import javax.inject.Provider;
 import okeanos.core.entities.Entity;
 import okeanos.management.services.EntityManagementService;
 import okeanos.management.services.PlatformManagementService;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.IAgentNode;
@@ -16,7 +16,8 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 @Component
 public class HelloWorld {
-	private static final Logger log = LoggerFactory.getLogger(HelloWorld.class);
+	@Logging
+	private Logger log;
 
 	private EntityManagementService entityManagementService;
 
@@ -25,34 +26,40 @@ public class HelloWorld {
 	@Inject
 	public HelloWorld(PlatformManagementService platformManagementService,
 			EntityManagementService entityManagementService,
-			Provider<HelloWorldBean> beanProvider)
-			throws LifecycleException {
+			Provider<HelloWorldBean> beanProvider) throws LifecycleException {
 		this.platformManagementService = platformManagementService;
 		this.entityManagementService = entityManagementService;
 
 		IAgentNode node = startAgentNode();
 		Entity entity = startEntity(node);
 
-		log.debug("Adding Hello World functionality to entity [{}]", entity);
+		if (log != null)
+			log.debug("Adding Hello World functionality to entity [{}]", entity);
 		entity.addFunctionality(beanProvider.get());
-		log.debug("Finished adding Hello World functionality to entity [{}]",
-				entity);
+		if (log != null)
+			log.debug(
+					"Finished adding Hello World functionality to entity [{}]",
+					entity);
 	}
 
 	private IAgentNode startAgentNode() throws LifecycleException {
-		log.debug("Starting Agent Node");
+		if (log != null)
+			log.debug("Starting Agent Node");
 		IAgentNode node = platformManagementService.startAgentNode();
-		log.debug("Finished starting Agent Node [{}]", node);
+		if (log != null)
+			log.debug("Finished starting Agent Node [{}]", node);
 
 		return node;
 	}
 
 	private Entity startEntity(IAgentNode node) throws LifecycleException {
-		log.debug("Starting Entity on Agent Node [{}]", node);
+		if (log != null)
+			log.debug("Starting Entity on Agent Node [{}]", node);
 		Entity entity = entityManagementService.loadEntity();
 		entityManagementService.startEntity(entity, node);
-		log.debug("Finished starting Entity [{}] on Agent Node[{}]", entity,
-				node);
+		if (log != null)
+			log.debug("Finished starting Entity [{}] on Agent Node[{}]",
+					entity, node);
 
 		return entity;
 	}

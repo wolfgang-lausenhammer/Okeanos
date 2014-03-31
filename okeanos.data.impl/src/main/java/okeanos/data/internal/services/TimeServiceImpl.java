@@ -3,12 +3,12 @@ package okeanos.data.internal.services;
 import java.util.concurrent.atomic.AtomicLong;
 
 import okeanos.data.services.TimeService;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeUtils.MillisProvider;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.util.concurrent.AtomicDouble;
@@ -19,8 +19,8 @@ import com.google.common.util.concurrent.AtomicDouble;
 @Component
 public class TimeServiceImpl implements TimeService, MillisProvider {
 	/** The Logger. */
-	private static final Logger log = LoggerFactory
-			.getLogger(TimeServiceImpl.class);
+	@Logging
+	private Logger log;
 
 	/** The pace. */
 	private AtomicDouble pace = new AtomicDouble();
@@ -78,7 +78,8 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 		pace.set(1);
 		referenceNano.set(System.nanoTime());
 		referenceMillis.set(dateTime.getMillis());
-		log.debug("new current date time set to [{}]", dateTime);
+		if (log != null)
+			log.debug("new current date time set to [{}]", dateTime);
 	}
 
 	/*
@@ -90,5 +91,27 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	public void setPace(double factor) {
 		setCurrentDateTime(DateTime.now());
 		pace.set((factor >= 0) ? factor : -1 / factor);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#sleep(long)
+	 */
+	@Override
+	public void sleep(long millis) throws InterruptedException {
+		sleep(millis, 0);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#sleep(long, int)
+	 */
+	@Override
+	public void sleep(long millis, int nanos) throws InterruptedException {
+		if (log != null)
+			log.debug("going to sleep for {}ms and {}ns", millis, nanos);
+		Thread.sleep((long) (millis / pace.get()), (int) (nanos / pace.get()));
 	}
 }

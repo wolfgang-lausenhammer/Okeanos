@@ -3,6 +3,7 @@ package okeanos.data.services;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * The TimeService interface provides an abstraction to the real world clock.
  * For simulations it is preferable to not have to wait for an event to happen
@@ -60,4 +61,47 @@ public interface TimeService {
 	 * @see DateTimeUtils#currentTimeMillis()
 	 */
 	long currentTimeMillis();
+
+	/**
+	 * Puts the current thread to sleep. If the pace is changed (
+	 * {@link #setPace(double)}) the method will adjust the given time in ms
+	 * accordingly, so that it will return sooner for a higher pace or later for
+	 * a lower pace, respectively.
+	 * 
+	 * @param millis
+	 *            the length of time to sleep in milliseconds
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the value of millis is negative
+	 * @throws InterruptedException
+	 *             if any thread has interrupted the current thread. The
+	 *             interrupted status of the current thread is cleared when this
+	 *             exception is thrown.
+	 * 
+	 * @see Thread#sleep(long)
+	 */
+	void sleep(long millis) throws InterruptedException;
+
+	/**
+	 * Puts the current thread to sleep. If the pace is changed (
+	 * {@link #setPace(double)}) the method will adjust the given time in ms and
+	 * ns accordingly, so that it will return sooner for a higher pace or later
+	 * for a lower pace, respectively.
+	 * 
+	 * @param millis
+	 *            the length of time to sleep in milliseconds
+	 * @param nanos
+	 *            0-999999 additional nanoseconds to sleep
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the value of millis is negative, or the value of nanos is
+	 *             not in the range 0-999999
+	 * @throws InterruptedException
+	 *             if any thread has interrupted the current thread. The
+	 *             interrupted status of the current thread is cleared when this
+	 *             exception is thrown.
+	 * 
+	 * @see Thread#sleep(long,int)
+	 */
+	void sleep(long millis, int nanos) throws InterruptedException;
 }

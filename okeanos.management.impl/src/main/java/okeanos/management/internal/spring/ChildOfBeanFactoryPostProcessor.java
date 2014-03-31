@@ -1,6 +1,6 @@
 package okeanos.management.internal.spring;
 
-import okeanos.management.internal.spring.stereotype.ChildOf;
+import okeanos.management.internal.spring.stereotypes.ChildOf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,10 +28,6 @@ public class ChildOfBeanFactoryPostProcessor implements
 	protected final Log logger = LogFactory.getLog(getClass());
 	private int order = Ordered.LOWEST_PRECEDENCE; // default: same as
 													// non-Ordered
-
-	public void setOrder(int order) {
-		this.order = order;
-	}
 
 	public int getOrder() {
 		return this.order;
@@ -88,10 +84,14 @@ public class ChildOfBeanFactoryPostProcessor implements
 					bd.setParentName(parentName);
 				}
 			} catch (ClassNotFoundException e) {
-				logger.error("Bean [" + beanName + "] has invalid ClassName["
+				logger.warn("Bean [" + beanName + "] has invalid ClassName["
 						+ bd.getBeanClassName()
 						+ "] - Exception will be ignored");
 			}
 		}
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
 	}
 }

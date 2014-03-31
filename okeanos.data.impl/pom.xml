@@ -29,6 +29,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.spring.misc</artifactId>
+			<version>${okeanos-spring-misc-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>${commons-math-version}</version>

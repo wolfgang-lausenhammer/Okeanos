@@ -4,6 +4,8 @@ import javax.management.NotificationBroadcasterSupport;
 import javax.management.openmbean.OpenDataException;
 import javax.security.auth.Destroyable;
 
+import okeanos.spring.misc.postprocessors.LoggingBeanFactoryPostProcessor;
+
 import org.eclipse.gemini.blueprint.service.exporter.support.OsgiServiceFactoryBean;
 import org.quartz.ObjectAlreadyExistsException;
 import org.springframework.beans.factory.DisposableBean;
@@ -53,6 +55,7 @@ public class MavenImports {
 	RequiredAnnotationBeanPostProcessor requiredAnnotationBeanPostProcessor;
 	CommonAnnotationBeanPostProcessor commonAnnotationBeanPostProcessor;
 	OsgiServiceFactoryBean osgiServiceFactoryBean;
+	LoggingBeanFactoryPostProcessor loggingBeanFactoryPostProcessor;
 
 	Destroyable d;
 

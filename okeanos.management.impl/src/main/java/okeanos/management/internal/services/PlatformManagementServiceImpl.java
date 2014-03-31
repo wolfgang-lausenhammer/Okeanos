@@ -1,7 +1,6 @@
 package okeanos.management.internal.services;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
@@ -9,9 +8,9 @@ import javax.inject.Provider;
 
 import okeanos.management.internal.services.platformmanagement.OkeanosBasicAgentNode;
 import okeanos.management.services.PlatformManagementService;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.IAgentNode;
@@ -20,10 +19,10 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 @Component
 public class PlatformManagementServiceImpl implements PlatformManagementService {
-	private static final Logger log = LoggerFactory
-			.getLogger(PlatformManagementServiceImpl.class);
-
 	private Provider<OkeanosBasicAgentNode> agentNodeProvider;
+
+	@Logging
+	private Logger log;
 
 	private Map<String, IAgentNode> managedAgentNodes = new ConcurrentHashMap<>();
 
@@ -47,9 +46,10 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 				return managedAgentNodes.values().iterator().next();
 			}
 		} catch (LifecycleException e) {
-			log.error(
-					"Encountered a LivecycleException when starting an agent node [{}]",
-					e);
+			if (log != null)
+				log.error(
+						"Encountered a LivecycleException when starting an agent node [{}]",
+						e);
 			return null;
 		}
 	}
@@ -61,7 +61,8 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 		// node will be started by spring!
 		// node.start();
 
-		log.debug("Started new agent node [node={}]", node);
+		if (log != null)
+			log.debug("Started new agent node [node={}]", node);
 		return node;
 	}
 
@@ -77,8 +78,10 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 			agentNode.cleanup();
 		}
 
-		log.debug("Stopped {} agents on agent node [node={}]", agentNode
-				.findAgents().size(), agentNode);
-		log.debug("Stopped agent node [node={}]", agentNode);
+		if (log != null)
+			log.debug("Stopped {} agents on agent node [node={}]", agentNode
+					.findAgents().size(), agentNode);
+		if (log != null)
+			log.debug("Stopped agent node [node={}]", agentNode);
 	}
 }

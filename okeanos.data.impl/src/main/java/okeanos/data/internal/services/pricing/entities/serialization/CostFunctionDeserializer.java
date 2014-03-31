@@ -17,9 +17,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 public class CostFunctionDeserializer implements JsonDeserializer<CostFunction> {
-	private static final Logger log = LoggerFactory
-			.getLogger(CostFunctionDeserializer.class);
-
 	@Override
 	public CostFunction deserialize(JsonElement json, Type typeOfT,
 			JsonDeserializationContext context) throws JsonParseException {

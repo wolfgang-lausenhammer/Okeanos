@@ -17,12 +17,12 @@ import okeanos.data.internal.services.pricing.entities.serialization.PriceDeseri
 import okeanos.data.services.PricingService;
 import okeanos.data.services.entities.CostFunction;
 import okeanos.data.services.entities.Price;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,15 +44,15 @@ import com.google.gson.reflect.TypeToken;
 @Component
 public class PricingServiceImpl implements PricingService {
 
-	/** The Logger. */
-	private static final Logger log = LoggerFactory
-			.getLogger(PricingServiceImpl.class);
-
 	/** The cost functions. */
 	private Map<DateTime, CostFunction> costFunctions;
 
 	/** Gson (de)serializer. */
 	private Gson gson;
+
+	/** The Logger. */
+	@Logging
+	private Logger log;
 
 	/** The pricing resource to fetch the prices from. */
 	private Resource pricingResource;
@@ -167,8 +167,10 @@ public class PricingServiceImpl implements PricingService {
 	public void refreshPricingResource() throws JsonSyntaxException,
 			IOException {
 		String jsonString = IOUtils.toString(pricingResource.getInputStream());
-		log.trace("New pricing resource with content: {}", jsonString);
-		log.debug("refreshing....");
+		if (log != null)
+			log.trace("New pricing resource with content: {}", jsonString);
+		if (log != null)
+			log.debug("refreshing....");
 
 		List<CostFunction> costFunctionsList = gson.fromJson(jsonString,
 				new TypeToken<List<CostFunction>>() {
@@ -181,8 +183,9 @@ public class PricingServiceImpl implements PricingService {
 
 		this.costFunctions = costFunctionsMap;
 
-		log.trace("New cost functions:\n[{}]",
-				StringUtils.join(costFunctionsList, StringUtils.LF));
+		if (log != null)
+			log.trace("New cost functions:\n[{}]",
+					StringUtils.join(costFunctionsList, StringUtils.LF));
 	}
 
 	/**
@@ -210,7 +213,8 @@ public class PricingServiceImpl implements PricingService {
 	 */
 	public void updatePricingResource(Resource pricingResource)
 			throws JsonSyntaxException, IOException {
-		log.trace("Pricing resource updated to {}", pricingResource);
+		if (log != null)
+			log.trace("Pricing resource updated to {}", pricingResource);
 		this.pricingResource = pricingResource;
 		refreshPricingResource();
 	}

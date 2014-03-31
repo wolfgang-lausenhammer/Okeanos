@@ -8,9 +8,9 @@ import javax.inject.Inject;
 
 import okeanos.core.entities.Entity;
 import okeanos.core.entities.builder.EntityBuilder;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -63,8 +63,9 @@ public class EntityImpl implements Entity {
 		}
 
 	}
-	
-	private static final Logger log = LoggerFactory.getLogger(EntityImpl.class);
+
+	@Logging
+	private Logger log;
 
 	private transient IAgent agent;
 
@@ -87,7 +88,9 @@ public class EntityImpl implements Entity {
 			throw new NullPointerException(
 					"functionality must contain at least one element");
 
-		log.debug("Adding {} functionalities to entity [{}]", functionality.length, this);
+		if (log != null)
+			log.debug("Adding {} functionalities to entity [{}]",
+					functionality.length, this);
 		List<IAgentBean> beans = agent.getAgentBeans();
 		List<IAgentBean> oldBeansPlusNew = new ArrayList<>(beans.size()
 				+ functionality.length);
@@ -96,12 +99,14 @@ public class EntityImpl implements Entity {
 
 		for (IAgentBean ab : functionality)
 			ab.setThisAgent(agent);
-		
+
 		agent.setAgentBeans(oldBeansPlusNew);
 		doInitOfNewBeans(functionality);
 		doStartOfNewBeans(functionality);
 
-		log.debug("Finished adding {} functionalities to entity [{}]", functionality.length, this);
+		if (log != null)
+			log.debug("Finished adding {} functionalities to entity [{}]",
+					functionality.length, this);
 	}
 
 	private void doInitOfNewBeans(IAgentBean... agentBeans)

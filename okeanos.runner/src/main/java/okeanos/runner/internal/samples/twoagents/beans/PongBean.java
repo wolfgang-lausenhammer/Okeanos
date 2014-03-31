@@ -4,12 +4,12 @@ import javax.inject.Inject;
 
 import okeanos.data.services.CommunicationService;
 import okeanos.runner.internal.samples.twoagents.beans.entities.Ping;
+import okeanos.spring.misc.stereotypes.Logging;
 
 import org.sercho.masp.space.event.SpaceEvent;
 import org.sercho.masp.space.event.SpaceObserver;
 import org.sercho.masp.space.event.WriteCallEvent;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,8 @@ public class PongBean extends AbstractAgentBean {
 				WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
 				// a JiacMessage holding a Ping with message "ping" has been
 				// written to this agent's memory
-				log.info("PongAgent - ping received");
+				if (log != null)
+					log.info("PongAgent - ping received");
 
 				// consume message
 				IJiacMessage message = memory.remove(wce.getObject());
@@ -41,18 +42,21 @@ public class PongBean extends AbstractAgentBean {
 				Ping answer = new Ping("pong");
 
 				// send Pong to PingAgent (the sender of the original message)
-				log.info("PongAgent - sending pong message");
+				if (log != null)
+					log.info("PongAgent - sending pong message");
 				try {
 					communicationService.sendAsync(PongBean.this,
 							message.getSender(), answer);
 				} catch (CommunicationException e) {
-					log.error("error sending pong message");
+					if (log != null)
+						log.error("error sending pong message");
 				}
 			}
 		}
 	}
 
-	private static final Logger log = LoggerFactory.getLogger(PongBean.class);
+	@Logging
+	private Logger log;
 
 	private CommunicationService communicationService;
 
@@ -61,7 +65,8 @@ public class PongBean extends AbstractAgentBean {
 		this.communicationService = communicationService;
 
 		setExecutionInterval(1000);
-		log.info("PongBean created");
+		if (log != null)
+			log.info("PongBean created");
 	}
 
 	@Override
