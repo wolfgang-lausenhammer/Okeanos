@@ -2,6 +2,8 @@ package okeanos.model.entities;
 
 public interface Load {
 	int getId();
-
-	void setId();
+	
+	double getConsumption();
+	
+	double getConsumption(long minutes);
 }

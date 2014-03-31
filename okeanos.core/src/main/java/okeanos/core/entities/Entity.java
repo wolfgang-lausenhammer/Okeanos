@@ -7,8 +7,6 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 public interface Entity {
 	String getId();
 
-	void setId(String id);
-
 	IAgent getAgent();
 
 	void setAgent(IAgent agent);

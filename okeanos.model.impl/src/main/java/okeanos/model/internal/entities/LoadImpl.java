@@ -6,14 +6,17 @@ public class LoadImpl implements Load {
 
 	@Override
 	public int getId() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void setId() {
-		// TODO Auto-generated method stub
+	public double getConsumption() {
+		return 0;
+	}
 
+	@Override
+	public double getConsumption(long minutes) {
+		return 0;
 	}
 
 }

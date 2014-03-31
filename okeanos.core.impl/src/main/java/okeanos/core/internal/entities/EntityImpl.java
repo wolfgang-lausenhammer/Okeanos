@@ -71,7 +71,9 @@ public class EntityImpl implements Entity {
 
 	private String id;
 
-	public EntityImpl() {
+	@Inject
+	public EntityImpl(@Value("#{ uuidGenerator.generateUUID() }") String id) {
+		this.id = id;
 	}
 
 	private EntityImpl(EntityBuilderImpl entityBuilder) {
@@ -163,11 +165,6 @@ public class EntityImpl implements Entity {
 	@Override
 	public void setAgent(IAgent agent) {
 		this.agent = agent;
-	}
-
-	@Override
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	@Override
