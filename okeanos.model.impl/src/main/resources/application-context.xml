@@ -9,32 +9,15 @@
 		http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<bean class="okeanos.data.internal.services.TimeServiceImpl" />
+	<context:annotation-config />
+	<context:component-scan base-package="okeanos" />
 
-	<task:executor id="myExecutor" pool-size="5" />
+	<context:property-placeholder location="classpath:load-profile.properties" />
 
-	<task:annotation-driven executor="myExecutor"
-		scheduler="scheduler" />
-
-	<bean id="refreshPricingResourceTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail">
-			<bean
-				class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-				<property name="targetObject" ref="pricingServiceImpl" />
-				<property name="targetMethod" value="refreshPricingResource" />
-			</bean>
-		</property>
-		<property name="repeatInterval" value="1000" />
-	</bean>
-
-	<bean id="scheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref bean="refreshPricingResourceTrigger" />
-			</list>
-		</property>
-	</bean>
-
-	<context:property-placeholder location="classpath:pricing-service.properties" />
+	<osgi:service ref="lightBulb100W" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="description" value="100W standard light bulb" />
+		</osgi:service-properties>
+	</osgi:service>
 </beans>

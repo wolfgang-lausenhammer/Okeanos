@@ -72,6 +72,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:jeff@binaryfeed.org">Jeffrey Wescott</a>
  * @author James House
  */
+@SuppressWarnings("unchecked")
 public abstract class JobStoreSupport implements JobStore, Constants {
 
     /*
@@ -321,7 +322,6 @@ public abstract class JobStoreSupport implements JobStore, Constants {
      * detecting failed instances.
      * </p>
      */
-    @SuppressWarnings("UnusedDeclaration") /* called reflectively */
     public void setClusterCheckinInterval(long l) {
         clusterCheckinInterval = l;
     }
@@ -1787,7 +1787,7 @@ public abstract class JobStoreSupport implements JobStore, Constants {
      * stored in the <code>JobStore</code>.
      * </p>
      */
-    public int getNumberOfJobs()
+	public int getNumberOfJobs()
         throws JobPersistenceException {
         return (Integer) executeWithoutLock( // no locks necessary for read...
                 new TransactionCallback() {

@@ -2,9 +2,9 @@ package okeanos.data.internal.services.pricing.entities;
 
 import java.util.Arrays;
 
-import okeanos.data.internal.services.pricing.regression.PowerTrendLine;
-import okeanos.data.internal.services.pricing.regression.TrendLine;
 import okeanos.data.services.entities.Price;
+import okeanos.math.regression.PowerTrendLine;
+import okeanos.math.regression.TrendLine;
 
 public class PriceImpl implements Price {
 

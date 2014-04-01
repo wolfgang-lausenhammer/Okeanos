@@ -18,7 +18,8 @@ public interface EntityManagementService {
 
 	Entity startEntity(Entity entity) throws LifecycleException;
 
-	Entity startEntity(Entity entity, IAgentNode node) throws LifecycleException;
+	Entity startEntity(Entity entity, IAgentNode node)
+			throws LifecycleException;
 
 	Entity stopEntity(Entity entity) throws LifecycleException;
 

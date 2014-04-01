@@ -1,4 +1,4 @@
-package okeanos.data.internal.services.pricing.regression;
+package okeanos.math.regression;
 
 import java.util.Arrays;
 

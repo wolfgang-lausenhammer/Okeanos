@@ -11,5 +11,6 @@ public interface Entity {
 
 	void setAgent(IAgent agent);
 
-	void addFunctionality(IAgentBean... functionality) throws LifecycleException;
+	void addFunctionality(IAgentBean... functionality)
+			throws LifecycleException;
 }

@@ -7,5 +7,5 @@ package okeanos.control.entities;
  * 
  */
 public enum LoadType {
-	PRODUCER, CONSUMER
+	CONSUMER, PRODUCER
 }

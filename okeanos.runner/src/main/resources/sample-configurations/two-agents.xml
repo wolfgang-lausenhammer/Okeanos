@@ -22,7 +22,7 @@
 		interface="okeanos.management.services.EntityManagementService"
 		availability="mandatory" />
 
-	<osgi:reference id="someId"
+	<osgi:reference id="pricingService"
 		interface="okeanos.data.services.PricingService" availability="mandatory" />
 
 	<osgi:reference id="communicationService"

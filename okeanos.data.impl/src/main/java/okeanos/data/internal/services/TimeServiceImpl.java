@@ -111,7 +111,7 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	@Override
 	public void sleep(long millis, int nanos) throws InterruptedException {
 		if (log != null)
-			log.debug("going to sleep for {}ms and {}ns", millis, nanos);
+			log.trace("going to sleep for {}ms and {}ns", millis, nanos);
 		Thread.sleep((long) (millis / pace.get()), (int) (nanos / pace.get()));
 	}
 }

@@ -28,6 +28,12 @@
 			<version>${okeanos-model-version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.math</artifactId>
+			<version>${okeanos-math-version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 </project>

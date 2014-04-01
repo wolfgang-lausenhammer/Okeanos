@@ -7,8 +7,6 @@ import okeanos.data.services.entities.CostFunction;
 import okeanos.data.services.entities.Price;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

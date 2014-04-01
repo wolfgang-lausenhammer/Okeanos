@@ -19,22 +19,39 @@ import de.dailab.jiactng.agentcore.execution.SimpleExecutionCycle;
 import de.dailab.jiactng.agentcore.knowledge.Memory;
 import de.dailab.jiactng.agentcore.management.jmx.JaasAuthenticator;
 
+/**
+ * The Class MavenImports.
+ */
+@SuppressWarnings("unused")
 public class MavenImports {
-	DirectoryAgentNodeBean agentNodeBean;
-	JaasAuthenticator authenticator;
-	AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor;
-	ActiveMQBroker broker;
-	CommonAnnotationBeanPostProcessor commonAnnotationBeanPostProcessor;
-	CommunicationBean communicationBean;
-	Destroyable d;
-	SimpleExecutionCycle executionCycle;
-	Memory memory;
-
-	OsgiServiceFactoryBean osgiServiceFactoryBean;
-	GenericAgentProperties prop;
-	RequiredAnnotationBeanPostProcessor requiredAnnotationBeanPostProcessor;
-	LoggingBeanFactoryPostProcessor loggingBeanFactoryPostProcessor;
-	JMSMessageTransport transport;
-
-	NotificationBroadcasterSupport x;
+	/** The agent node bean. */
+	private DirectoryAgentNodeBean agentNodeBean;
+	/** The authenticator. */
+	private JaasAuthenticator authenticator;
+	/** The autowired annotation bean post processor. */
+	private AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor;
+	/** The broker. */
+	private ActiveMQBroker broker;
+	/** The common annotation bean post processor. */
+	private CommonAnnotationBeanPostProcessor commonAnnotationBeanPostProcessor;
+	/** The communication bean. */
+	private CommunicationBean communicationBean;
+	/** The d. */
+	private Destroyable d;
+	/** The execution cycle. */
+	private SimpleExecutionCycle executionCycle;
+	/** The memory. */
+	private Memory memory;
+	/** The osgi service factory bean. */
+	private OsgiServiceFactoryBean osgiServiceFactoryBean;
+	/** The prop. */
+	private GenericAgentProperties prop;
+	/** The required annotation bean post processor. */
+	private RequiredAnnotationBeanPostProcessor requiredAnnotationBeanPostProcessor;
+	/** The logging bean factory post processor. */
+	private LoggingBeanFactoryPostProcessor loggingBeanFactoryPostProcessor;
+	/** The transport. */
+	private JMSMessageTransport transport;
+	/** The x. */
+	private NotificationBroadcasterSupport x;
 }

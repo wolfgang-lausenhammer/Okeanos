@@ -16,10 +16,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.Agent;
+import de.dailab.jiactng.agentcore.comm.ICommunicationBean;
+import de.dailab.jiactng.agentcore.knowledge.IMemory;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 @Component
-@ChildOf(parent = "SimpleAgent")
+@ChildOf(parent = "NonBlockingAgent")
 @Scope("prototype")
 public class OkeanosBasicAgent extends Agent {
 	private boolean active;
@@ -29,9 +31,12 @@ public class OkeanosBasicAgent extends Agent {
 	private TimeService timeService;
 
 	@Inject
-	public OkeanosBasicAgent(TimeService timeService) {
+	public OkeanosBasicAgent(TimeService timeService,
+			ICommunicationBean communication, IMemory memory) {
 		super();
 		this.timeService = timeService;
+		setCommunication(communication);
+		setMemory(memory);
 	}
 
 	@Override
@@ -66,7 +71,7 @@ public class OkeanosBasicAgent extends Agent {
 	public void run() {
 		while (true) {
 			try {
-				timeService.sleep(getExecutionInterval());
+				timeService.sleep(getExecutionInterval() * 1000);
 				synchronized (this) {
 					if (active) {
 						executionFuture = getAgentNode().getThreadPool()

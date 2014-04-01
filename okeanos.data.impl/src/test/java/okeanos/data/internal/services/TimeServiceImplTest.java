@@ -45,7 +45,7 @@ public class TimeServiceImplTest {
 
 		assertThat(millis, is(greaterThan(START_MILLIS)));
 		assertThat(
-				millis + 1,
+				millis + 2,
 				is(anyOf(greaterThan(durationMillisWithoutObjectCreation
 						+ START_MILLIS),
 						equalTo(durationMillisWithoutObjectCreation
@@ -123,8 +123,8 @@ public class TimeServiceImplTest {
 		assertThat(difference, is(greaterThan(SLEEP_TIME)));
 		assertThat(
 				difference,
-				is(allOf(greaterThan((long) ((SLEEP_TIME - 10) / PACE)),
-						lessThan((long) ((SLEEP_TIME + 10) / PACE)))));
+				is(allOf(greaterThan((long) ((SLEEP_TIME - 50) / PACE)),
+						lessThan((long) ((SLEEP_TIME + 50) / PACE)))));
 	}
 
 	@Test
@@ -141,7 +141,7 @@ public class TimeServiceImplTest {
 		assertThat(difference, is(lessThan(SLEEP_TIME)));
 		assertThat(
 				difference,
-				is(allOf(greaterThan((long) ((SLEEP_TIME - 10) / PACE)),
-						lessThan((long) ((SLEEP_TIME + 10) / PACE)))));
+				is(allOf(greaterThan((long) ((SLEEP_TIME - 50) / PACE)),
+						lessThan((long) ((SLEEP_TIME + 50) / PACE)))));
 	}
 }

@@ -1,4 +1,4 @@
-package okeanos.data.internal.services.pricing.regression;
+package okeanos.math.regression;
 
 public interface TrendLine {
 	public void setValues(double[] y, double[] x); // y ~ f(x)

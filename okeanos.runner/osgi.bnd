@@ -4,5 +4,6 @@
 
 #Bundle-Activator: ${bundle.namespace}.internal.samples.TwoAgents
 #Spring-Context: classpath:application-context.xml
-Spring-Context: classpath:sample-configurations/two-agents.xml
+#Spring-Context: classpath:sample-configurations/two-agents.xml
 #Spring-Context: classpaph:sample-configurations/hello-world.xml
+Spring-Context: classpath:sample-configurations/load-reporting-light-bulbs.xml

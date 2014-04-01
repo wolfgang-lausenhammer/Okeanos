@@ -1,4 +1,4 @@
-package okeanos.data.internal.services.pricing.regression;
+package okeanos.math.regression;
 
 public class PowerTrendLine extends OLSTrendLine {
 	@Override
