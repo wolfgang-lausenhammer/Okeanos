@@ -13,10 +13,14 @@
 	<context:component-scan base-package="okeanos" />
 
 	<context:property-placeholder location="classpath:load-profile.properties" />
+	
+	<osgi:reference id="uuidGenerator" interface="okeanos.data.services.UUIDGenerator"
+		availability="mandatory" />
 
 	<osgi:service ref="lightBulb100W" interface="okeanos.model.entities.Load">
 		<osgi:service-properties>
 			<entry key="brand" value="general" />
+			<entry key="name" value="LIGHT_BULB_100W" />
 			<entry key="description" value="100W standard light bulb" />
 		</osgi:service-properties>
 	</osgi:service>

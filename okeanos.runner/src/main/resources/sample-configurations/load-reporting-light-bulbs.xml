@@ -19,12 +19,20 @@
 		interface="okeanos.management.services.EntityManagementService"
 		availability="mandatory" />
 
-	<osgi:reference id="timeService"
-		interface="okeanos.data.services.TimeService" availability="mandatory" />
+	<osgi:reference id="groupManagementService"
+		interface="okeanos.management.services.GroupManagementService"
+		availability="mandatory" />
 
-	<osgi:reference id="pricingService"
-		interface="okeanos.data.services.PricingService" availability="mandatory" />
+	<osgi:reference id="timeService" interface="okeanos.data.services.TimeService"
+		availability="mandatory" />
 
-	<osgi:reference id="communicationService"
-		interface="okeanos.data.services.CommunicationService" availability="mandatory" />
+	<osgi:reference id="controlEntitiesProvider"
+		interface="okeanos.control.entities.provider.ControlEntitiesProvider"
+		availability="mandatory" />
+
+	<osgi:reference id="controlAlgorithmService"
+		interface="okeanos.control.algorithms.ControlAlgorithm" availability="mandatory" />
+
+	<osgi:reference id="lightBulb100W" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=LIGHT_BULB_100W)(brand=general))" availability="mandatory" />
 </beans>

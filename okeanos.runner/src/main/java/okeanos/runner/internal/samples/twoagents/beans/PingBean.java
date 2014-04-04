@@ -1,18 +1,19 @@
 package okeanos.runner.internal.samples.twoagents.beans;
 
-import javax.inject.Inject;
+import java.io.Serializable;
 
-import okeanos.data.services.CommunicationService;
+import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.runner.internal.samples.twoagents.beans.entities.Ping;
-import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.AbstractAgentBean;
-import de.dailab.jiactng.agentcore.comm.CommunicationException;
+import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
+import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
 /**
  * Sends a {@link Ping} to another agent, where it will be received by the
@@ -23,28 +24,30 @@ import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 @Scope("prototype")
 public class PingBean extends AbstractAgentBean {
 	/** The Constant EXECUTION_INTERVAL. */
-	private static final int EXECUTION_INTERVAL = 1000;
+	private static final int EXECUTION_INTERVAL = 5000;
 
 	/** The logger. */
-	@Logging
-	private Logger log;
+	private static final Logger LOG = LoggerFactory.getLogger(PingBean.class);
 
-	/** The communication service to send messages to other agents. */
-	private CommunicationService communicationService;
+	/** The communication action to send messages to other agents. */
+	private IActionDescription actionSend;
 
 	/**
 	 * Instantiates a new ping bean.
-	 * 
-	 * @param communicationService
-	 *            the communication service
 	 */
-	@Inject
-	public PingBean(final CommunicationService communicationService) {
-		this.communicationService = communicationService;
-
+	public PingBean() {
 		setExecutionInterval(EXECUTION_INTERVAL);
-		if (log != null) {
-			log.warn("PingBean created");
+	}
+
+	@Override
+	public void doStart() throws Exception {
+		super.doStart();
+
+		IActionDescription template = new Action(
+				CommunicationServiceAgentBean.ACTION_SEND_STRING);
+		actionSend = memory.read(template);
+		if (actionSend == null) {
+			actionSend = thisAgent.searchAction(template);
 		}
 	}
 
@@ -54,22 +57,20 @@ public class PingBean extends AbstractAgentBean {
 	 */
 	@Override
 	public void execute() {
-		if (log != null) {
-			log.info("execute() on PingBean called");
+		if (LOG != null) {
+			LOG.info("PingAgent - execute() called");
 		}
-		try {
-			if (log != null) {
-				log.info("PingAgent - sending ping");
-			}
-			IJiacMessage answer = communicationService.send(this, "PongAgent",
-					new Ping("ping"));
-			if (log != null) {
-				log.info("got answer [answer={}]", answer);
-			}
-		} catch (CommunicationException e) {
-			if (log != null) {
-				log.error("error sending ping message");
-			}
+
+		if (LOG != null) {
+			LOG.info("PingAgent - sending ping");
+		}
+
+		IJiacMessage answer = (IJiacMessage) invokeAndWaitForResult(actionSend,
+				new Serializable[] { "pong-agent", new Ping("ping") })
+				.getResults()[0];
+
+		if (LOG != null) {
+			LOG.info("PingAgent - received answer [answer={}]", answer);
 		}
 	}
 }

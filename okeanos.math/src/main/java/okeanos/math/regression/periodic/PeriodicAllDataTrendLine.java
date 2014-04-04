@@ -18,7 +18,7 @@ public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 		wrappedTrendLine.setValues(y, x);
 
 		lowerXBoundary = x[0];
-		upperXBoundary = x[x.length];
+		upperXBoundary = x[x.length - 1];
 		lowestIntervalLowerBoundary = lowerXBoundary % upperXBoundary
 				- lowerXBoundary;
 		difference = upperXBoundary - lowerXBoundary;

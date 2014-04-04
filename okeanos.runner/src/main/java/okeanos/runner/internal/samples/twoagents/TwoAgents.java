@@ -1,5 +1,8 @@
 package okeanos.runner.internal.samples.twoagents;
 
+import static okeanos.runner.internal.samples.misc.startup.StartUpHelper.startAgentNode;
+import static okeanos.runner.internal.samples.misc.startup.StartUpHelper.startEntity;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -56,12 +59,9 @@ public class TwoAgents {
 		this.platformManagementService = platformManagementService;
 		this.entityManagementService = entityManagementService;
 
-		IAgentNode node = startAgentNode();
-		Entity entity1 = startEntity(node);
-		Entity entity2 = startEntity(node);
-
-		entity1.getAgent().setAgentName("PingAgent");
-		entity2.getAgent().setAgentName("PongAgent");
+		IAgentNode node = startAgentNode(platformManagementService);
+		Entity entity1 = startEntity(entityManagementService, node, "ping-agent");
+		Entity entity2 = startEntity(entityManagementService, node, "pong-agent");
 
 		if (log != null) {
 			log.debug(
@@ -86,47 +86,5 @@ public class TwoAgents {
 			log.debug("Finished adding Pong functionality to entity [{}]",
 					entity2);
 		}
-	}
-
-	/**
-	 * Start an agent node.
-	 * 
-	 * @return the agent node
-	 * @throws LifecycleException
-	 *             if the agent node faces any problems while starting up
-	 */
-	private IAgentNode startAgentNode() throws LifecycleException {
-		if (log != null) {
-			log.debug("Starting Agent Node");
-		}
-		IAgentNode node = platformManagementService.startAgentNode();
-		if (log != null) {
-			log.debug("Finished starting Agent Node [{}]", node);
-		}
-
-		return node;
-	}
-
-	/**
-	 * Start an entity.
-	 * 
-	 * @param node
-	 *            the node on which the entity should be started on
-	 * @return the entity
-	 * @throws LifecycleException
-	 *             if the entity faces any problems while starting its agent up
-	 */
-	private Entity startEntity(final IAgentNode node) throws LifecycleException {
-		if (log != null) {
-			log.debug("Starting Entity on Agent Node [{}]", node);
-		}
-		Entity entity = entityManagementService.loadEntity();
-		entityManagementService.startEntity(entity, node);
-		if (log != null) {
-			log.debug("Finished starting Entity [{}] on Agent Node[{}]",
-					entity, node);
-		}
-
-		return entity;
 	}
 }

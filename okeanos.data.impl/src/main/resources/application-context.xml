@@ -22,16 +22,15 @@
 
 	<context:property-placeholder location="classpath:pricing-service.properties" />
 
-	<osgi:service id="communicationServiceOsgi" ref="communicationServiceImpl"
-		interface="okeanos.data.services.CommunicationService" />
-	<osgi:service id="knowledgeBaseServiceOsgi" ref="knowledgeBaseServiceImpl"
-		interface="okeanos.data.services.KnowledgeBaseService" />
-	<osgi:service id="pricingServiceOsgi" ref="pricingServiceImpl"
+	<osgi:service id="dataServicesProviderOsgi" ref="dataServicesProvider"
+		interface="okeanos.data.services.agentbeans.provider.DataServicesProvider" />
+
+	<osgi:service id="pricingServiceOsgi" ref="pricingService"
 		interface="okeanos.data.services.PricingService" />
-	<osgi:service id="timeServiceOsgi" ref="timeServiceImpl"
+	<osgi:service id="timeServiceOsgi" ref="timeService"
 		interface="okeanos.data.services.TimeService" />
-	<osgi:service id="weatherServiceOsgi" ref="weatherServiceImpl"
+	<osgi:service id="weatherServiceOsgi" ref="weatherService"
 		interface="okeanos.data.services.WeatherService" />
-	<osgi:service id="uuidGeneratorOsgi" ref="uuidGeneratorImpl"
+	<osgi:service id="uuidGeneratorOsgi" ref="uuidGenerator"
 		interface="okeanos.data.services.UUIDGenerator" />
 </beans>

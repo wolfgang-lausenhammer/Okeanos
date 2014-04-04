@@ -6,7 +6,7 @@
 *.ear
 
 # PAX Runner #
-/runner
+runner/
 
 # Maven Generated Artifacts #
 target/

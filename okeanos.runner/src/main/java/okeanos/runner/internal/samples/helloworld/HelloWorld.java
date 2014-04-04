@@ -1,5 +1,8 @@
 package okeanos.runner.internal.samples.helloworld;
 
+import static okeanos.runner.internal.samples.misc.startup.StartUpHelper.startAgentNode;
+import static okeanos.runner.internal.samples.misc.startup.StartUpHelper.startEntity;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -56,8 +59,8 @@ public class HelloWorld {
 		this.platformManagementService = platformManagementService;
 		this.entityManagementService = entityManagementService;
 
-		IAgentNode node = startAgentNode();
-		Entity entity = startEntity(node);
+		IAgentNode node = startAgentNode(platformManagementService);
+		Entity entity = startEntity(entityManagementService, node, "hello-world");
 
 		if (log != null) {
 			log.debug("Adding Hello World functionality to entity [{}]", entity);
@@ -68,47 +71,5 @@ public class HelloWorld {
 					"Finished adding Hello World functionality to entity [{}]",
 					entity);
 		}
-	}
-
-	/**
-	 * Start an agent node.
-	 * 
-	 * @return the agent node
-	 * @throws LifecycleException
-	 *             if the agent node faces any problems while starting up
-	 */
-	private IAgentNode startAgentNode() throws LifecycleException {
-		if (log != null) {
-			log.debug("Starting Agent Node");
-		}
-		IAgentNode node = platformManagementService.startAgentNode();
-		if (log != null) {
-			log.debug("Finished starting Agent Node [{}]", node);
-		}
-
-		return node;
-	}
-
-	/**
-	 * Start an entity.
-	 * 
-	 * @param node
-	 *            the node on which the entity should be started on
-	 * @return the entity
-	 * @throws LifecycleException
-	 *             if the entity faces any problems while starting its agent up
-	 */
-	private Entity startEntity(final IAgentNode node) throws LifecycleException {
-		if (log != null) {
-			log.debug("Starting Entity on Agent Node [{}]", node);
-		}
-		Entity entity = entityManagementService.loadEntity();
-		entityManagementService.startEntity(entity, node);
-		if (log != null) {
-			log.debug("Finished starting Entity [{}] on Agent Node[{}]",
-					entity, node);
-		}
-
-		return entity;
 	}
 }

@@ -1,5 +1,6 @@
 package okeanos.core.internal.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,10 +8,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 import okeanos.core.entities.Entity;
+import okeanos.core.entities.Group;
 import okeanos.core.entities.builder.EntityBuilder;
+import okeanos.data.services.agentbeans.entities.GroupFact;
 import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,22 +22,45 @@ import org.springframework.stereotype.Component;
 import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.IAgent;
 import de.dailab.jiactng.agentcore.IAgentBean;
+import de.dailab.jiactng.agentcore.action.Action;
+import de.dailab.jiactng.agentcore.comm.CommunicationAddressFactory;
+import de.dailab.jiactng.agentcore.comm.CommunicationBean;
+import de.dailab.jiactng.agentcore.environment.IEffector;
 import de.dailab.jiactng.agentcore.knowledge.IMemory;
 import de.dailab.jiactng.agentcore.lifecycle.ILifecycle.LifecycleStates;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
+import de.dailab.jiactng.agentcore.ontology.IActionDescription;
+import de.dailab.jiactng.agentcore.ontology.IAgentDescription;
+import de.dailab.jiactng.agentcore.ontology.ThisAgentDescription;
 
+/**
+ * The Class EntityImpl.
+ */
 @Component
 @Scope("prototype")
 public class EntityImpl implements Entity {
-	@Component("entityBuilderImpl")
+
+	/**
+	 * Represents an entity builder. Can be used to create new entities in a
+	 * fluent API.
+	 */
+	@Component("entityBuilder")
 	@Scope("prototype")
 	public static class EntityBuilderImpl implements EntityBuilder {
-		// optional
+		/* optional */
+		/** The agent. */
 		private IAgent agent;
 
-		// mandatory
+		/* mandatory */
+		/** The id. */
 		private final String id;
 
+		/**
+		 * Instantiates a new entity builder.
+		 * 
+		 * @param id
+		 *            the id
+		 */
 		@Inject
 		public EntityBuilderImpl(
 				@Value("#{ uuidGenerator.generateUUID() }") String id) {
@@ -43,6 +70,13 @@ public class EntityImpl implements Entity {
 						"ID is null, check if Spring Expression term is right");
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * okeanos.core.entities.builder.EntityBuilder#agent(de.dailab.jiactng
+		 * .agentcore.IAgent)
+		 */
 		@Override
 		public EntityBuilder agent(IAgent agent) {
 			this.agent = agent;
@@ -50,11 +84,23 @@ public class EntityImpl implements Entity {
 			return this;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see okeanos.core.entities.builder.EntityBuilder#build()
+		 */
 		@Override
 		public Entity build() {
 			return new EntityImpl(this);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * okeanos.core.entities.builder.EntityBuilder#fromJson(java.lang.String
+		 * )
+		 */
 		@Override
 		public EntityBuilder fromJson(String entityAsJson) {
 			throw new NullPointerException(
@@ -64,23 +110,62 @@ public class EntityImpl implements Entity {
 
 	}
 
-	@Logging
-	private Logger log;
+	/** The logger. */
+	private Logger log = LoggerFactory.getLogger(EntityImpl.class);
 
+	/** The agent. */
 	private transient IAgent agent;
 
+	/** The id. */
 	private String id;
 
+	/**
+	 * Instantiates a new entity.
+	 * 
+	 * @param id
+	 *            the id
+	 */
 	@Inject
 	public EntityImpl(@Value("#{ uuidGenerator.generateUUID() }") String id) {
 		this.id = id;
 	}
 
+	/**
+	 * Instantiates a new entity from a builder.
+	 * 
+	 * @param entityBuilder
+	 *            the entity builder
+	 */
 	private EntityImpl(EntityBuilderImpl entityBuilder) {
 		this.id = entityBuilder.id;
 		this.agent = entityBuilder.agent;
 	}
 
+	@Override
+	public void joinGroup(Group group) {
+		log.debug("Entity [entity={}] joining group [group={}]", this, group);
+		Agent agent = ((Agent) this.agent);
+		IMemory memory = agent.getMemory();
+		GroupFact groupFact = new GroupFact(group.getId());
+		memory.write(groupFact);
+	}
+
+	@Override
+	public void leaveGroup(Group group) {
+		log.debug("Entity [entity={}] leaving group [group={}]", this, group);
+		Agent agent = ((Agent) this.agent);
+		IMemory memory = agent.getMemory();
+		GroupFact groupFact = new GroupFact(group.getId());
+		memory.remove(groupFact);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.core.entities.Entity#addFunctionality(de.dailab.jiactng.agentcore
+	 * .IAgentBean[])
+	 */
 	@Override
 	public void addFunctionality(IAgentBean... functionality)
 			throws LifecycleException {
@@ -90,9 +175,10 @@ public class EntityImpl implements Entity {
 			throw new NullPointerException(
 					"functionality must contain at least one element");
 
-		if (log != null)
+		if (log != null) {
 			log.debug("Adding {} functionalities to entity [{}]",
 					functionality.length, this);
+		}
 		List<IAgentBean> beans = agent.getAgentBeans();
 		List<IAgentBean> oldBeansPlusNew = new ArrayList<>(beans.size()
 				+ functionality.length);
@@ -111,12 +197,25 @@ public class EntityImpl implements Entity {
 					functionality.length, this);
 	}
 
+	/**
+	 * Calls the initialization methods of new beans.
+	 * 
+	 * @param agentBeans
+	 *            the agent beans
+	 * @throws LifecycleException
+	 *             if an agent bean could not be initialized
+	 */
 	private void doInitOfNewBeans(IAgentBean... agentBeans)
 			throws LifecycleException {
 		Agent agent = ((Agent) this.agent);
 		IMemory memory = agent.getMemory();
 
+		IAgentDescription myDescription = memory
+				.read(new ThisAgentDescription());
+
 		List<LifecycleException> exceptions = new ArrayList<>(1);
+		ArrayList<IActionDescription> tempList = new ArrayList<>();
+
 		for (IAgentBean ab : agentBeans) {
 			ab.setThisAgent(agent);
 			try {
@@ -127,13 +226,40 @@ public class EntityImpl implements Entity {
 			} catch (LifecycleException e) {
 				exceptions.add(e);
 			}
+
+			// if bean is effector, add all actions to memory
+			if (ab instanceof IEffector) {
+				final List<? extends IActionDescription> acts = ((IEffector) ab)
+						.getActions();
+				if (acts != null) {
+					for (IActionDescription item : acts) {
+						item.setProviderDescription(myDescription);
+						if (item.getProviderBean() == null) {
+							item.setProviderBean((IEffector) ab);
+						}
+						memory.write(item);
+						tempList.add(item);
+					}
+				}
+			}
 		}
+
+		tempList.addAll(agent.getActionList());
+		agent.setActionList(tempList);
 
 		if (exceptions.size() > 0) {
 			throw exceptions.get(0);
 		}
 	}
 
+	/**
+	 * Calls the start methods of new beans.
+	 * 
+	 * @param agentBeans
+	 *            the agent beans
+	 * @throws LifecycleException
+	 *             if an agent bean could not be started
+	 */
 	private void doStartOfNewBeans(IAgentBean... agentBeans)
 			throws LifecycleException {
 		Agent agent = ((Agent) this.agent);
@@ -152,21 +278,42 @@ public class EntityImpl implements Entity {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.core.entities.Entity#getAgent()
+	 */
 	@Override
 	public IAgent getAgent() {
 		return agent;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.core.entities.Entity#getId()
+	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.core.entities.Entity#setAgent(de.dailab.jiactng.agentcore.IAgent)
+	 */
 	@Override
 	public void setAgent(IAgent agent) {
 		this.agent = agent;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return String.format("EntityImpl [id=%s]", id);

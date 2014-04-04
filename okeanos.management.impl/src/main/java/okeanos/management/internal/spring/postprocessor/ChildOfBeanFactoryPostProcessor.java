@@ -1,6 +1,7 @@
-package okeanos.management.internal.spring;
+package okeanos.management.internal.spring.postprocessor;
 
-import okeanos.management.internal.spring.stereotypes.ChildOf;
+
+import okeanos.spring.misc.stereotypes.ChildOf;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

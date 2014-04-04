@@ -15,8 +15,10 @@ import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * An implementation of {@code TimeService}.
+ * 
+ * @author Wolfgang Lausenhammer
  */
-@Component
+@Component("timeService")
 public class TimeServiceImpl implements TimeService, MillisProvider {
 	/** The Logger. */
 	@Logging

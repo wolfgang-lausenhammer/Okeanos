@@ -1,6 +1,6 @@
 package okeanos.management.internal.services.platformmanagement;
 
-import okeanos.management.internal.spring.stereotypes.ChildOf;
+import okeanos.spring.misc.stereotypes.ChildOf;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

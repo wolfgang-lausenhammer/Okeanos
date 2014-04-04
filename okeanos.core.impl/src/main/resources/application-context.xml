@@ -11,8 +11,10 @@
 	<context:component-scan base-package="okeanos" />
 
 	<!-- OSGi published services -->
-	<osgi:service id="entityBuilderOsgi" ref="entityBuilderImpl"
+	<osgi:service id="entityBuilderOsgi" ref="entityBuilder"
 		interface="okeanos.core.entities.builder.EntityBuilder" />
+	<osgi:service id="groupBuilderOsgi" ref="groupBuilder"
+		interface="okeanos.core.entities.builder.GroupBuilder" />
 
 	<osgi:reference id="uuidGenerator" interface="okeanos.data.services.UUIDGenerator"
 		availability="mandatory" />

@@ -12,16 +12,17 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 
 	public Periodic24hTrendline(TrendLine trendLine) {
 		this.trendLine = trendLine;
-		this.periodicTrendLine = new Periodic24hTrendline(trendLine);
+		this.periodicTrendLine = new PeriodicAllDataTrendLine(trendLine);
 	}
 
 	@Override
 	public void setValues(double[] y, double[] x) {
-		DateTime beginning = new DateTime(x[0]);
+		trendLine.setValues(y, x);
+		DateTime beginning = new DateTime((long) x[0]);
 		DateTime nextDay = beginning.plusHours(24);
 		int numberOfItemsToCopy = 1;
 		for (double item : x) {
-			if (new DateTime(item).isAfter(nextDay)) {
+			if (new DateTime((long) item).isAfter(nextDay)) {
 				break;
 			}
 

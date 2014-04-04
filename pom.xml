@@ -75,19 +75,19 @@
 		<commons-math-version>3.2</commons-math-version>
 		<commons-lang-version>3.3</commons-lang-version>
 		<commons-io-version>2.4</commons-io-version>
-		<compiled-bundle-settings-version>1.0.0</compiled-bundle-settings-version>
-		<wrapper-bundle-settings-version>1.0.0</wrapper-bundle-settings-version>
-		<individual-wrapper-bundle-settings-version>1.0.0</individual-wrapper-bundle-settings-version>
-		<okeanos-control-version>1.0.0</okeanos-control-version>
-		<okeanos-control-impl-version>1.0.0</okeanos-control-impl-version>
+		<compiled-bundle-settings-version>2.0.0-SNAPSHOT</compiled-bundle-settings-version>
+		<wrapper-bundle-settings-version>2.0.0-SNAPSHOT</wrapper-bundle-settings-version>
+		<individual-wrapper-bundle-settings-version>2.0.0-SNAPSHOT</individual-wrapper-bundle-settings-version>
+		<okeanos-control-version>2.0.0-SNAPSHOT</okeanos-control-version>
+		<okeanos-control-impl-version>2.0.0-SNAPSHOT</okeanos-control-impl-version>
 		<okeanos-core-version>2.0.0-SNAPSHOT</okeanos-core-version>
 		<okeanos-core-impl-version>2.0.0-SNAPSHOT</okeanos-core-impl-version>
-		<okeanos-data-version>1.0.0</okeanos-data-version>
+		<okeanos-data-version>2.0.0-SNAPSHOT</okeanos-data-version>
 		<okeanos-data-impl-version>2.0.0-SNAPSHOT</okeanos-data-impl-version>
 		<okeanos-logging-version>1.0.0</okeanos-logging-version>
-		<okeanos-model-version>1.0.0</okeanos-model-version>
-		<okeanos-model-impl-version>1.0.0</okeanos-model-impl-version>
-		<okeanos-management-version>1.0.0</okeanos-management-version>
+		<okeanos-model-version>2.0.0-SNAPSHOT</okeanos-model-version>
+		<okeanos-model-impl-version>2.0.0-SNAPSHOT</okeanos-model-impl-version>
+		<okeanos-management-version>2.0.0-SNAPSHOT</okeanos-management-version>
 		<okeanos-management-impl-version>2.0.0-SNAPSHOT</okeanos-management-impl-version>
 		<okeanos-runner-version>2.0.0-SNAPSHOT</okeanos-runner-version>
 		<okeanos-jiac-additions-version>1.0.0</okeanos-jiac-additions-version>

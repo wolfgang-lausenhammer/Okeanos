@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import javax.inject.Provider;
 
+import okeanos.data.internal.services.agentbeans.CommunicationServiceAgentBeanImpl;
 import okeanos.data.internal.services.communication.MyTestMessage;
 import okeanos.data.services.UUIDGenerator;
 
@@ -19,9 +20,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import de.dailab.jiactng.agentcore.AbstractAgentBean;
 import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.comm.CommunicationException;
 import de.dailab.jiactng.agentcore.comm.ICommunicationAddress;
@@ -42,13 +41,15 @@ public class CommunicationServiceImplAsyncTest {
 
 	private static final String TEST_UUID = "random-number-1";
 
+	private static final String RECEIVER_AGENT_NAME = "test-receiver";
+
 	@Mock
 	private ICommunicationBean communicationBean;
 
 	@Mock
 	private Provider<ICommunicationBean> communicationBeanProvider;
 
-	private CommunicationServiceImpl communicationServiceImpl;
+	private CommunicationServiceAgentBeanImpl communicationServiceImpl;
 
 	@Mock
 	private IDirectory directory;
@@ -58,9 +59,6 @@ public class CommunicationServiceImplAsyncTest {
 
 	@Mock
 	private IMessageBoxAddress receiverMessageBoxAddress;
-
-	@Mock
-	private AbstractAgentBean sender;
 
 	@Mock
 	private Agent senderAgent;
@@ -88,24 +86,25 @@ public class CommunicationServiceImplAsyncTest {
 				SENDER_AGENT_ADDRESS);
 		when(senderAgentDescription.getMessageBoxAddress()).thenReturn(
 				senderMessageBoxAddress);
-		ReflectionTestUtils.setField(sender, "thisAgent", senderAgent);
-		ReflectionTestUtils.setField(sender, "memory", senderMemory);
 		when(senderAgent.getAgentDescription()).thenReturn(
 				senderAgentDescription);
 		senderAgent.setDirectory(directory);
+		senderAgent.setMemory(senderMemory);
 
 		// Receiver
 		when(receiverMessageBoxAddress.toString()).thenReturn(
 				RECEIVER_AGENT_ADDRESS);
 		when(receiverAgentDescription.getMessageBoxAddress()).thenReturn(
 				receiverMessageBoxAddress);
-		when(receiverAgentDescription.getName()).thenReturn("test-receiver");
+		when(receiverAgentDescription.getName())
+				.thenReturn(RECEIVER_AGENT_NAME);
 
 		// UUID
 		when(uuidGenerator.generateUUID()).thenReturn(TEST_UUID);
 
-		communicationServiceImpl = new CommunicationServiceImpl(
+		communicationServiceImpl = new CommunicationServiceAgentBeanImpl(
 				communicationBeanProvider, uuidGenerator);
+		communicationServiceImpl.setThisAgent(senderAgent);
 	}
 
 	@Test
@@ -113,8 +112,7 @@ public class CommunicationServiceImplAsyncTest {
 			throws CommunicationException {
 		MyTestMessage message = new MyTestMessage("my test content");
 
-		communicationServiceImpl.sendAsync(sender, receiverMessageBoxAddress,
-				message);
+		communicationServiceImpl.sendAsync(receiverMessageBoxAddress, message);
 
 		ArgumentCaptor<IJiacMessage> jiacMessageArg = ArgumentCaptor
 				.forClass(IJiacMessage.class);
@@ -148,7 +146,7 @@ public class CommunicationServiceImplAsyncTest {
 				.thenReturn(
 						Arrays.asList((IAgentDescription) receiverAgentDescription));
 
-		communicationServiceImpl.sendAsync(sender, "test-receiver", message);
+		communicationServiceImpl.sendAsync("test-receiver", message);
 
 		ArgumentCaptor<IJiacMessage> jiacMessageArg = ArgumentCaptor
 				.forClass(IJiacMessage.class);

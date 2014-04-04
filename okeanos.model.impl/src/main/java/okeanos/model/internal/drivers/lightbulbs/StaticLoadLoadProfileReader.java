@@ -126,11 +126,17 @@ public final class StaticLoadLoadProfileReader {
 
 		JsonArray arrayOfInstances = gson.fromJson(jsonString, JsonArray.class);
 		for (JsonElement item : arrayOfInstances) {
-			JsonObject obj = item.getAsJsonObject();
-			DateTime dateTime = DateTime.parse(obj.get("dateTime")
-					.getAsString());
-			double consumption = obj.get("consumption").getAsDouble();
-			loadProfileMap.put(dateTime, consumption);
+			try {
+				JsonObject obj = item.getAsJsonObject();
+
+				DateTime dateTime = DateTime.parse(obj.get("dateTime")
+						.getAsString());
+				double consumption = obj.get("consumption").getAsDouble();
+
+				loadProfileMap.put(dateTime, consumption);
+			} catch (IllegalStateException e) {
+				continue;
+			}
 		}
 
 		if (LOG != null) {

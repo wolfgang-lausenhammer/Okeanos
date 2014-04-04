@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
  * Implements several features for generating UUIDs. At the moment uses
  * {@link UUID#randomUUID()} for the UUID and {@code SHA-256} for the hashing
  * function.
+ * 
+ * @author Wolfgang Lausenhammer
  */
-@Component("uuidGeneratorImpl")
+@Component("uuidGenerator")
 public class UUIDGeneratorImpl implements UUIDGenerator {
 
 	/*

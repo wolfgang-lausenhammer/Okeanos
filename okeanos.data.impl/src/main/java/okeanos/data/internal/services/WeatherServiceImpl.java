@@ -4,7 +4,12 @@ import org.springframework.stereotype.Component;
 
 import okeanos.data.services.WeatherService;
 
-@Component
+/**
+ * The Class WeatherServiceImpl.
+ * 
+ * @author Wolfgang Lausenhammer
+ */
+@Component("weatherService")
 public class WeatherServiceImpl implements WeatherService {
 
 }

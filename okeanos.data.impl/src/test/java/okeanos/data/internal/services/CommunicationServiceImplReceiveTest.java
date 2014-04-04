@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Provider;
 
+import okeanos.data.internal.services.agentbeans.CommunicationServiceAgentBeanImpl;
 import okeanos.data.internal.services.communication.MyTestMessage;
 import okeanos.data.services.UUIDGenerator;
 
@@ -29,9 +30,8 @@ import org.sercho.masp.space.SimpleObjectSpace;
 import org.sercho.masp.space.event.SpaceEvent;
 import org.sercho.masp.space.event.SpaceObserver;
 import org.sercho.masp.space.event.WriteCallEvent;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import de.dailab.jiactng.agentcore.AbstractAgentBean;
+import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.comm.ICommunicationBean;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.comm.message.JiacMessage;
@@ -46,10 +46,10 @@ public class CommunicationServiceImplReceiveTest {
 	@Mock
 	private Provider<ICommunicationBean> communicationBeanProvider;
 
-	private CommunicationServiceImpl communicationServiceImpl;
+	private CommunicationServiceAgentBeanImpl communicationServiceImpl;
 
 	@Mock
-	private AbstractAgentBean receiver;
+	private Agent receiver;
 
 	@Mock
 	private IMemory memory;
@@ -64,10 +64,11 @@ public class CommunicationServiceImplReceiveTest {
 		when(communicationBeanProvider.get()).thenReturn(communicationBean);
 
 		// Sender Agent
-		ReflectionTestUtils.setField(receiver, "memory", memory);
+		receiver.setMemory(memory);
 
-		communicationServiceImpl = new CommunicationServiceImpl(
+		communicationServiceImpl = new CommunicationServiceAgentBeanImpl(
 				communicationBeanProvider, uuidGenerator);
+		communicationServiceImpl.setThisAgent(receiver);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -93,7 +94,7 @@ public class CommunicationServiceImplReceiveTest {
 				.attach(Matchers.any(SpaceObserver.class),
 						Matchers.any(IFact.class));
 
-		IJiacMessage answer = communicationServiceImpl.receiveMessage(receiver);
+		IJiacMessage answer = communicationServiceImpl.receiveMessage();
 
 		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
 		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
@@ -122,8 +123,8 @@ public class CommunicationServiceImplReceiveTest {
 				.attach(Matchers.any(SpaceObserver.class),
 						Matchers.any(IFact.class));
 
-		IJiacMessage answer = communicationServiceImpl.receiveMessage(receiver,
-				new MyTestMessage(null));
+		IJiacMessage answer = communicationServiceImpl
+				.receiveMessage(new MyTestMessage(null));
 
 		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
 		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
@@ -153,8 +154,8 @@ public class CommunicationServiceImplReceiveTest {
 				.attach(Matchers.any(SpaceObserver.class),
 						Matchers.any(IFact.class));
 
-		IJiacMessage answer = communicationServiceImpl.receiveMessageAsync(
-				receiver).get();
+		IJiacMessage answer = communicationServiceImpl.receiveMessageAsync()
+				.get();
 
 		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
 		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
@@ -185,7 +186,7 @@ public class CommunicationServiceImplReceiveTest {
 						Matchers.any(IFact.class));
 
 		IJiacMessage answer = communicationServiceImpl.receiveMessageAsync(
-				receiver, new MyTestMessage(null)).get();
+				new MyTestMessage(null)).get();
 
 		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
 		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
@@ -216,8 +217,8 @@ public class CommunicationServiceImplReceiveTest {
 				.attach(Matchers.any(SpaceObserver.class),
 						Matchers.any(IFact.class));
 
-		communicationServiceImpl.receiveMessageCallback(receiver,
-				new SpaceObserver<IFact>() {
+		communicationServiceImpl
+				.receiveMessageCallback(new SpaceObserver<IFact>() {
 					@Override
 					public void notify(SpaceEvent<? extends IFact> event) {
 						try {
@@ -263,7 +264,7 @@ public class CommunicationServiceImplReceiveTest {
 				.attach(Matchers.any(SpaceObserver.class),
 						Matchers.any(IFact.class));
 
-		communicationServiceImpl.receiveMessageCallback(receiver,
+		communicationServiceImpl.receiveMessageCallback(
 				new SpaceObserver<IFact>() {
 					@Override
 					public void notify(SpaceEvent<? extends IFact> event) {

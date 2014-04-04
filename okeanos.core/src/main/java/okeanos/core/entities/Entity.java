@@ -13,4 +13,8 @@ public interface Entity {
 
 	void addFunctionality(IAgentBean... functionality)
 			throws LifecycleException;
+
+	void joinGroup(Group group);
+
+	void leaveGroup(Group group);
 }

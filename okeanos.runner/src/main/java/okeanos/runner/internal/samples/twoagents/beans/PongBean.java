@@ -1,22 +1,25 @@
 package okeanos.runner.internal.samples.twoagents.beans;
 
-import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-import okeanos.data.services.CommunicationService;
+import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.runner.internal.samples.twoagents.beans.entities.Ping;
-import okeanos.spring.misc.stereotypes.Logging;
 
 import org.sercho.masp.space.event.SpaceEvent;
 import org.sercho.masp.space.event.SpaceObserver;
 import org.sercho.masp.space.event.WriteCallEvent;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.AbstractAgentBean;
-import de.dailab.jiactng.agentcore.comm.CommunicationException;
+import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
+import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
 /**
  * Provides the receiving of pings functionality to agents. Waits for a
@@ -35,6 +38,23 @@ public class PongBean extends AbstractAgentBean {
 		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = -627146953559709337L;
 
+		/** The action send async. */
+		private IActionDescription actionSendAsyncOptions;
+
+		/**
+		 * This method is called when information about an PingMessage which was
+		 * previously requested using an asynchronous interface becomes
+		 * available.
+		 */
+		public PingMessageObserver() {
+			IActionDescription template = new Action(
+					CommunicationServiceAgentBean.ACTION_SEND_ASYNC_OPTIONS);
+			actionSendAsyncOptions = memory.read(template);
+			if (actionSendAsyncOptions == null) {
+				actionSendAsyncOptions = thisAgent.searchAction(template);
+			}
+		}
+
 		/**
 		 * Is called everytime a {@link Ping} with content "ping" is received.
 		 * Answers with a {@link Ping} with content "pong".
@@ -49,8 +69,8 @@ public class PongBean extends AbstractAgentBean {
 				WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
 				// a JiacMessage holding a Ping with message "ping" has been
 				// written to this agent's memory
-				if (log != null) {
-					log.info("PongAgent - ping received");
+				if (LOG != null) {
+					LOG.info("PongAgent - ping received");
 				}
 
 				// consume message
@@ -61,45 +81,36 @@ public class PongBean extends AbstractAgentBean {
 				Ping answer = new Ping("pong");
 
 				// send Pong to PingAgent (the sender of the original message)
-				if (log != null) {
-					log.info("PongAgent - sending pong message");
+				if (LOG != null) {
+					LOG.info("PongAgent - sending pong message");
 				}
-				try {
-					communicationService.sendAsync(PongBean.this,
-							message.getSender(), answer);
-				} catch (CommunicationException e) {
-					if (log != null) {
-						log.error("error sending pong message");
-					}
-				}
+
+				HashMap<String, String> options = new HashMap<>();
+				options.put("OkeanosCommunicationCorrelationId",
+						message.getHeader("OkeanosCommunicationCorrelationId"));
+				
+				invoke(actionSendAsyncOptions,
+						new Serializable[] { message.getSender(), answer,
+								options });
 			}
 		}
 	}
 
 	/** The Constant EXECUTION_INTERVAL. */
-	private static final int EXECUTION_INTERVAL = 1000;
+	private static final int EXECUTION_INTERVAL = 0;
 
 	/** The logger. */
-	@Logging
-	private Logger log;
+	private static final Logger LOG = LoggerFactory.getLogger(PongBean.class);
 
-	/** The communication service to send messages to other agents. */
-	private CommunicationService communicationService;
+	/** The communication action to register a callback handler. */
+	private IActionDescription actionReceiveMessageCallbackIfact;
 
 	/**
 	 * Instantiates a new pong bean.
 	 * 
-	 * @param communicationService
-	 *            the communication service
 	 */
-	@Inject
-	public PongBean(final CommunicationService communicationService) {
-		this.communicationService = communicationService;
-
-		setExecutionInterval(EXECUTION_INTERVAL);
-		if (log != null) {
-			log.info("PongBean created");
-		}
+	public PongBean() {
+		setExecutionInterval(EXECUTION_INTERVAL); // disable execution
 	}
 
 	/*
@@ -110,8 +121,16 @@ public class PongBean extends AbstractAgentBean {
 	@Override
 	public void doStart() throws Exception {
 		super.doStart();
-		communicationService.receiveMessageCallback(this,
-				new PingMessageObserver(), new Ping("ping"));
+
+		IActionDescription template = new Action(
+				CommunicationServiceAgentBean.ACTION_RECEIVE_MESSAGE_CALLBACK_IFACT);
+		actionReceiveMessageCallbackIfact = memory.read(template);
+		if (actionReceiveMessageCallbackIfact == null) {
+			actionReceiveMessageCallbackIfact = thisAgent
+					.searchAction(template);
+		}
+		invoke(actionReceiveMessageCallbackIfact, new Serializable[] {
+				new PingMessageObserver(), new Ping("ping") });
 	}
 
 	/*

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 
 import okeanos.data.services.TimeService;
-import okeanos.management.internal.spring.stereotypes.ChildOf;
+import okeanos.spring.misc.stereotypes.ChildOf;
 import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
@@ -37,6 +37,7 @@ public class OkeanosBasicAgent extends Agent {
 		this.timeService = timeService;
 		setCommunication(communication);
 		setMemory(memory);
+		setExecutionInterval(100);
 	}
 
 	@Override
@@ -52,8 +53,8 @@ public class OkeanosBasicAgent extends Agent {
 
 	@Override
 	public void doStart() throws LifecycleException {
-		active = true;
 		super.doStart();
+		active = true;
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class OkeanosBasicAgent extends Agent {
 	public void run() {
 		while (true) {
 			try {
-				timeService.sleep(getExecutionInterval() * 1000);
+				timeService.sleep(getExecutionInterval());
 				synchronized (this) {
 					if (active) {
 						executionFuture = getAgentNode().getThreadPool()
@@ -105,6 +106,13 @@ public class OkeanosBasicAgent extends Agent {
 				}
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return String.format(
+				"OkeanosBasicAgent [getAgentName()=%s, getAgentId()=%s]",
+				getAgentName(), getAgentId());
 	}
 
 }

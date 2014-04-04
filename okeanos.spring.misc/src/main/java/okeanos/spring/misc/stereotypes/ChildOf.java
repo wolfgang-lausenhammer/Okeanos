@@ -1,4 +1,4 @@
-package okeanos.management.internal.spring.stereotypes;
+package okeanos.spring.misc.stereotypes;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

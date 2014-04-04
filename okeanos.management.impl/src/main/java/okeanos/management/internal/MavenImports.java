@@ -3,7 +3,7 @@ package okeanos.management.internal;
 import javax.management.NotificationBroadcasterSupport;
 import javax.security.auth.Destroyable;
 
-import okeanos.management.internal.spring.ChildOfBeanFactoryPostProcessor;
+import okeanos.management.internal.spring.postprocessor.ChildOfBeanFactoryPostProcessor;
 import okeanos.spring.misc.postprocessors.LoggingBeanFactoryPostProcessor;
 
 import org.eclipse.gemini.blueprint.service.exporter.support.OsgiServiceFactoryBean;

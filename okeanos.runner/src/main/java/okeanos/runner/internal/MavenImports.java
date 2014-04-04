@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostP
 import org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor;
 import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
 
+import okeanos.control.algorithms.ControlAlgorithm;
+import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import de.dailab.jiactng.agentcore.comm.CommunicationBean;
 import de.dailab.jiactng.agentcore.comm.broker.ActiveMQBroker;
 import de.dailab.jiactng.agentcore.comm.transport.jms.JMSMessageTransport;
@@ -54,4 +56,8 @@ public class MavenImports {
 	private JMSMessageTransport transport;
 	/** The x. */
 	private NotificationBroadcasterSupport x;
+	/** The control algorithm. */
+	private ControlAlgorithm controlAlgorithm;
+	/** The communication service agent bean. */
+	private CommunicationServiceAgentBean communicationServiceAgentBean;
 }

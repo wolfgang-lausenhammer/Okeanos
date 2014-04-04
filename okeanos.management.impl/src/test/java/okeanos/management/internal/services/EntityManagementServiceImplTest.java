@@ -14,6 +14,7 @@ import javax.inject.Provider;
 
 import okeanos.core.entities.Entity;
 import okeanos.core.entities.builder.EntityBuilder;
+import okeanos.data.services.agentbeans.provider.DataServicesProvider;
 import okeanos.management.internal.services.entitymanagement.OkeanosBasicAgent;
 import okeanos.management.services.PlatformManagementService;
 
@@ -48,6 +49,9 @@ public class EntityManagementServiceImplTest {
 	@Mock
 	private PlatformManagementService platformManagementService;
 
+	@Mock
+	private DataServicesProvider dataServicesProvider;
+
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -57,7 +61,8 @@ public class EntityManagementServiceImplTest {
 		ReflectionTestUtils.setField(mockAgent, "agentId", UUID + "-agent");
 
 		entityManagementService = new EntityManagementServiceImpl(
-				platformManagementService, entityBuilderProvider, agentProvider);
+				platformManagementService, dataServicesProvider,
+				entityBuilderProvider, agentProvider);
 	}
 
 	@Test

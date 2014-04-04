@@ -24,7 +24,4 @@
 
 	<osgi:reference id="pricingService"
 		interface="okeanos.data.services.PricingService" availability="mandatory" />
-
-	<osgi:reference id="communicationService"
-		interface="okeanos.data.services.CommunicationService" availability="mandatory" />
 </beans>

@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import javax.inject.Provider;
 
+import okeanos.data.internal.services.agentbeans.CommunicationServiceAgentBeanImpl;
 import okeanos.data.internal.services.communication.MyTestMessage;
 import okeanos.data.services.UUIDGenerator;
 
@@ -25,9 +26,7 @@ import org.mockito.stubbing.Answer;
 import org.sercho.masp.space.SimpleObjectSpace;
 import org.sercho.masp.space.event.SpaceObserver;
 import org.sercho.masp.space.event.WriteCallEvent;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import de.dailab.jiactng.agentcore.AbstractAgentBean;
 import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.comm.CommunicationException;
 import de.dailab.jiactng.agentcore.comm.ICommunicationBean;
@@ -55,7 +54,7 @@ public class CommunicationServiceImplSyncTest {
 	@Mock
 	private Provider<ICommunicationBean> communicationBeanProvider;
 
-	private CommunicationServiceImpl communicationServiceImpl;
+	private CommunicationServiceAgentBeanImpl communicationServiceImpl;
 
 	@Mock
 	private IDirectory directory;
@@ -65,9 +64,6 @@ public class CommunicationServiceImplSyncTest {
 
 	@Mock
 	private IMessageBoxAddress receiverMessageBoxAddress;
-
-	@Mock
-	private AbstractAgentBean sender;
 
 	@Mock
 	private Agent senderAgent;
@@ -95,11 +91,10 @@ public class CommunicationServiceImplSyncTest {
 				SENDER_AGENT_ADDRESS);
 		when(senderAgentDescription.getMessageBoxAddress()).thenReturn(
 				senderMessageBoxAddress);
-		ReflectionTestUtils.setField(sender, "thisAgent", senderAgent);
-		ReflectionTestUtils.setField(sender, "memory", senderMemory);
 		when(senderAgent.getAgentDescription()).thenReturn(
 				senderAgentDescription);
 		senderAgent.setDirectory(directory);
+		senderAgent.setMemory(senderMemory);
 
 		// Receiver
 		when(receiverMessageBoxAddress.toString()).thenReturn(
@@ -111,8 +106,9 @@ public class CommunicationServiceImplSyncTest {
 		// UUID
 		when(uuidGenerator.generateUUID()).thenReturn(TEST_UUID);
 
-		communicationServiceImpl = new CommunicationServiceImpl(
+		communicationServiceImpl = new CommunicationServiceAgentBeanImpl(
 				communicationBeanProvider, uuidGenerator);
+		communicationServiceImpl.setThisAgent(senderAgent);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -140,7 +136,7 @@ public class CommunicationServiceImplSyncTest {
 				.attach(Matchers.any(SpaceObserver.class),
 						Matchers.any(IFact.class));
 
-		IJiacMessage answer = communicationServiceImpl.send(sender,
+		IJiacMessage answer = communicationServiceImpl.send(
 				receiverMessageBoxAddress, sentMessage);
 
 		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
@@ -176,8 +172,8 @@ public class CommunicationServiceImplSyncTest {
 				.thenReturn(
 						Arrays.asList((IAgentDescription) receiverAgentDescription));
 
-		IJiacMessage answer = communicationServiceImpl.send(sender,
-				"test-receiver", sentMessage);
+		IJiacMessage answer = communicationServiceImpl.send("test-receiver",
+				sentMessage);
 
 		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
 		verify(senderMemory, atLeastOnce()).detach(any(SpaceObserver.class));

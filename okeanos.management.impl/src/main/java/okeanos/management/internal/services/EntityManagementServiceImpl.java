@@ -8,6 +8,7 @@ import javax.inject.Provider;
 
 import okeanos.core.entities.Entity;
 import okeanos.core.entities.builder.EntityBuilder;
+import okeanos.data.services.agentbeans.provider.DataServicesProvider;
 import okeanos.management.internal.services.entitymanagement.EntitySerializer;
 import okeanos.management.internal.services.entitymanagement.OkeanosBasicAgent;
 import okeanos.management.services.EntityManagementService;
@@ -25,56 +26,101 @@ import de.dailab.jiactng.agentcore.IAgent;
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
+/**
+ * The {@link EntityManagementService} provides services around {@link Entity}.
+ * That is, it enables the creation of entities, both with a default
+ * configuration or through a {@link EntityBuilder}, which allows for complete
+ * configuration of the entity.
+ * 
+ * Moreover, the so created entity can then be started, stopped and unloaded.
+ * 
+ * @author Wolfgang Lausenhammer
+ */
 @Component
 public class EntityManagementServiceImpl implements EntityManagementService {
+
+	/** The agent provider. */
 	private Provider<OkeanosBasicAgent> agentProvider;
 
+	/** The data services provider. */
+	private DataServicesProvider dataServicesProvider;
+
+	/** The entity builder provider. */
 	private Provider<EntityBuilder> entityBuilderProvider;
+
+	/** The gson (de)serializer. */
 	private Gson gson = new GsonBuilder()
 			.registerTypeAdapter(Entity.class, new EntitySerializer())
 			.serializeNulls().create();
 
+	/** The logger. */
 	@Logging
 	private Logger log;
 
+	/** The managed agents. */
 	private Map<String, IAgent> managedAgents = new ConcurrentHashMap<>();
+
+	/** The managed entities by agent id. */
 	private Map<String, Entity> managedEntitiesByAgentId = new ConcurrentHashMap<>();
+
+	/** The managed entities by entity id. */
 	private Map<String, Entity> managedEntitiesByEntityId = new ConcurrentHashMap<>();
 
+	/** The platform management service. */
 	private PlatformManagementService platformManagementService;
 
+	/**
+	 * Instantiates a new entity management service.
+	 * 
+	 * @param platformManagementService
+	 *            the platform management service
+	 * @param dataServicesProvider
+	 *            the data services provider
+	 * @param entityBuilderProvider
+	 *            the entity builder provider
+	 * @param agentProvider
+	 *            the agent provider
+	 */
 	@Inject
 	public EntityManagementServiceImpl(
-			PlatformManagementService platformManagementService,
-			Provider<EntityBuilder> entityBuilderProvider,
-			Provider<OkeanosBasicAgent> agentProvider) {
+			final PlatformManagementService platformManagementService,
+			final DataServicesProvider dataServicesProvider,
+			final Provider<EntityBuilder> entityBuilderProvider,
+			final Provider<OkeanosBasicAgent> agentProvider) {
 		this.platformManagementService = platformManagementService;
+		this.dataServicesProvider = dataServicesProvider;
 		this.entityBuilderProvider = entityBuilderProvider;
 		this.agentProvider = agentProvider;
 	}
 
-	private OkeanosBasicAgent getDefaultAgent() {
-		OkeanosBasicAgent agent = agentProvider.get();
-		managedAgents.put(agent.getAgentId(), agent);
-		return agent;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#getEntity(java.lang
+	 * .String)
+	 */
 	@Override
 	public Entity getEntity(String id) {
 		return managedEntitiesByEntityId.get(id);
 	}
 
-	/**
-	 * Creates and returns an entity builder instance, which can be used to
-	 * configure and eventually create an entity.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#loadConfigurableEntity
+	 * ()
 	 */
 	@Override
 	public EntityBuilder loadConfigurableEntity() {
 		return entityBuilderProvider.get();
 	}
 
-	/**
-	 * Creates a new entity with the default settings.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.management.services.EntityManagementService#loadEntity()
 	 */
 	@Override
 	public Entity loadEntity() {
@@ -88,8 +134,12 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		return builder.build();
 	}
 
-	/**
-	 * Loads an entity from
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#loadEntityFromJson
+	 * (java.lang.String)
 	 */
 	@Override
 	public Entity loadEntityFromJson(String entityAsJson) {
@@ -106,17 +156,38 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		return builder.build();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#saveEntityToJson(
+	 * okeanos.core.entities.Entity)
+	 */
 	@Override
 	public String saveEntityToJson(Entity entity) {
 		return gson.toJson(entity, Entity.class);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#startEntity(okeanos
+	 * .core.entities.Entity)
+	 */
 	@Override
 	public Entity startEntity(Entity entity) throws LifecycleException {
 		return startEntity(entity,
 				platformManagementService.getDefaultAgentNode());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#startEntity(okeanos
+	 * .core.entities.Entity, de.dailab.jiactng.agentcore.IAgentNode)
+	 */
 	@Override
 	public Entity startEntity(Entity entity, IAgentNode node)
 			throws LifecycleException {
@@ -132,6 +203,10 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		node.addAgent(agent);
 		agent.init();
 		agent.start();
+		entity.addFunctionality(dataServicesProvider
+				.getNewCommunicationServiceAgentBean());
+		entity.addFunctionality(dataServicesProvider
+				.getNewGroupServiceAgentBean());
 		managedEntitiesByEntityId.put(entity.getId(), entity);
 		managedEntitiesByAgentId.put(agent.getAgentId(), entity);
 		managedAgents.put(agent.getAgentId(), agent);
@@ -142,6 +217,13 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		return entity;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#stopEntity(okeanos
+	 * .core.entities.Entity)
+	 */
 	@Override
 	public Entity stopEntity(Entity entity) throws LifecycleException {
 		if (log != null)
@@ -153,6 +235,13 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		return entity;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.EntityManagementService#unloadEntity(okeanos
+	 * .core.entities.Entity)
+	 */
 	@Override
 	public void unloadEntity(Entity entity) throws LifecycleException {
 		if (log != null)
@@ -177,6 +266,17 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		}
 		if (log != null)
 			log.debug("Successfully unloaded entity [{}]", entity);
+	}
+
+	/**
+	 * Creates a default agent. A unique id will be generated.
+	 * 
+	 * @return the default agent
+	 */
+	private OkeanosBasicAgent getDefaultAgent() {
+		OkeanosBasicAgent agent = agentProvider.get();
+		managedAgents.put(agent.getAgentId(), agent);
+		return agent;
 	}
 
 }

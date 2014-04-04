@@ -17,12 +17,19 @@
 	<!-- OSGi published services -->
 	<osgi:service id="entityManagementServiceOsgi" ref="entityManagementServiceImpl"
 		interface="okeanos.management.services.EntityManagementService" />
+	<osgi:service id="groupManagementServiceOsgi" ref="groupManagementServiceImpl"
+		interface="okeanos.management.services.GroupManagementService" />
 	<osgi:service id="platformManagementServiceOsgi" ref="platformManagementServiceImpl"
 		interface="okeanos.management.services.PlatformManagementService" />
 
 	<!-- OSGi references -->
 	<osgi:reference id="entityBuilderOsgi"
 		interface="okeanos.core.entities.builder.EntityBuilder" availability="mandatory" />
+	<osgi:reference id="groupBuilderOsgi"
+		interface="okeanos.core.entities.builder.GroupBuilder" availability="mandatory" />
 	<osgi:reference id="timerServiceOsgi" interface="okeanos.data.services.TimeService"
+		availability="mandatory" />
+	<osgi:reference id="dataServicesProviderOsgi"
+		interface="okeanos.data.services.agentbeans.provider.DataServicesProvider"
 		availability="mandatory" />
 </beans>

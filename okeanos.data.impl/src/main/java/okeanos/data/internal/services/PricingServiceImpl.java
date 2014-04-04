@@ -41,7 +41,7 @@ import com.google.gson.reflect.TypeToken;
  * @author Wolfgang Lausenhammer
  * 
  */
-@Component
+@Component("pricingService")
 public class PricingServiceImpl implements PricingService {
 
 	/** The cost functions. */

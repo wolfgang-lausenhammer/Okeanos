@@ -1,11 +1,17 @@
 package okeanos.control.entities;
 
 /**
- * Be either producer or consumer as devices cannot do both at the same time.
+ * A device can be either a producer or a consumer at one time, both at the same
+ * time is not possible.
  * 
- * @author wlausen
+ * @author Wolfgang Lausenhammer
  * 
  */
 public enum LoadType {
-	CONSUMER, PRODUCER
+
+	/** The consumer. */
+	CONSUMER,
+
+	/** The producer. */
+	PRODUCER
 }

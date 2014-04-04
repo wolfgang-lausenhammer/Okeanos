@@ -53,7 +53,8 @@ public class LightBulb100W implements Load {
 	@Inject
 	public LightBulb100W(
 			@Value("${okeanos.model.internal.drivers.lightbulbs.LightBulb100W.loadProfilePath}") final Resource resource,
-			final String id) throws IOException {
+			@Value("#{ uuidGenerator.generateUUID() }") final String id)
+			throws IOException {
 		this.id = id;
 		XYEntity<double[]> xyEntries = StaticLoadLoadProfileReader
 				.getXYFromLoadProfile(StaticLoadLoadProfileReader

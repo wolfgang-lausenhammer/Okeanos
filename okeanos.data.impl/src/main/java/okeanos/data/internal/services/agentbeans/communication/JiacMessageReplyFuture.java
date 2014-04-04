@@ -1,4 +1,4 @@
-package okeanos.data.internal.services.communication;
+package okeanos.data.internal.services.agentbeans.communication;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -13,9 +13,9 @@ import org.sercho.masp.space.event.WriteCallEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dailab.jiactng.agentcore.AbstractAgentBean;
-import de.dailab.jiactng.agentcore.AbstractAgentBeanProtectedMethodPublisher;
-import de.dailab.jiactng.agentcore.IAgentBean;
+import de.dailab.jiactng.agentcore.AbstractAgentProtectedMethodPublisher;
+import de.dailab.jiactng.agentcore.Agent;
+import de.dailab.jiactng.agentcore.IAgent;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.comm.message.JiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
@@ -36,21 +36,21 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 	private final BlockingQueue<IJiacMessage> reply = new ArrayBlockingQueue<>(
 			10);
 
-	private IAgentBean sender;
+	private IAgent sender;
 
 	private volatile State state = State.WAITING;
 
-	public JiacMessageReplyFuture(IAgentBean sender,
+	public JiacMessageReplyFuture(IAgent sender,
 			SpaceObserver<IFact> callback, IFact factToListenFor) {
 		this(sender, null, callback, factToListenFor);
 	}
 
-	public JiacMessageReplyFuture(IAgentBean sender, String messageId,
+	public JiacMessageReplyFuture(IAgent sender, String messageId,
 			IFact factToListenFor) {
 		this(sender, messageId, null, factToListenFor);
 	}
 
-	private JiacMessageReplyFuture(IAgentBean sender, String messageId,
+	private JiacMessageReplyFuture(IAgent sender, String messageId,
 			SpaceObserver<IFact> callback, IFact factToListenFor) {
 		this.sender = sender;
 		if (callback == null) {
@@ -60,8 +60,8 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 		}
 
 		// initialization
-		IMemory memory = AbstractAgentBeanProtectedMethodPublisher
-				.getMemory(((AbstractAgentBean) sender));
+		IMemory memory = AbstractAgentProtectedMethodPublisher
+				.getMemory((Agent) sender);
 		this.memory = memory;
 
 		JiacMessage listenerTemplate = new JiacMessage();
