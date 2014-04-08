@@ -45,6 +45,10 @@ public class ScheduleUtil implements Comparator<Schedule> {
 		if (schedule1 == null || schedule2 == null) {
 			return -1;
 		}
+		
+		if (schedule1.getSchedule() == null || schedule2.getSchedule() == null) {
+			return -1;
+		}
 
 		if (schedule1.getSchedule().size() != schedule2.getSchedule().size()) {
 			return -1;
@@ -66,10 +70,10 @@ public class ScheduleUtil implements Comparator<Schedule> {
 		Amount<Power> sumSchedule2 = Amount.valueOf(0, Power.UNIT);
 
 		for (Slot value : schedule1.getSchedule().values()) {
-			sumSchedule1.plus(value.getLoad());
+			sumSchedule1 = sumSchedule1.plus(value.getLoad());
 		}
 		for (Slot value : schedule2.getSchedule().values()) {
-			sumSchedule2.plus(value.getLoad());
+			sumSchedule2 = sumSchedule2.plus(value.getLoad());
 		}
 
 		return sumSchedule1.compareTo(sumSchedule2);

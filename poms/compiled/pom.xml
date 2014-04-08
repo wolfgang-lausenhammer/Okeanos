@@ -10,7 +10,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>compiled-bundle-settings</artifactId>
-
+	<version>2.0.0-SNAPSHOT</version>
 	<name>okeanos - bundle instructions</name>
 
 	<packaging>pom</packaging>

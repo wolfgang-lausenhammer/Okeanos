@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>okeanos.build</groupId>
 	<artifactId>shared-plugin-settings</artifactId>
-
+	<version>1.0.0</version>
 	<name>okeanos - plugin configuration</name>
 
 	<packaging>pom</packaging>
