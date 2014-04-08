@@ -1,7 +1,5 @@
 package okeanos.control.entities.impl;
 
-import java.io.Serializable;
-
 import javax.measure.quantity.Power;
 
 import okeanos.control.entities.Slot;
@@ -17,17 +15,14 @@ import org.jscience.physics.amount.Amount;
  */
 public class SlotImpl implements Slot {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4079948602773029091L;
+
 	/** The id. */
 	private String id;
 
 	/** The load. */
 	private Amount<Power> load;
-
-	@Override
-	public String toString() {
-		return String.format("[load=%s]", load);
-	}
 
 	/**
 	 * Instantiates a new slot.
@@ -67,6 +62,16 @@ public class SlotImpl implements Slot {
 	@Override
 	public void setLoad(final Amount<Power> load) {
 		this.load = load;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("[load=%s]", load);
 	}
 
 }

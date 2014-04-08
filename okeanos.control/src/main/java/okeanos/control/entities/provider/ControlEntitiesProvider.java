@@ -1,8 +1,8 @@
 package okeanos.control.entities.provider;
 
 import okeanos.control.entities.Configuration;
-import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.OptimizedRun;
+import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 
@@ -35,16 +35,16 @@ public interface ControlEntitiesProvider {
 	PossibleRun getNewPossibleRun();
 
 	/**
-	 * Returns a new slot.
-	 * 
-	 * @return the new slot
-	 */
-	Slot getNewSlot();
-
-	/**
 	 * Gets the schedule.
 	 * 
 	 * @return the schedule
 	 */
 	Schedule getNewSchedule();
+
+	/**
+	 * Returns a new slot.
+	 * 
+	 * @return the new slot
+	 */
+	Slot getNewSlot();
 }

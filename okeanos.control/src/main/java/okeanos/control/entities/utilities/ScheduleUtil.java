@@ -1,9 +1,7 @@
 package okeanos.control.entities.utilities;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.measure.quantity.Power;
@@ -19,6 +17,8 @@ import org.jscience.physics.amount.Amount;
 
 /**
  * Provides utility methods that work with {@link Schedule} instances.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class ScheduleUtil implements Comparator<Schedule> {
 

@@ -15,12 +15,8 @@ import okeanos.control.entities.Schedule;
  */
 public class ConfigurationImpl implements Configuration {
 
-	@Override
-	public String toString() {
-		return String
-				.format("ConfigurationImpl [possibleRuns=%s, scheduleOfOtherDevices=%s]",
-						possibleRuns, scheduleOfOtherDevices);
-	}
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 5682690715158469780L;
 
 	/** The id. */
 	private String id;
@@ -92,6 +88,18 @@ public class ConfigurationImpl implements Configuration {
 	@Override
 	public void setSchedule(final Schedule scheduleOfOtherDevices) {
 		this.scheduleOfOtherDevices = scheduleOfOtherDevices;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String
+				.format("ConfigurationImpl [possibleRuns=%s, scheduleOfOtherDevices=%s]",
+						possibleRuns, scheduleOfOtherDevices);
 	}
 
 }

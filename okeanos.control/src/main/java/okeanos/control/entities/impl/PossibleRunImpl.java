@@ -21,12 +21,8 @@ import org.joda.time.DateTime;
  */
 public class PossibleRunImpl implements PossibleRun {
 
-	@Override
-	public String toString() {
-		return String
-				.format("PossibleRunImpl [earliestStartTime=%s, latestEndTime=%s, loadType=%s, neededSlots=%s]",
-						earliestStartTime, latestEndTime, loadType, neededSlots);
-	}
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = -4835192147397594886L;
 
 	/** The earliest start time. */
 	private DateTime earliestStartTime;
@@ -147,6 +143,18 @@ public class PossibleRunImpl implements PossibleRun {
 	@Override
 	public void setNeededSlots(final List<Slot> neededSlots) {
 		this.neededSlots = neededSlots;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String
+				.format("PossibleRunImpl [earliestStartTime=%s, latestEndTime=%s, loadType=%s, neededSlots=%s]",
+						earliestStartTime, latestEndTime, loadType, neededSlots);
 	}
 
 }

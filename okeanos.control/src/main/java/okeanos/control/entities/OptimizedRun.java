@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import de.dailab.jiactng.agentcore.knowledge.IFact;
+
 /**
  * Represents an optimized run, i.e. a run that went through an optimization
  * algorithm that selected the best runs among the proposed runs. Specifies the
@@ -11,7 +13,7 @@ import org.joda.time.DateTime;
  * 
  * @author Wolfgang Lausenhammer
  */
-public interface OptimizedRun {
+public interface OptimizedRun extends IFact {
 
 	/**
 	 * Gets the id.

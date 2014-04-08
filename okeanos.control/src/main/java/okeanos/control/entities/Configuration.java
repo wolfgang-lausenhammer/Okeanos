@@ -2,12 +2,16 @@ package okeanos.control.entities;
 
 import java.util.List;
 
+import de.dailab.jiactng.agentcore.knowledge.IFact;
+
 /**
  * Represents a configuration that contains the possible runs and the schedule
  * of the other devices, so that the control algorithm is able to figure out the
  * best possible configuration.
+ * 
+ * @author Wolfgang Lausenhammer
  */
-public interface Configuration {
+public interface Configuration extends IFact {
 
 	/**
 	 * Gets the id.

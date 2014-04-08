@@ -5,7 +5,6 @@ import java.util.Map;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 /**
@@ -15,6 +14,8 @@ import org.joda.time.DateTime;
  * @author Wolfgang Lausenhammer
  */
 public class ScheduleImpl implements Schedule {
+
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -6137167380166709470L;
 
 	/** The id. */
@@ -31,11 +32,6 @@ public class ScheduleImpl implements Schedule {
 	 */
 	public ScheduleImpl(final String id) {
 		this.id = id;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("ScheduleImpl [schedule=%s]", schedule);
 	}
 
 	/*
@@ -66,5 +62,15 @@ public class ScheduleImpl implements Schedule {
 	@Override
 	public void setSchedule(final Map<DateTime, Slot> schedule) {
 		this.schedule = schedule;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("ScheduleImpl [schedule=%s]", schedule);
 	}
 }

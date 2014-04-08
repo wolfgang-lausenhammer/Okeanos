@@ -8,6 +8,7 @@ import okeanos.control.entities.Slot;
 
 import org.joda.time.DateTime;
 
+// TODO: Auto-generated Javadoc
 /**
  * Represents an optimized run, i.e. a run that went through an optimization
  * algorithm that selected the best runs among the proposed runs. Specifies the
@@ -17,12 +18,8 @@ import org.joda.time.DateTime;
  */
 public class OptimizedRunImpl implements OptimizedRun {
 
-	@Override
-	public String toString() {
-		return String.format(
-				"OptimizedRunImpl [loadType=%s, neededSlots=%s, startTime=%s]",
-				loadType, neededSlots, startTime);
-	}
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = -2634930143806210883L;
 
 	/** The id. */
 	private String id;
@@ -118,6 +115,18 @@ public class OptimizedRunImpl implements OptimizedRun {
 	@Override
 	public void setStartTime(final DateTime startTime) {
 		this.startTime = startTime;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format(
+				"OptimizedRunImpl [loadType=%s, neededSlots=%s, startTime=%s]",
+				loadType, neededSlots, startTime);
 	}
 
 }

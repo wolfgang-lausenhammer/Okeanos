@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import de.dailab.jiactng.agentcore.knowledge.IFact;
+
 /**
  * Represents a proposed run, i.e., a run that would be possible for the
  * household device. A dishwasher could, for example, start anytime after its
@@ -15,7 +17,7 @@ import org.joda.time.DateTime;
  * 
  * @author Wolfgang Lausenhammer
  */
-public interface PossibleRun {
+public interface PossibleRun extends IFact {
 
 	/**
 	 * Gets the earliest start time.
