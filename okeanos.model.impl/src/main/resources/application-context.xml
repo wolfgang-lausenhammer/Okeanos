@@ -13,8 +13,12 @@
 	<context:component-scan base-package="okeanos" />
 
 	<context:property-placeholder location="classpath:load-profile.properties" />
-	
+
 	<osgi:reference id="uuidGenerator" interface="okeanos.data.services.UUIDGenerator"
+		availability="mandatory" />
+
+	<osgi:reference id="controlEntitiesProvider"
+		interface="okeanos.control.entities.provider.ControlEntitiesProvider"
 		availability="mandatory" />
 
 	<osgi:service ref="lightBulb100W" interface="okeanos.model.entities.Load">

@@ -1,5 +1,9 @@
 package okeanos.data.internal.services.agentbeans;
 
+import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_CORRELATION_ID;
+import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_RECEIVER;
+import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_SENDER;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +21,11 @@ import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.data.services.agentbeans.entities.GridFact;
 import okeanos.data.services.agentbeans.entities.GroupFact;
 import okeanos.data.services.entities.MessageScope;
-import okeanos.spring.misc.stereotypes.Logging;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sercho.masp.space.event.SpaceObserver;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -51,8 +56,8 @@ public class CommunicationServiceAgentBeanImpl extends
 	private Provider<ICommunicationBean> communicationBeanProvider;
 
 	/** The logger. */
-	@Logging
-	private Logger log;
+	private static final Logger LOG = LoggerFactory
+			.getLogger(CommunicationServiceAgentBeanImpl.class);
 
 	/** The uuid generator. */
 	private UUIDGenerator uuidGenerator;
@@ -85,9 +90,7 @@ public class CommunicationServiceAgentBeanImpl extends
 	@Override
 	public void broadcast(final MessageScope scope, final IFact message)
 			throws CommunicationException {
-		if (log != null) {
-			log.trace("Broadcasting [message={}] to [scope={}]", message, scope);
-		}
+		LOG.trace("Broadcasting [message={}] to [scope={}]", message, scope);
 
 		switch (scope) {
 		case GROUP:
@@ -96,9 +99,7 @@ public class CommunicationServiceAgentBeanImpl extends
 			for (GroupFact group : groups) {
 				ICommunicationAddress receiver = CommunicationAddressFactory
 						.createGroupAddress(group.getGroupId());
-				if (log != null) {
-					log.trace("Sending to [groupAddress={}]", receiver);
-				}
+				LOG.debug("Sending to [groupAddress={}]", receiver);
 				sendAsync(receiver, message);
 			}
 			break;
@@ -106,9 +107,7 @@ public class CommunicationServiceAgentBeanImpl extends
 			GridFact grid = memory.read(new GridFact(null));
 			ICommunicationAddress gridAddress = CommunicationAddressFactory
 					.createGroupAddress(grid.getGroupId());
-			if (log != null) {
-				log.trace("Sending to [gridAddress={}]", gridAddress);
-			}
+			LOG.trace("Sending to [gridAddress={}]", gridAddress);
 			sendAsync(gridAddress, message);
 			break;
 		default:
@@ -141,11 +140,8 @@ public class CommunicationServiceAgentBeanImpl extends
 	@Expose(name = ACTION_RECEIVE_MESSAGE_IFACT)
 	@Override
 	public IJiacMessage receiveMessage(final IFact factToListenFor) {
-		if (log != null) {
-			log.trace(
-					"Receiving synchronously [fact={}] at [receivingAgent={}]",
-					factToListenFor, thisAgent);
-		}
+		LOG.trace("Receiving synchronously [fact={}] at [receivingAgent={}]",
+				factToListenFor, thisAgent);
 		try {
 			return receiveMessageAsync(factToListenFor).get();
 		} catch (InterruptedException | ExecutionException e) {
@@ -174,11 +170,8 @@ public class CommunicationServiceAgentBeanImpl extends
 	@Expose(name = ACTION_RECEIVE_MESSAGE_ASYNC_IFACT)
 	@Override
 	public Future<IJiacMessage> receiveMessageAsync(final IFact factToListenFor) {
-		if (log != null) {
-			log.trace(
-					"Receiving asynchronously [fact={}] at [receivingAgent={}]",
-					factToListenFor, thisAgent);
-		}
+		LOG.trace("Receiving asynchronously [fact={}] at [receivingAgent={}]",
+				factToListenFor, thisAgent);
 		// build future for reply
 		Future<IJiacMessage> replyFuture = new JiacMessageReplyFuture(
 				thisAgent, (SpaceObserver<IFact>) null, factToListenFor);
@@ -209,11 +202,9 @@ public class CommunicationServiceAgentBeanImpl extends
 	@Override
 	public void receiveMessageCallback(final SpaceObserver<IFact> listener,
 			final IFact factToListenFor) {
-		if (log != null) {
-			log.trace(
-					"Registering message callback for [receivingAgent={}] [factToListenFor={}]",
-					thisAgent, factToListenFor);
-		}
+		LOG.debug(
+				"Registering message callback for [receivingAgent={}] [factToListenFor={}]",
+				thisAgent, factToListenFor);
 
 		// build future for reply
 		new JiacMessageReplyFuture(thisAgent, listener, factToListenFor);
@@ -259,11 +250,9 @@ public class CommunicationServiceAgentBeanImpl extends
 	public IJiacMessage send(final ICommunicationAddress receiver,
 			final IFact message, final Map<String, String> options)
 			throws CommunicationException {
-		if (log != null) {
-			log.trace(
-					"Sending [message={}] synchronously from [sender={}] to [receiver={}]",
-					message, thisAgent, receiver);
-		}
+		LOG.trace(
+				"Sending [message={}] synchronously from [sender={}] to [receiver={}]",
+				message, thisAgent, receiver);
 		try {
 			return sendAsync(receiver, message, options).get();
 		} catch (InterruptedException | ExecutionException e) {
@@ -331,19 +320,18 @@ public class CommunicationServiceAgentBeanImpl extends
 		// initialize
 		ICommunicationBean communicationBean = getCommunicationBean();
 		String messageId = "";
-		if (options.containsKey("OkeanosCommunicationCorrelationId")) {
-			messageId = options.get("OkeanosCommunicationCorrelationId");
+		if (options.containsKey(COMMUNICATION_CORRELATION_ID)) {
+			messageId = options.get(COMMUNICATION_CORRELATION_ID);
 		} else {
 			messageId = uuidGenerator.generateUUID();
 		}
 
 		// compile message
 		JiacMessage jiacMessage = new JiacMessage(message);
-		jiacMessage.setHeader("OkeanosCommunicationCorrelationId", messageId);
-		jiacMessage.setHeader("OkeanosCommunicationSender", getAddressOfAgent()
+		jiacMessage.setHeader(COMMUNICATION_CORRELATION_ID, messageId);
+		jiacMessage.setHeader(COMMUNICATION_SENDER, getAddressOfAgent()
 				.toString());
-		jiacMessage.setHeader("OkeanosCommunicationReceiver",
-				receiver.toString());
+		jiacMessage.setHeader(COMMUNICATION_RECEIVER, receiver.toString());
 		jiacMessage.setSender(getAddressOfAgent());
 		for (Entry<String, String> entry : options.entrySet()) {
 			jiacMessage.setHeader(entry.getKey(), entry.getValue());
@@ -353,11 +341,10 @@ public class CommunicationServiceAgentBeanImpl extends
 		Future<IJiacMessage> replyFuture = new JiacMessageReplyFuture(
 				thisAgent, messageId, null);
 
-		if (log != null) {
-			log.trace(
-					"Sending [message={}] asynchronously from [sender={}] to [receiver={}]",
-					jiacMessage, getAddressOfAgent(), receiver);
-		}
+		LOG.debug(
+				"Sending [message={}] asynchronously from [sender={}] to [receiver={}]",
+				StringUtils.abbreviate(jiacMessage.toString(), 1000),
+				getAddressOfAgent(), receiver);
 
 		// send
 		communicationBean.send(jiacMessage, receiver);
@@ -428,7 +415,7 @@ public class CommunicationServiceAgentBeanImpl extends
 			}
 		}
 
-		log.warn("agent with name \"" + agentName + "\" not found");
+		LOG.warn("agent with name \"" + agentName + "\" not found");
 
 		return CommunicationAddressFactory.createMessageBoxAddress("");
 	}

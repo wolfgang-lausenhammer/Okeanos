@@ -17,6 +17,7 @@ import okeanos.data.internal.services.pricing.entities.serialization.PriceDeseri
 import okeanos.data.services.PricingService;
 import okeanos.data.services.entities.CostFunction;
 import okeanos.data.services.entities.Price;
+import okeanos.math.regression.LargeSerializableConcurrentSkipListMap;
 import okeanos.spring.misc.stereotypes.Logging;
 
 import org.apache.commons.io.IOUtils;
@@ -176,7 +177,7 @@ public class PricingServiceImpl implements PricingService {
 				new TypeToken<List<CostFunction>>() {
 				}.getType());
 
-		Map<DateTime, CostFunction> costFunctionsMap = new ConcurrentSkipListMap<>();
+		Map<DateTime, CostFunction> costFunctionsMap = new LargeSerializableConcurrentSkipListMap<>();
 		for (CostFunction func : costFunctionsList) {
 			costFunctionsMap.put(func.getValidFromDateTime(), func);
 		}

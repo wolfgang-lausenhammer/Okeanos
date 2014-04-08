@@ -12,17 +12,56 @@ import org.joda.time.DateTime;
  * @author Wolfgang Lausenhammer
  */
 public interface OptimizedRun {
+
+	/**
+	 * Gets the id.
+	 * 
+	 * @return the id
+	 */
 	String getId();
 
+	/**
+	 * Gets the load type.
+	 * 
+	 * @return the load type
+	 */
 	LoadType getLoadType();
 
+	/**
+	 * Gets the needed slots.
+	 * 
+	 * @return the needed slots
+	 */
 	List<Slot> getNeededSlots();
 
+	/**
+	 * Gets the start time.
+	 * 
+	 * @return the start time
+	 */
 	DateTime getStartTime();
 
+	/**
+	 * Sets the load type.
+	 * 
+	 * @param loadType
+	 *            the new load type
+	 */
 	void setLoadType(LoadType loadType);
 
+	/**
+	 * Sets the needed slots.
+	 * 
+	 * @param neededSlots
+	 *            the new needed slots
+	 */
 	void setNeededSlots(List<Slot> neededSlots);
 
+	/**
+	 * Sets the start time.
+	 * 
+	 * @param startTime
+	 *            the new start time
+	 */
 	void setStartTime(DateTime startTime);
 }

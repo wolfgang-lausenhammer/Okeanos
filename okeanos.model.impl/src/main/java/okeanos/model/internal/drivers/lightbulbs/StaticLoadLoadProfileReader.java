@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import okeanos.math.regression.LargeSerializableConcurrentSkipListMap;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -121,7 +123,7 @@ public final class StaticLoadLoadProfileReader {
 	 */
 	public static Map<DateTime, Double> readLoadProfile(
 			final Resource loadProfile) throws IOException {
-		Map<DateTime, Double> loadProfileMap = new ConcurrentSkipListMap<>();
+		Map<DateTime, Double> loadProfileMap = new LargeSerializableConcurrentSkipListMap<>();
 		String jsonString = IOUtils.toString(loadProfile.getInputStream());
 
 		JsonArray arrayOfInstances = gson.fromJson(jsonString, JsonArray.class);

@@ -103,22 +103,22 @@ public class ControlEntitiesProviderImpl implements ControlEntitiesProvider {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * okeanos.control.entities.provider.ControlEntitiesProvider#getNewSlot()
+	 * okeanos.control.entities.provider.ControlEntitiesProvider#getSchedule()
 	 */
 	@Override
-	public Slot getNewSlot() {
-		return slotProvider.get();
+	public Schedule getNewSchedule() {
+		return scheduleProvider.get();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * okeanos.control.entities.provider.ControlEntitiesProvider#getSchedule()
+	 * okeanos.control.entities.provider.ControlEntitiesProvider#getNewSlot()
 	 */
 	@Override
-	public Schedule getNewSchedule() {
-		return scheduleProvider.get();
+	public Slot getNewSlot() {
+		return slotProvider.get();
 	}
 
 }

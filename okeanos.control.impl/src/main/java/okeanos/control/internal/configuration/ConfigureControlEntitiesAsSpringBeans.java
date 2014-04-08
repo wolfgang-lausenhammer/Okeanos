@@ -1,5 +1,7 @@
 package okeanos.control.internal.configuration;
 
+import javax.inject.Inject;
+
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Schedule;
@@ -9,10 +11,11 @@ import okeanos.control.entities.impl.OptimizedRunImpl;
 import okeanos.control.entities.impl.PossibleRunImpl;
 import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
+import okeanos.data.services.UUIDGenerator;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 /**
  * Configuration class to let Spring know about all the control entities.
@@ -20,67 +23,72 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ConfigureControlEntitiesAsSpringBeans {
 
+	/** The uuid generator. */
+	private UUIDGenerator uuidGenerator;
+
+	/**
+	 * Sets the uuid generator.
+	 * 
+	 * @param uuidGenerator
+	 *            the new uuid generator
+	 */
+	@Inject
+	public void setUuidGenerator(final UUIDGenerator uuidGenerator) {
+		this.uuidGenerator = uuidGenerator;
+	}
+
 	/**
 	 * Configuration.
 	 * 
-	 * @param id
-	 *            the id
 	 * @return the configuration
 	 */
 	@Bean
-	public okeanos.control.entities.Configuration configuration(
-			@Value("#{ uuidGenerator.generateUUID() }") final String id) {
-		return new ConfigurationImpl(id);
+	@Scope("prototype")
+	public okeanos.control.entities.Configuration configuration() {
+		return new ConfigurationImpl(uuidGenerator.generateUUID());
 	}
 
 	/**
 	 * Optimized run.
 	 * 
-	 * @param id
-	 *            the id
 	 * @return the optimized run
 	 */
 	@Bean
-	public OptimizedRun optimizedRun(
-			@Value("#{ uuidGenerator.generateUUID() }") final String id) {
-		return new OptimizedRunImpl(id);
+	@Scope("prototype")
+	public OptimizedRun optimizedRun() {
+		return new OptimizedRunImpl(uuidGenerator.generateUUID());
 	}
 
 	/**
 	 * Possible run.
 	 * 
-	 * @param id
-	 *            the id
 	 * @return the possible run
 	 */
 	@Bean
-	public PossibleRun possibleRun(
-			@Value("#{ uuidGenerator.generateUUID() }") final String id) {
-		return new PossibleRunImpl(id);
+	@Scope("prototype")
+	public PossibleRun possibleRun() {
+		return new PossibleRunImpl(uuidGenerator.generateUUID());
 	}
 
 	/**
 	 * Schedule.
 	 * 
-	 * @param id
-	 *            the id
 	 * @return the schedule
 	 */
 	@Bean
-	public Schedule schedule(
-			@Value("#{ uuidGenerator.generateUUID() }") final String id) {
-		return new ScheduleImpl(id);
+	@Scope("prototype")
+	public Schedule schedule() {
+		return new ScheduleImpl(uuidGenerator.generateUUID());
 	}
 
 	/**
 	 * Slot.
 	 * 
-	 * @param id
-	 *            the id
 	 * @return the slot
 	 */
 	@Bean
-	public Slot slot(@Value("#{ uuidGenerator.generateUUID() }") final String id) {
-		return new SlotImpl(id);
+	@Scope("prototype")
+	public Slot slot() {
+		return new SlotImpl(uuidGenerator.generateUUID());
 	}
 }

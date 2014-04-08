@@ -22,6 +22,12 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>okeanos</groupId>
+			<artifactId>okeanos.control</artifactId>
+			<version>${okeanos-control-version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 </project>

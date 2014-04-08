@@ -12,14 +12,14 @@ import okeanos.data.services.UUIDGenerator;
  */
 @SuppressWarnings("unused")
 public class MavenImports {
-	/** The uuid generator. */
-	private UUIDGenerator uuidGenerator;
 	/** The disposable bean. */
 	private DisposableBean disposableBean;
-		/** The reflect utils. */
-	private ReflectUtils reflectUtils;
-	/** The method proxy. */
-	private MethodProxy methodProxy;
 	/** The fast class. */
 	private FastClass fastClass;
+	/** The method proxy. */
+	private MethodProxy methodProxy;
+	/** The reflect utils. */
+	private ReflectUtils reflectUtils;
+	/** The uuid generator. */
+	private UUIDGenerator uuidGenerator;
 }

@@ -23,27 +23,21 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 /**
  * The Class LoadReportingLightBulbs.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 public class LoadReportingLightBulbs {
 
 	/** The Constant PACE. */
-	private static final int PACE = 10;
+	private static final int PACE = 1;
 
 	/** The logger. */
 	@Logging
 	private Logger log;
 
-	/** The entity management service. */
-	private EntityManagementService entityManagementService;
-
-	/** The platform management service. */
-	private PlatformManagementService platformManagementService;
-
 	/** The time service. */
 	private TimeService timeService;
-
-	private GroupManagementService groupManagementService;
 
 	/**
 	 * Instantiates a new load reporting light bulbs.
@@ -67,9 +61,6 @@ public class LoadReportingLightBulbs {
 			final TimeService timeService,
 			final Provider<LightBulbBean> beanProvider)
 			throws LifecycleException {
-		this.platformManagementService = platformManagementService;
-		this.entityManagementService = entityManagementService;
-		this.groupManagementService = groupManagementService;
 		this.timeService = timeService;
 
 		IAgentNode node = startAgentNode(platformManagementService);
@@ -80,11 +71,11 @@ public class LoadReportingLightBulbs {
 
 		Group group = groupManagementService.loadGroup();
 		groupManagementService.startGroup(group);
-		
+
 		lightBulbEntity1.joinGroup(group);
 		lightBulbEntity2.joinGroup(group);
 
-		this.timeService.setPace(PACE);
+		//this.timeService.setPace(PACE);
 
 		lightBulbEntity1.addFunctionality(beanProvider.get());
 		lightBulbEntity2.addFunctionality(beanProvider.get());

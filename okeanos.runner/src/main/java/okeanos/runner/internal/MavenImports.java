@@ -9,6 +9,9 @@ import org.eclipse.gemini.blueprint.service.exporter.support.OsgiServiceFactoryB
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor;
 import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
+import org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.config.TaskExecutorFactoryBean;
 
 import okeanos.control.algorithms.ControlAlgorithm;
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
@@ -60,4 +63,7 @@ public class MavenImports {
 	private ControlAlgorithm controlAlgorithm;
 	/** The communication service agent bean. */
 	private CommunicationServiceAgentBean communicationServiceAgentBean;
+	AsyncAnnotationBeanPostProcessor asyncAnnotationBeanPostProcessor;
+	TaskExecutorFactoryBean taskExecutorFactoryBean;
+	ThreadPoolTaskScheduler threadPoolTaskScheduler;
 }

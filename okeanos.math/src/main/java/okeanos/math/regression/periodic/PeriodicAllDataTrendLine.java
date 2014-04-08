@@ -6,7 +6,6 @@ public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 	private TrendLine wrappedTrendLine;
 	private double lowerXBoundary = 0;
 	private double upperXBoundary = 0;
-	private double lowestIntervalLowerBoundary = 0;
 	private double difference = 0;
 
 	public PeriodicAllDataTrendLine(TrendLine wrappedTrendLine) {
@@ -19,8 +18,6 @@ public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 
 		lowerXBoundary = x[0];
 		upperXBoundary = x[x.length - 1];
-		lowestIntervalLowerBoundary = lowerXBoundary % upperXBoundary
-				- lowerXBoundary;
 		difference = upperXBoundary - lowerXBoundary;
 	}
 
@@ -29,13 +26,32 @@ public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 		if (x >= lowerXBoundary && x <= upperXBoundary) {
 			return wrappedTrendLine.predict(x);
 		} else {
-			double periodicX = x % difference;
-
-			if (periodicX - lowestIntervalLowerBoundary >= difference) {
-				periodicX = periodicX - difference;
-			} else {
-				periodicX = periodicX - lowestIntervalLowerBoundary;
+			double val = lowerXBoundary;
+			double posX = x;
+			while (posX < 0) {
+				posX += difference;
 			}
+
+			double periodicX = 0;
+			if (val < posX) {
+				while (val < posX) {
+					val += difference;
+				}
+				periodicX = posX - val + difference;
+			} else {
+				while (val > posX) {
+					val -= difference;
+				}
+				periodicX = posX - val - difference;
+			}
+
+			/*
+			 * double periodicX = absX % difference;
+			 * 
+			 * if (periodicX - lowestIntervalLowerBoundary >= difference) {
+			 * periodicX = periodicX - difference; } else { periodicX =
+			 * periodicX - lowestIntervalLowerBoundary; }
+			 */
 
 			return wrappedTrendLine.predict(periodicX + lowerXBoundary);
 		}

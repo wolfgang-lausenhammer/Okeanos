@@ -17,6 +17,13 @@ import org.joda.time.DateTime;
  */
 public class OptimizedRunImpl implements OptimizedRun {
 
+	@Override
+	public String toString() {
+		return String.format(
+				"OptimizedRunImpl [loadType=%s, neededSlots=%s, startTime=%s]",
+				loadType, neededSlots, startTime);
+	}
+
 	/** The id. */
 	private String id;
 

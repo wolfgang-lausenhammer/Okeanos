@@ -1,4 +1,4 @@
-package okeanos.data.internal.services.communication;
+package okeanos.data.internal.services.agentbeans.communication;
 
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 

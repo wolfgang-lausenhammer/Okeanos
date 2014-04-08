@@ -1,4 +1,4 @@
-package okeanos.data.internal.services;
+package okeanos.data.internal.services.agentbeans;
 
 import static org.hamcrest.core.IsSame.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -14,8 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Provider;
 
-import okeanos.data.internal.services.agentbeans.CommunicationServiceAgentBeanImpl;
-import okeanos.data.internal.services.communication.MyTestMessage;
+import okeanos.data.internal.services.agentbeans.communication.MyTestMessage;
 import okeanos.data.services.UUIDGenerator;
 
 import org.junit.Before;
@@ -38,25 +37,40 @@ import de.dailab.jiactng.agentcore.comm.message.JiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 import de.dailab.jiactng.agentcore.knowledge.IMemory;
 
+/**
+ * The Class CommunicationServiceImplReceiveTest.
+ */
 public class CommunicationServiceImplReceiveTest {
 
+	/** The communication bean. */
 	@Mock
 	private ICommunicationBean communicationBean;
 
+	/** The communication bean provider. */
 	@Mock
 	private Provider<ICommunicationBean> communicationBeanProvider;
 
+	/** The communication service impl. */
 	private CommunicationServiceAgentBeanImpl communicationServiceImpl;
 
-	@Mock
-	private Agent receiver;
-
+	/** The memory. */
 	@Mock
 	private IMemory memory;
 
+	/** The receiver. */
+	@Mock
+	private Agent receiver;
+
+	/** The uuid generator. */
 	@Mock
 	private UUIDGenerator uuidGenerator;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -71,65 +85,14 @@ public class CommunicationServiceImplReceiveTest {
 		communicationServiceImpl.setThisAgent(receiver);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Test
-	public final void testReceiveMessageIAgentBean() {
-		MyTestMessage receivedMessage = new MyTestMessage(
-				"my test content - receive");
-		final WriteCallEvent<IJiacMessage> wce = new WriteCallEvent(
-				new SimpleObjectSpace<IJiacMessage>("myspace"),
-				new JiacMessage(receivedMessage));
-
-		Mockito.doAnswer(new Answer<Void>() {
-			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
-				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
-						.getArguments()[0];
-
-				callback.notify(wce);
-				return null;
-			}
-		})
-				.when(memory)
-				.attach(Matchers.any(SpaceObserver.class),
-						Matchers.any(IFact.class));
-
-		IJiacMessage answer = communicationServiceImpl.receiveMessage();
-
-		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
-		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Test
-	public final void testReceiveMessageIAgentBeanIFact() {
-		MyTestMessage receivedMessage = new MyTestMessage(
-				"my test content - receive");
-		final WriteCallEvent<IJiacMessage> wce = new WriteCallEvent(
-				new SimpleObjectSpace<IJiacMessage>("myspace"),
-				new JiacMessage(receivedMessage));
-
-		Mockito.doAnswer(new Answer<Void>() {
-			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
-				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
-						.getArguments()[0];
-
-				callback.notify(wce);
-				return null;
-			}
-		})
-				.when(memory)
-				.attach(Matchers.any(SpaceObserver.class),
-						Matchers.any(IFact.class));
-
-		IJiacMessage answer = communicationServiceImpl
-				.receiveMessage(new MyTestMessage(null));
-
-		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
-		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
-	}
-
+	/**
+	 * Test receive message async i agent bean.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 * @throws ExecutionException
+	 *             the execution exception
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public final void testReceiveMessageAsyncIAgentBean()
@@ -142,7 +105,8 @@ public class CommunicationServiceImplReceiveTest {
 
 		Mockito.doAnswer(new Answer<Void>() {
 			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
+			public Void answer(final InvocationOnMock invocation)
+					throws Throwable {
 				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
 						.getArguments()[0];
 
@@ -161,6 +125,14 @@ public class CommunicationServiceImplReceiveTest {
 		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
 	}
 
+	/**
+	 * Test receive message async i agent bean i fact.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 * @throws ExecutionException
+	 *             the execution exception
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public final void testReceiveMessageAsyncIAgentBeanIFact()
@@ -173,7 +145,8 @@ public class CommunicationServiceImplReceiveTest {
 
 		Mockito.doAnswer(new Answer<Void>() {
 			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
+			public Void answer(final InvocationOnMock invocation)
+					throws Throwable {
 				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
 						.getArguments()[0];
 
@@ -192,6 +165,12 @@ public class CommunicationServiceImplReceiveTest {
 		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
 	}
 
+	/**
+	 * Test receive message callback i agent bean space observer of i fact.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
 	@SuppressWarnings({ "unchecked", "serial", "rawtypes" })
 	@Test
 	public final void testReceiveMessageCallbackIAgentBeanSpaceObserverOfIFact()
@@ -205,7 +184,8 @@ public class CommunicationServiceImplReceiveTest {
 
 		Mockito.doAnswer(new Answer<Void>() {
 			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
+			public Void answer(final InvocationOnMock invocation)
+					throws Throwable {
 				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
 						.getArguments()[0];
 
@@ -220,7 +200,7 @@ public class CommunicationServiceImplReceiveTest {
 		communicationServiceImpl
 				.receiveMessageCallback(new SpaceObserver<IFact>() {
 					@Override
-					public void notify(SpaceEvent<? extends IFact> event) {
+					public void notify(final SpaceEvent<? extends IFact> event) {
 						try {
 							queue.put(((WriteCallEvent<IJiacMessage>) event)
 									.getObject());
@@ -234,6 +214,13 @@ public class CommunicationServiceImplReceiveTest {
 				sameInstance((IFact) receivedMessage));
 	}
 
+	/**
+	 * Test receive message callback i agent bean space observer of i fact i
+	 * fact.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
 	@SuppressWarnings({ "unchecked", "serial", "rawtypes" })
 	@Test
 	public final void testReceiveMessageCallbackIAgentBeanSpaceObserverOfIFactIFact()
@@ -247,7 +234,8 @@ public class CommunicationServiceImplReceiveTest {
 
 		Mockito.doAnswer(new Answer<Void>() {
 			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
+			public Void answer(final InvocationOnMock invocation)
+					throws Throwable {
 				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
 						.getArguments()[0];
 
@@ -267,7 +255,7 @@ public class CommunicationServiceImplReceiveTest {
 		communicationServiceImpl.receiveMessageCallback(
 				new SpaceObserver<IFact>() {
 					@Override
-					public void notify(SpaceEvent<? extends IFact> event) {
+					public void notify(final SpaceEvent<? extends IFact> event) {
 						try {
 							queue.put(((WriteCallEvent<IJiacMessage>) event)
 									.getObject());
@@ -288,5 +276,72 @@ public class CommunicationServiceImplReceiveTest {
 				sameInstance((IFact) receivedMessage));
 		assertThat(queue.take().getPayload(),
 				sameInstance((IFact) receivedMessage));
+	}
+
+	/**
+	 * Test receive message i agent bean.
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
+	public final void testReceiveMessageIAgentBean() {
+		MyTestMessage receivedMessage = new MyTestMessage(
+				"my test content - receive");
+		final WriteCallEvent<IJiacMessage> wce = new WriteCallEvent(
+				new SimpleObjectSpace<IJiacMessage>("myspace"),
+				new JiacMessage(receivedMessage));
+
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(final InvocationOnMock invocation)
+					throws Throwable {
+				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
+						.getArguments()[0];
+
+				callback.notify(wce);
+				return null;
+			}
+		})
+				.when(memory)
+				.attach(Matchers.any(SpaceObserver.class),
+						Matchers.any(IFact.class));
+
+		IJiacMessage answer = communicationServiceImpl.receiveMessage();
+
+		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
+		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
+	}
+
+	/**
+	 * Test receive message i agent bean i fact.
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
+	public final void testReceiveMessageIAgentBeanIFact() {
+		MyTestMessage receivedMessage = new MyTestMessage(
+				"my test content - receive");
+		final WriteCallEvent<IJiacMessage> wce = new WriteCallEvent(
+				new SimpleObjectSpace<IJiacMessage>("myspace"),
+				new JiacMessage(receivedMessage));
+
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(final InvocationOnMock invocation)
+					throws Throwable {
+				SpaceObserver<IJiacMessage> callback = (SpaceObserver<IJiacMessage>) invocation
+						.getArguments()[0];
+
+				callback.notify(wce);
+				return null;
+			}
+		})
+				.when(memory)
+				.attach(Matchers.any(SpaceObserver.class),
+						Matchers.any(IFact.class));
+
+		IJiacMessage answer = communicationServiceImpl
+				.receiveMessage(new MyTestMessage(null));
+
+		assertThat(answer.getPayload(), sameInstance((IFact) receivedMessage));
+		verify(memory, atLeastOnce()).detach(any(SpaceObserver.class));
 	}
 }

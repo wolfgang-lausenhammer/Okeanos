@@ -62,6 +62,8 @@ public class GroupServiceAgentBeanImpl extends AbstractMethodExposingBean
 			actionJoinGroup = thisAgent.searchAction(template);
 		}
 
+		LOG.info("action join group: {}", actionJoinGroup);
+
 		template = new Action(CommunicationBean.ACTION_LEAVE_GROUP);
 		actionLeaveGroup = memory.read(template);
 		if (actionLeaveGroup == null) {

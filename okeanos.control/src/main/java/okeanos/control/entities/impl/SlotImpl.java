@@ -1,6 +1,12 @@
 package okeanos.control.entities.impl;
 
+import java.io.Serializable;
+
+import javax.measure.quantity.Power;
+
 import okeanos.control.entities.Slot;
+
+import org.jscience.physics.amount.Amount;
 
 /**
  * Represents one time slot within a run. Every time slot can have different
@@ -11,11 +17,17 @@ import okeanos.control.entities.Slot;
  */
 public class SlotImpl implements Slot {
 
+	private static final long serialVersionUID = -4079948602773029091L;
 	/** The id. */
 	private String id;
 
 	/** The load. */
-	private double load;
+	private Amount<Power> load;
+
+	@Override
+	public String toString() {
+		return String.format("[load=%s]", load);
+	}
 
 	/**
 	 * Instantiates a new slot.
@@ -43,17 +55,17 @@ public class SlotImpl implements Slot {
 	 * @see okeanos.control.entities.Slot#getLoad()
 	 */
 	@Override
-	public double getLoad() {
+	public Amount<Power> getLoad() {
 		return load;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.control.entities.Slot#setLoad(double)
+	 * @see okeanos.control.entities.Slot#setLoad(javax.measure.Measurable)
 	 */
 	@Override
-	public void setLoad(final double load) {
+	public void setLoad(final Amount<Power> load) {
 		this.load = load;
 	}
 

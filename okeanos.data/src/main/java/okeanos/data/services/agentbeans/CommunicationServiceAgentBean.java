@@ -25,53 +25,59 @@ import de.dailab.jiactng.agentcore.knowledge.IFact;
  */
 public interface CommunicationServiceAgentBean extends IEffector {
 
+	public final class Header {
+		public static final String COMMUNICATION_CORRELATION_ID = "OkeanosCommunicationCorrelationId";
+		public static final String COMMUNICATION_SENDER = "OkeanosCommunicationSender";
+		public static final String COMMUNICATION_RECEIVER = "OkeanosCommunicationReceiver";
+	}
+
 	/** The Constant ACTION_BROADCAST. */
-	public static final String ACTION_BROADCAST = "okeanos.data.services.CommunicationService#broadcast(MessageScope, IFact)";
+	String ACTION_BROADCAST = "okeanos.data.services.CommunicationService#broadcast(MessageScope, IFact)";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE. */
-	public static final String ACTION_RECEIVE_MESSAGE = "okeanos.data.services.CommunicationService#receiveMessage()";
+	String ACTION_RECEIVE_MESSAGE = "okeanos.data.services.CommunicationService#receiveMessage()";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE_IFACT. */
-	public static final String ACTION_RECEIVE_MESSAGE_IFACT = "okeanos.data.services.CommunicationService#receiveMessage(IFact)";
+	String ACTION_RECEIVE_MESSAGE_IFACT = "okeanos.data.services.CommunicationService#receiveMessage(IFact)";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE_ASYNC. */
-	public static final String ACTION_RECEIVE_MESSAGE_ASYNC = "okeanos.data.services.CommunicationService#receiveMessageAsync()";
+	String ACTION_RECEIVE_MESSAGE_ASYNC = "okeanos.data.services.CommunicationService#receiveMessageAsync()";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE_ASYNC_IFACT. */
-	public static final String ACTION_RECEIVE_MESSAGE_ASYNC_IFACT = "okeanos.data.services.CommunicationService#receiveMessageAsync(IFact)";
+	String ACTION_RECEIVE_MESSAGE_ASYNC_IFACT = "okeanos.data.services.CommunicationService#receiveMessageAsync(IFact)";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE_CALLBACK. */
-	public static final String ACTION_RECEIVE_MESSAGE_CALLBACK = "okeanos.data.services.CommunicationService#receiveMessageCallback(SpaceObserver<IFact>)";
+	String ACTION_RECEIVE_MESSAGE_CALLBACK = "okeanos.data.services.CommunicationService#receiveMessageCallback(SpaceObserver<IFact>)";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE_CALLBACK_IFACT. */
-	public static final String ACTION_RECEIVE_MESSAGE_CALLBACK_IFACT = "okeanos.data.services.CommunicationService#receiveMessageCallback(SpaceObserver<IFact>, IFact)";
+	String ACTION_RECEIVE_MESSAGE_CALLBACK_IFACT = "okeanos.data.services.CommunicationService#receiveMessageCallback(SpaceObserver<IFact>, IFact)";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE_DETACH_CALLBACK. */
-	public static final String ACTION_RECEIVE_MESSAGE_DETACH_CALLBACK = "okeanos.data.services.CommunicationService#receiveMessageDetachCallback(SpaceObserver<IFact>)";
+	String ACTION_RECEIVE_MESSAGE_DETACH_CALLBACK = "okeanos.data.services.CommunicationService#receiveMessageDetachCallback(SpaceObserver<IFact>)";
 
 	/** The Constant ACTION_SEND. */
-	public static final String ACTION_SEND = "okeanos.data.services.CommunicationService#send(ICommunicationAddress, IFact)";
+	String ACTION_SEND = "okeanos.data.services.CommunicationService#send(ICommunicationAddress, IFact)";
 
 	/** The Constant ACTION_SEND_OPTIONS. */
-	public static final String ACTION_SEND_OPTIONS = "okeanos.data.services.CommunicationService#send(ICommunicationAddress, IFact, Map<String, String>)";
+	String ACTION_SEND_OPTIONS = "okeanos.data.services.CommunicationService#send(ICommunicationAddress, IFact, Map<String, String>)";
 
 	/** The Constant ACTION_SEND_STRING. */
-	public static final String ACTION_SEND_STRING = "okeanos.data.services.CommunicationService#send(String, IFact)";
+	String ACTION_SEND_STRING = "okeanos.data.services.CommunicationService#send(String, IFact)";
 
 	/** The Constant ACTION_SEND_STRING_OPTIONS. */
-	public static final String ACTION_SEND_STRING_OPTIONS = "okeanos.data.services.CommunicationService#send(String, IFact, Map<String, String>)";
+	String ACTION_SEND_STRING_OPTIONS = "okeanos.data.services.CommunicationService#send(String, IFact, Map<String, String>)";
 
 	/** The Constant ACTION_SEND_ASYNC. */
-	public static final String ACTION_SEND_ASYNC = "okeanos.data.services.CommunicationService#sendAsync(ICommunicationAddress, IFact)";
+	String ACTION_SEND_ASYNC = "okeanos.data.services.CommunicationService#sendAsync(ICommunicationAddress, IFact)";
 
 	/** The Constant ACTION_SEND_ASYNC_OPTIONS. */
-	public static final String ACTION_SEND_ASYNC_OPTIONS = "okeanos.data.services.CommunicationService#sendAsync(ICommunicationAddress, IFact, Map<String, String>)";
+	String ACTION_SEND_ASYNC_OPTIONS = "okeanos.data.services.CommunicationService#sendAsync(ICommunicationAddress, IFact, Map<String, String>)";
 
 	/** The Constant ACTION_SEND_ASYNC_STRING. */
-	public static final String ACTION_SEND_ASYNC_STRING = "okeanos.data.services.CommunicationService#sendAsync(String, IFact, Map<String, String>)";
+	String ACTION_SEND_ASYNC_STRING = "okeanos.data.services.CommunicationService#sendAsync(String, IFact, Map<String, String>)";
 
 	/** The Constant ACTION_SEND_ASYNC_STRING_OPTIONS. */
-	public static final String ACTION_SEND_ASYNC_STRING_OPTIONS = "okeanos.data.services.CommunicationService#sendAsync(String, IFact)";
+	String ACTION_SEND_ASYNC_STRING_OPTIONS = "okeanos.data.services.CommunicationService#sendAsync(String, IFact)";
 
 	/**
 	 * Broadcasts a message to the system. Depending on the scope, the message

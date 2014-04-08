@@ -1,11 +1,15 @@
 package okeanos.data.internal.services.agentbeans.communication;
 
+import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_CORRELATION_ID;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header;
 
 import org.sercho.masp.space.event.SpaceEvent;
 import org.sercho.masp.space.event.SpaceObserver;
@@ -40,18 +44,18 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 
 	private volatile State state = State.WAITING;
 
-	public JiacMessageReplyFuture(IAgent sender,
-			SpaceObserver<IFact> callback, IFact factToListenFor) {
+	public JiacMessageReplyFuture(final IAgent sender,
+			final SpaceObserver<IFact> callback, final IFact factToListenFor) {
 		this(sender, null, callback, factToListenFor);
 	}
 
-	public JiacMessageReplyFuture(IAgent sender, String messageId,
-			IFact factToListenFor) {
+	public JiacMessageReplyFuture(final IAgent sender, final String messageId,
+			final IFact factToListenFor) {
 		this(sender, messageId, null, factToListenFor);
 	}
 
-	private JiacMessageReplyFuture(IAgent sender, String messageId,
-			SpaceObserver<IFact> callback, IFact factToListenFor) {
+	private JiacMessageReplyFuture(final IAgent sender, final String messageId,
+			final SpaceObserver<IFact> callback, final IFact factToListenFor) {
 		this.sender = sender;
 		if (callback == null) {
 			this.callback = this;
@@ -66,13 +70,12 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 
 		JiacMessage listenerTemplate = new JiacMessage();
 		if (messageId != null) {
-			listenerTemplate.setHeader("OkeanosCommunicationCorrelationId",
-					messageId);
+			listenerTemplate.setHeader(COMMUNICATION_CORRELATION_ID, messageId);
 		}
 		if (factToListenFor != null) {
 			listenerTemplate.setPayload(factToListenFor);
 		}
-		log.trace("Adding listener [callback={}] for [message={}]",
+		log.debug("Adding listener [callback={}] for [message={}]",
 				this.callback, listenerTemplate);
 
 		// register listener
@@ -80,7 +83,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 	}
 
 	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
+	public boolean cancel(final boolean mayInterruptIfRunning) {
 		state = State.CANCELLED;
 		cleanUp();
 		return true;
@@ -100,7 +103,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 	}
 
 	@Override
-	public IJiacMessage get(long timeout, TimeUnit unit)
+	public IJiacMessage get(final long timeout, final TimeUnit unit)
 			throws InterruptedException, ExecutionException, TimeoutException {
 		log.trace("Trying to get item from Future, waiting maximal {}ms",
 				unit.toMillis(timeout));
@@ -124,7 +127,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void notify(SpaceEvent<? extends IFact> event) {
+	public void notify(final SpaceEvent<? extends IFact> event) {
 		if (event instanceof WriteCallEvent<?>) {
 			WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
 			try {

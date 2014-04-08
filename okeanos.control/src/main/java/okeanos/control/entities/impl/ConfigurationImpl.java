@@ -15,6 +15,13 @@ import okeanos.control.entities.Schedule;
  */
 public class ConfigurationImpl implements Configuration {
 
+	@Override
+	public String toString() {
+		return String
+				.format("ConfigurationImpl [possibleRuns=%s, scheduleOfOtherDevices=%s]",
+						possibleRuns, scheduleOfOtherDevices);
+	}
+
 	/** The id. */
 	private String id;
 

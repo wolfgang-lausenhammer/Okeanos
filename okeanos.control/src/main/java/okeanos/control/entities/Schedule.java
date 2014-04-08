@@ -26,7 +26,7 @@ public interface Schedule extends IFact {
 	 * 
 	 * @return the schedule
 	 */
-	Map<DateTime, Double> getSchedule();
+	Map<DateTime, Slot> getSchedule();
 
 	/**
 	 * Sets the schedule.
@@ -34,5 +34,5 @@ public interface Schedule extends IFact {
 	 * @param schedule
 	 *            the schedule
 	 */
-	void setSchedule(Map<DateTime, Double> schedule);
+	void setSchedule(Map<DateTime, Slot> schedule);
 }

@@ -13,13 +13,47 @@ import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * The Class TimeServiceImplTest.
+ */
 public class TimeServiceImplTest {
-	private static final long START_MILLIS = 1000L;
+
+	/** The Constant HIGH_PACE. */
+	private static final int HIGH_PACE = 4;
+
+	/** The Constant PACE_EIGHT. */
+	private static final int PACE_EIGHT = 8;
+
+	/** The Constant SLEEP_TIME. */
 	private static final long SLEEP_TIME = 100L;
-	private TimeServiceImpl timeService;
-	private long startNanosBefore;
+
+	/** The Constant SLOW_PACE. */
+	private static final double SLOW_PACE = 0.25;
+
+	/** The Constant START_MILLIS. */
+	private static final long START_MILLIS = 1000L;
+
+	/** The Constant THOUSAND. */
+	private static final long THOUSAND = 1000;
+
+	/** The Constant TOLERANCE. */
+	private static final long TOLERANCE = 50;
+
+	/** The start nanos after. */
 	private long startNanosAfter;
 
+	/** The start nanos before. */
+	private long startNanosBefore;
+
+	/** The time service. */
+	private TimeServiceImpl timeService;
+
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		DateTimeUtils.setCurrentMillisFixed(START_MILLIS);
@@ -28,20 +62,18 @@ public class TimeServiceImplTest {
 		startNanosAfter = System.nanoTime();
 	}
 
-	@Test
-	public void testTimeServiceImpl() {
-		long millis = timeService.currentTimeMillis();
-
-		assertThat(millis, is(greaterThan(START_MILLIS)));
-	}
-
+	/**
+	 * Test get millis.
+	 */
 	@Test
 	public void testGetMillis() {
 		long millis = timeService.getMillis();
 
 		long endNanos = System.nanoTime();
-		long durationMillisWithObjectCreation = (endNanos - startNanosBefore) / 1000;
-		long durationMillisWithoutObjectCreation = (endNanos - startNanosAfter) / 1000;
+		long durationMillisWithObjectCreation = (endNanos - startNanosBefore)
+				/ THOUSAND;
+		long durationMillisWithoutObjectCreation = (endNanos - startNanosAfter)
+				/ THOUSAND;
 
 		assertThat(millis, is(greaterThan(START_MILLIS)));
 		assertThat(
@@ -54,6 +86,9 @@ public class TimeServiceImplTest {
 				+ START_MILLIS)));
 	}
 
+	/**
+	 * Test set current date time.
+	 */
 	@Test
 	public void testSetCurrentDateTime() {
 		DateTime dateTime = new DateTime(START_MILLIS * 2);
@@ -67,36 +102,47 @@ public class TimeServiceImplTest {
 						equalTo(START_MILLIS * 2))));
 	}
 
+	/**
+	 * Test set pace.
+	 */
 	@Test
 	public void testSetPace() {
-		int PACE = 8;
+		int pace = PACE_EIGHT;
 
-		timeService.setPace(PACE);
+		timeService.setPace(pace);
 
 		long nanosBeforeBefore = System.nanoTime();
 		long millisBefore = timeService.getMillis();
 		long nanosBefore = System.nanoTime();
-		for (int i = 1000000; i > 0; i--)
-			;
+		for (int i = (int) (THOUSAND * THOUSAND); i > 0; i--) {
+		}
 		long nanosAfter = System.nanoTime();
 		long millisAfter = timeService.getMillis();
 		long nanosAfterAfter = System.nanoTime();
 
 		long differenceMillis = millisAfter - millisBefore;
-		long differenceNanosInMillisInner = (nanosAfter - nanosBefore) / 1000;
-		long differenceNanosInMillisOuter = (nanosAfterAfter - nanosBeforeBefore) / 1000;
+		long differenceNanosInMillisInner = (nanosAfter - nanosBefore)
+				/ THOUSAND;
+		long differenceNanosInMillisOuter = (nanosAfterAfter - nanosBeforeBefore)
+				/ THOUSAND;
 
 		assertThat(millisBefore, is(greaterThan(START_MILLIS)));
 		assertThat(millisAfter, is(greaterThan(START_MILLIS)));
 
 		assertThat(differenceMillis, is(lessThan(differenceNanosInMillisOuter
-				* PACE)));
+				* pace)));
 		assertThat(
 				differenceMillis,
-				is(anyOf(greaterThan(differenceNanosInMillisInner * PACE),
-						equalTo(differenceNanosInMillisInner * PACE))));
+				is(anyOf(greaterThan(differenceNanosInMillisInner * pace),
+						equalTo(differenceNanosInMillisInner * pace))));
 	}
 
+	/**
+	 * Test sleep millis.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
 	@Test
 	public void testSleepMillis() throws InterruptedException {
 		long before = System.nanoTime();
@@ -109,39 +155,61 @@ public class TimeServiceImplTest {
 				is(anyOf(greaterThan(SLEEP_TIME), equalTo(SLEEP_TIME))));
 	}
 
-	@Test
-	public void testSleepMillisSlowPace() throws InterruptedException {
-		double PACE = 0.25;
-
-		timeService.setPace(PACE);
-		long before = System.nanoTime();
-
-		timeService.sleep(SLEEP_TIME);
-
-		long after = System.nanoTime();
-		long difference = (after - before) / 1000 / 1000;
-		assertThat(difference, is(greaterThan(SLEEP_TIME)));
-		assertThat(
-				difference,
-				is(allOf(greaterThan((long) ((SLEEP_TIME - 50) / PACE)),
-						lessThan((long) ((SLEEP_TIME + 50) / PACE)))));
-	}
-
+	/**
+	 * Test sleep millis high pace.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
 	@Test
 	public void testSleepMillisHighPace() throws InterruptedException {
-		int PACE = 4;
+		int pace = HIGH_PACE;
 
-		timeService.setPace(PACE);
+		timeService.setPace(pace);
 		long before = System.nanoTime();
 
 		timeService.sleep(SLEEP_TIME);
 
 		long after = System.nanoTime();
-		long difference = (after - before) / 1000 / 1000;
+		long difference = (after - before) / THOUSAND / THOUSAND;
 		assertThat(difference, is(lessThan(SLEEP_TIME)));
 		assertThat(
 				difference,
-				is(allOf(greaterThan((long) ((SLEEP_TIME - 50) / PACE)),
-						lessThan((long) ((SLEEP_TIME + 50) / PACE)))));
+				is(allOf(greaterThan((long) ((SLEEP_TIME - TOLERANCE) / pace)),
+						lessThan((long) ((SLEEP_TIME + 2 * TOLERANCE) / pace)))));
+	}
+
+	/**
+	 * Test sleep millis slow pace.
+	 * 
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
+	@Test
+	public void testSleepMillisSlowPace() throws InterruptedException {
+		double pace = SLOW_PACE;
+
+		timeService.setPace(pace);
+		long before = System.nanoTime();
+
+		timeService.sleep(SLEEP_TIME);
+
+		long after = System.nanoTime();
+		long difference = (after - before) / THOUSAND / THOUSAND;
+		assertThat(difference, is(greaterThan(SLEEP_TIME)));
+		assertThat(
+				difference,
+				is(allOf(greaterThan((long) ((SLEEP_TIME - TOLERANCE) / pace)),
+						lessThan((long) ((SLEEP_TIME + TOLERANCE) / pace)))));
+	}
+
+	/**
+	 * Test time service impl.
+	 */
+	@Test
+	public void testTimeServiceImpl() {
+		long millis = timeService.currentTimeMillis();
+
+		assertThat(millis, is(greaterThan(START_MILLIS)));
 	}
 }

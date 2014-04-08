@@ -2,9 +2,9 @@ package okeanos.math.regression.periodic;
 
 import java.util.Arrays;
 
-import org.joda.time.DateTime;
-
 import okeanos.math.regression.TrendLine;
+
+import org.joda.time.DateTime;
 
 public class Periodic24hTrendline implements PeriodicTrendLine {
 	private PeriodicTrendLine periodicTrendLine;
@@ -20,7 +20,7 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 		trendLine.setValues(y, x);
 		DateTime beginning = new DateTime((long) x[0]);
 		DateTime nextDay = beginning.plusHours(24);
-		int numberOfItemsToCopy = 1;
+		int numberOfItemsToCopy = 0;
 		for (double item : x) {
 			if (new DateTime((long) item).isAfter(nextDay)) {
 				break;

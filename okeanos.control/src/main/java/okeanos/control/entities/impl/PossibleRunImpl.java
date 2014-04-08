@@ -21,6 +21,13 @@ import org.joda.time.DateTime;
  */
 public class PossibleRunImpl implements PossibleRun {
 
+	@Override
+	public String toString() {
+		return String
+				.format("PossibleRunImpl [earliestStartTime=%s, latestEndTime=%s, loadType=%s, neededSlots=%s]",
+						earliestStartTime, latestEndTime, loadType, neededSlots);
+	}
+
 	/** The earliest start time. */
 	private DateTime earliestStartTime;
 

@@ -3,10 +3,11 @@ package okeanos.control.entities.impl;
 import java.util.Map;
 
 import okeanos.control.entities.Schedule;
+import okeanos.control.entities.Slot;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
-// TODO: Auto-generated Javadoc
 /**
  * Represents a schedule of a household device. Contains the
  * consumption/production of a device for several points in time.
@@ -14,25 +15,13 @@ import org.joda.time.DateTime;
  * @author Wolfgang Lausenhammer
  */
 public class ScheduleImpl implements Schedule {
-
-	/** The serialVersionUID. */
-	private static final long serialVersionUID = -8286110109867048650L;
+	private static final long serialVersionUID = -6137167380166709470L;
 
 	/** The id. */
 	private String id;
 
 	/** The schedule. */
-	private Map<DateTime, Double> schedule;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return String.format("ScheduleImpl [id=%s]", id);
-	}
+	private Map<DateTime, Slot> schedule;
 
 	/**
 	 * Instantiates a new schedule.
@@ -42,6 +31,11 @@ public class ScheduleImpl implements Schedule {
 	 */
 	public ScheduleImpl(final String id) {
 		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("ScheduleImpl [schedule=%s]", schedule);
 	}
 
 	/*
@@ -60,7 +54,7 @@ public class ScheduleImpl implements Schedule {
 	 * @see okeanos.core.entities.Schedule#getSchedule()
 	 */
 	@Override
-	public Map<DateTime, Double> getSchedule() {
+	public Map<DateTime, Slot> getSchedule() {
 		return schedule;
 	}
 
@@ -70,7 +64,7 @@ public class ScheduleImpl implements Schedule {
 	 * @see okeanos.control.entities.Schedule#setSchedule(java.util.Map)
 	 */
 	@Override
-	public void setSchedule(final Map<DateTime, Double> schedule) {
+	public void setSchedule(final Map<DateTime, Slot> schedule) {
 		this.schedule = schedule;
 	}
 }
