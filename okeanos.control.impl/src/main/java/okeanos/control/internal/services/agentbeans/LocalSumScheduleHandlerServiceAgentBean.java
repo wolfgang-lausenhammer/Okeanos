@@ -46,12 +46,12 @@ import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
-@Component
+@Component("localSumScheduleHandlerServiceAgentBean")
 @Scope("prototype")
-public class ScheduleHandlerServiceAgentBeanImpl extends
+public class LocalSumScheduleHandlerServiceAgentBean extends
 		AbstractMethodExposingBean implements ScheduleHandlerServiceAgentBean {
 	private static final Logger LOG = LoggerFactory
-			.getLogger(ScheduleHandlerServiceAgentBeanImpl.class);
+			.getLogger(LocalSumScheduleHandlerServiceAgentBean.class);
 	private SchedulesReceivedCallback schedulesReceivedCallback;
 	private PossibleRunsCallback possibleRunsCallback;
 	private OptimizedRunsCallback optimizedRunsCallback;
@@ -68,7 +68,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 	private List<OptimizedRun> latestOptimizedRuns;
 
 	@Inject
-	public ScheduleHandlerServiceAgentBeanImpl(
+	public LocalSumScheduleHandlerServiceAgentBean(
 			final ControlEntitiesProvider controlEntitiesProvider,
 			final TaskScheduler taskScheduler) {
 		this.controlEntitiesProvider = controlEntitiesProvider;
@@ -382,10 +382,10 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 
 		private IActionDescription getAction(String actionString) {
 			IActionDescription template = new Action(actionString);
-			IActionDescription action = ScheduleHandlerServiceAgentBeanImpl.this.memory
+			IActionDescription action = LocalSumScheduleHandlerServiceAgentBean.this.memory
 					.read(template);
 			if (action == null) {
-				action = ScheduleHandlerServiceAgentBeanImpl.this.thisAgent
+				action = LocalSumScheduleHandlerServiceAgentBean.this.thisAgent
 						.searchAction(template);
 			}
 			return action;
@@ -399,7 +399,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			}
 			if (actionSchedulesReceivedCallback == null) {
 				LOG.info("{} - No action called {} available",
-						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						LocalSumScheduleHandlerServiceAgentBean.this.thisAgent,
 						ACTION_SCHEDULE_RECEIVED_CALLBACK);
 				return allSchedules;
 			}
@@ -410,7 +410,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			} else {
 				list = new LinkedList<>(lastOptimizedRuns);
 			}
-			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+			ActionResult result = LocalSumScheduleHandlerServiceAgentBean.this
 					.invokeAndWaitForResult(actionSchedulesReceivedCallback,
 							new Serializable[] { allSchedules, list });
 
@@ -424,12 +424,12 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			}
 			if (actionGetPossibleRuns == null) {
 				LOG.info("{} - No action called {} available",
-						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						LocalSumScheduleHandlerServiceAgentBean.this.thisAgent,
 						ACTION_GET_POSSIBLE_RUNS);
 				return null;
 			}
 
-			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+			ActionResult result = LocalSumScheduleHandlerServiceAgentBean.this
 					.invokeAndWaitForResult(actionGetPossibleRuns,
 							new Serializable[] {});
 
@@ -444,7 +444,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			}
 			if (actionOptimizedRunsCallback == null) {
 				LOG.info("{} - No action called {} available",
-						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						LocalSumScheduleHandlerServiceAgentBean.this.thisAgent,
 						ACTION_OPTIMIZED_RUNS_CALLBACK);
 				return optimizedRuns;
 			}
@@ -455,7 +455,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			} else {
 				list = new LinkedList<>(optimizedRuns);
 			}
-			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+			ActionResult result = LocalSumScheduleHandlerServiceAgentBean.this
 					.invokeAndWaitForResult(actionOptimizedRunsCallback,
 							new Serializable[] { list });
 
@@ -470,7 +470,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			}
 			if (actionEquilibrium == null) {
 				LOG.info("{} - No action called {} available",
-						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						LocalSumScheduleHandlerServiceAgentBean.this.thisAgent,
 						ACTION_EQUILIBRIUM);
 				return;
 			}
@@ -481,7 +481,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			} else {
 				list = new LinkedList<>(optimizedRuns);
 			}
-			ScheduleHandlerServiceAgentBeanImpl.this.invoke(actionEquilibrium,
+			LocalSumScheduleHandlerServiceAgentBean.this.invoke(actionEquilibrium,
 					new Serializable[] { schedule, list });
 		}
 
@@ -493,12 +493,12 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			}
 			if (actionFindBestConfiguration == null) {
 				LOG.info("{} - No action called {} available",
-						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						LocalSumScheduleHandlerServiceAgentBean.this.thisAgent,
 						ACTION_FIND_BEST_CONFIGURATION);
 				return null;
 			}
 
-			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+			ActionResult result = LocalSumScheduleHandlerServiceAgentBean.this
 					.invokeAndWaitForResult(actionFindBestConfiguration,
 							new Serializable[] { currentConfiguration });
 
