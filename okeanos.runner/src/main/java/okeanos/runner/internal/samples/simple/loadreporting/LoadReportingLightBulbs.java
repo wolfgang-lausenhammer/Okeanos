@@ -30,7 +30,7 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 public class LoadReportingLightBulbs {
 
 	/** The Constant PACE. */
-	private static final int PACE = 1;
+	private static final int PACE = 10;
 
 	/** The logger. */
 	@Logging
@@ -75,7 +75,7 @@ public class LoadReportingLightBulbs {
 		lightBulbEntity1.joinGroup(group);
 		lightBulbEntity2.joinGroup(group);
 
-		//this.timeService.setPace(PACE);
+		this.timeService.setPace(PACE);
 
 		lightBulbEntity1.addFunctionality(beanProvider.get());
 		lightBulbEntity2.addFunctionality(beanProvider.get());

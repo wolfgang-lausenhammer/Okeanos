@@ -14,6 +14,7 @@ import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.environment.IEffector;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 
+// TODO: Auto-generated Javadoc
 /**
  * An interface for all inter-agent communication services. Methods include the
  * synchronous and asynchronous sending and receiving of messages. Moreover,
@@ -22,13 +23,31 @@ import de.dailab.jiactng.agentcore.knowledge.IFact;
  * 
  * TODO: document what happens, when more than one message handler is registered
  * for a message
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public interface CommunicationServiceAgentBean extends IEffector {
 
+	/**
+	 * Combines constants that can be used and will be understood by both sides
+	 * of a communication.
+	 */
 	public final class Header {
+
+		/**
+		 * Private constructor to prevent instantiation.
+		 */
+		private Header() {
+		}
+
+		/** The Constant COMMUNICATION_CORRELATION_ID. */
 		public static final String COMMUNICATION_CORRELATION_ID = "OkeanosCommunicationCorrelationId";
-		public static final String COMMUNICATION_SENDER = "OkeanosCommunicationSender";
+
+		/** The Constant COMMUNICATION_RECEIVER. */
 		public static final String COMMUNICATION_RECEIVER = "OkeanosCommunicationReceiver";
+
+		/** The Constant COMMUNICATION_SENDER. */
+		public static final String COMMUNICATION_SENDER = "OkeanosCommunicationSender";
 	}
 
 	/** The Constant ACTION_BROADCAST. */
@@ -36,9 +55,6 @@ public interface CommunicationServiceAgentBean extends IEffector {
 
 	/** The Constant ACTION_RECEIVE_MESSAGE. */
 	String ACTION_RECEIVE_MESSAGE = "okeanos.data.services.CommunicationService#receiveMessage()";
-
-	/** The Constant ACTION_RECEIVE_MESSAGE_IFACT. */
-	String ACTION_RECEIVE_MESSAGE_IFACT = "okeanos.data.services.CommunicationService#receiveMessage(IFact)";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE_ASYNC. */
 	String ACTION_RECEIVE_MESSAGE_ASYNC = "okeanos.data.services.CommunicationService#receiveMessageAsync()";
@@ -55,17 +71,11 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	/** The Constant ACTION_RECEIVE_MESSAGE_DETACH_CALLBACK. */
 	String ACTION_RECEIVE_MESSAGE_DETACH_CALLBACK = "okeanos.data.services.CommunicationService#receiveMessageDetachCallback(SpaceObserver<IFact>)";
 
+	/** The Constant ACTION_RECEIVE_MESSAGE_IFACT. */
+	String ACTION_RECEIVE_MESSAGE_IFACT = "okeanos.data.services.CommunicationService#receiveMessage(IFact)";
+
 	/** The Constant ACTION_SEND. */
 	String ACTION_SEND = "okeanos.data.services.CommunicationService#send(ICommunicationAddress, IFact)";
-
-	/** The Constant ACTION_SEND_OPTIONS. */
-	String ACTION_SEND_OPTIONS = "okeanos.data.services.CommunicationService#send(ICommunicationAddress, IFact, Map<String, String>)";
-
-	/** The Constant ACTION_SEND_STRING. */
-	String ACTION_SEND_STRING = "okeanos.data.services.CommunicationService#send(String, IFact)";
-
-	/** The Constant ACTION_SEND_STRING_OPTIONS. */
-	String ACTION_SEND_STRING_OPTIONS = "okeanos.data.services.CommunicationService#send(String, IFact, Map<String, String>)";
 
 	/** The Constant ACTION_SEND_ASYNC. */
 	String ACTION_SEND_ASYNC = "okeanos.data.services.CommunicationService#sendAsync(ICommunicationAddress, IFact)";
@@ -78,6 +88,15 @@ public interface CommunicationServiceAgentBean extends IEffector {
 
 	/** The Constant ACTION_SEND_ASYNC_STRING_OPTIONS. */
 	String ACTION_SEND_ASYNC_STRING_OPTIONS = "okeanos.data.services.CommunicationService#sendAsync(String, IFact)";
+
+	/** The Constant ACTION_SEND_OPTIONS. */
+	String ACTION_SEND_OPTIONS = "okeanos.data.services.CommunicationService#send(ICommunicationAddress, IFact, Map<String, String>)";
+
+	/** The Constant ACTION_SEND_STRING. */
+	String ACTION_SEND_STRING = "okeanos.data.services.CommunicationService#send(String, IFact)";
+
+	/** The Constant ACTION_SEND_STRING_OPTIONS. */
+	String ACTION_SEND_STRING_OPTIONS = "okeanos.data.services.CommunicationService#send(String, IFact, Map<String, String>)";
 
 	/**
 	 * Broadcasts a message to the system. Depending on the scope, the message
@@ -183,6 +202,22 @@ public interface CommunicationServiceAgentBean extends IEffector {
 			throws CommunicationException;
 
 	/**
+	 * Send.
+	 * 
+	 * @param receiver
+	 *            the receiver
+	 * @param message
+	 *            the message
+	 * @param options
+	 *            the options
+	 * @return the i jiac message
+	 * @throws CommunicationException
+	 *             the communication exception
+	 */
+	IJiacMessage send(ICommunicationAddress receiver, IFact message,
+			Map<String, String> options) throws CommunicationException;
+
+	/**
 	 * Sends a message to a communication address and wait for an answer to that
 	 * message by listening out for the message id in the header. Use
 	 * {@link #sendAsync(IAgentBean, String, IFact)} if no answer is expected,
@@ -198,6 +233,22 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	 */
 	IJiacMessage send(String receiver, IFact message)
 			throws CommunicationException;
+
+	/**
+	 * Send.
+	 * 
+	 * @param receiver
+	 *            the receiver
+	 * @param message
+	 *            the message
+	 * @param options
+	 *            the options
+	 * @return the i jiac message
+	 * @throws CommunicationException
+	 *             the communication exception
+	 */
+	IJiacMessage send(String receiver, IFact message,
+			Map<String, String> options) throws CommunicationException;
 
 	/**
 	 * Sends a message to a communication address and returns a future, which
@@ -264,37 +315,5 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	 *             the communication exception
 	 */
 	Future<IJiacMessage> sendAsync(String receiver, IFact message,
-			Map<String, String> options) throws CommunicationException;
-
-	/**
-	 * Send.
-	 * 
-	 * @param receiver
-	 *            the receiver
-	 * @param message
-	 *            the message
-	 * @param options
-	 *            the options
-	 * @return the i jiac message
-	 * @throws CommunicationException
-	 *             the communication exception
-	 */
-	IJiacMessage send(ICommunicationAddress receiver, IFact message,
-			Map<String, String> options) throws CommunicationException;
-
-	/**
-	 * Send.
-	 * 
-	 * @param receiver
-	 *            the receiver
-	 * @param message
-	 *            the message
-	 * @param options
-	 *            the options
-	 * @return the i jiac message
-	 * @throws CommunicationException
-	 *             the communication exception
-	 */
-	IJiacMessage send(String receiver, IFact message,
 			Map<String, String> options) throws CommunicationException;
 }

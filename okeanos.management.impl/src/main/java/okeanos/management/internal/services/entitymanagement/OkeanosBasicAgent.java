@@ -37,7 +37,14 @@ public class OkeanosBasicAgent extends Agent {
 		this.timeService = timeService;
 		setCommunication(communication);
 		setMemory(memory);
-		setExecutionInterval(100);
+		setExecutionInterval(1000);
+	}
+
+	@Override
+	public void doInit() throws LifecycleException {
+		super.doInit();
+
+		setExecutionInterval(1000);
 	}
 
 	@Override

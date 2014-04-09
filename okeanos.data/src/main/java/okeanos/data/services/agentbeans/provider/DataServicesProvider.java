@@ -8,8 +8,8 @@ public interface DataServicesProvider {
 
 	CommunicationServiceAgentBean getNewCommunicationServiceAgentBean();
 
-	KnowledgeBaseServiceAgentBean getNewKnowledgeBaseServiceAgentBean();
-
 	GroupServiceAgentBean getNewGroupServiceAgentBean();
+
+	KnowledgeBaseServiceAgentBean getNewKnowledgeBaseServiceAgentBean();
 
 }

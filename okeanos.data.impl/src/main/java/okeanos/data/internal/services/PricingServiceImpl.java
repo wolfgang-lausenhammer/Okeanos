@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.inject.Inject;
 
@@ -63,16 +62,14 @@ public class PricingServiceImpl implements PricingService {
 	 * 
 	 * @param pricingResource
 	 *            the pricing resource
-	 * @throws JsonSyntaxException
-	 *             if the json is malformed
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred, if the resource
 	 *             could not be read.
 	 */
 	@Inject
 	public PricingServiceImpl(
-			@Value("${okeanos.pricing.service.pathToPricingFile}") Resource pricingResource)
-			throws JsonSyntaxException, IOException {
+			@Value("${okeanos.pricing.service.pathToPricingFile}") final Resource pricingResource)
+			throws IOException {
 		this.pricingResource = pricingResource;
 
 		registerGson();
@@ -87,7 +84,7 @@ public class PricingServiceImpl implements PricingService {
 	 * )
 	 */
 	@Override
-	public CostFunction getCostFunction(DateTime at) {
+	public CostFunction getCostFunction(final DateTime at) {
 		CostFunction closestMatchingCostFunction = null;
 
 		for (Entry<DateTime, CostFunction> entry : costFunctions.entrySet()) {
@@ -124,7 +121,7 @@ public class PricingServiceImpl implements PricingService {
 	 * )
 	 */
 	@Override
-	public Collection<CostFunction> getCostFunctions(DateTime to) {
+	public Collection<CostFunction> getCostFunctions(final DateTime to) {
 		return getCostFunctions(DateTime.now(), to);
 	}
 
@@ -136,7 +133,8 @@ public class PricingServiceImpl implements PricingService {
 	 * , org.joda.time.DateTime)
 	 */
 	@Override
-	public Collection<CostFunction> getCostFunctions(DateTime from, DateTime to) {
+	public Collection<CostFunction> getCostFunctions(final DateTime from,
+			final DateTime to) {
 		if (from.isAfter(to)) {
 			throw new RuntimeException(String.format(
 					"from [%s] must be earlier than to [%s]", from, to));
@@ -168,10 +166,12 @@ public class PricingServiceImpl implements PricingService {
 	public void refreshPricingResource() throws JsonSyntaxException,
 			IOException {
 		String jsonString = IOUtils.toString(pricingResource.getInputStream());
-		if (log != null)
+		if (log != null) {
 			log.trace("New pricing resource with content: {}", jsonString);
-		if (log != null)
+		}
+		if (log != null) {
 			log.debug("refreshing....");
+		}
 
 		List<CostFunction> costFunctionsList = gson.fromJson(jsonString,
 				new TypeToken<List<CostFunction>>() {
@@ -184,9 +184,10 @@ public class PricingServiceImpl implements PricingService {
 
 		this.costFunctions = costFunctionsMap;
 
-		if (log != null)
+		if (log != null) {
 			log.trace("New cost functions:\n[{}]",
 					StringUtils.join(costFunctionsList, StringUtils.LF));
+		}
 	}
 
 	/**
@@ -212,10 +213,11 @@ public class PricingServiceImpl implements PricingService {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void updatePricingResource(Resource pricingResource)
+	public void updatePricingResource(final Resource pricingResource)
 			throws JsonSyntaxException, IOException {
-		if (log != null)
+		if (log != null) {
 			log.trace("Pricing resource updated to {}", pricingResource);
+		}
 		this.pricingResource = pricingResource;
 		refreshPricingResource();
 	}

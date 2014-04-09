@@ -2,6 +2,8 @@ package okeanos.data.services;
 
 /**
  * The UUIDGenerator interface combines methods for generating unique IDs.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public interface UUIDGenerator {
 

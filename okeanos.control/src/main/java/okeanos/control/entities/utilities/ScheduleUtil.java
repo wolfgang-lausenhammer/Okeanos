@@ -1,6 +1,7 @@
 package okeanos.control.entities.utilities;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -45,7 +46,7 @@ public class ScheduleUtil implements Comparator<Schedule> {
 		if (schedule1 == null || schedule2 == null) {
 			return -1;
 		}
-		
+
 		if (schedule1.getSchedule() == null || schedule2.getSchedule() == null) {
 			return -1;
 		}
@@ -153,10 +154,14 @@ public class ScheduleUtil implements Comparator<Schedule> {
 	 * @return the schedule
 	 */
 	public Schedule toSchedule(final List<OptimizedRun> optimizedRuns) {
+		List<OptimizedRun> optimizedRunsAdapted = optimizedRuns;
+		if (optimizedRunsAdapted == null) {
+			optimizedRunsAdapted = new LinkedList<>();
+		}
 		Schedule schedule = controlEntitiesProvider.getNewSchedule();
 
 		LargeSerializableConcurrentSkipListMap<DateTime, Slot> scheduleMap = new LargeSerializableConcurrentSkipListMap<>();
-		for (OptimizedRun run : optimizedRuns) {
+		for (OptimizedRun run : optimizedRunsAdapted) {
 			DateTime currentEntryTime = run.getStartTime();
 
 			for (Slot slot : run.getNeededSlots()) {

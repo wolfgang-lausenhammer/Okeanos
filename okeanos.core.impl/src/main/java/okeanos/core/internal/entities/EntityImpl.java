@@ -1,6 +1,5 @@
 package okeanos.core.internal.entities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +10,6 @@ import okeanos.core.entities.Entity;
 import okeanos.core.entities.Group;
 import okeanos.core.entities.builder.EntityBuilder;
 import okeanos.data.services.agentbeans.entities.GroupFact;
-import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +20,6 @@ import org.springframework.stereotype.Component;
 import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.IAgent;
 import de.dailab.jiactng.agentcore.IAgentBean;
-import de.dailab.jiactng.agentcore.action.Action;
-import de.dailab.jiactng.agentcore.comm.CommunicationAddressFactory;
-import de.dailab.jiactng.agentcore.comm.CommunicationBean;
 import de.dailab.jiactng.agentcore.environment.IEffector;
 import de.dailab.jiactng.agentcore.knowledge.IMemory;
 import de.dailab.jiactng.agentcore.lifecycle.ILifecycle.LifecycleStates;
@@ -35,6 +30,8 @@ import de.dailab.jiactng.agentcore.ontology.ThisAgentDescription;
 
 /**
  * The Class EntityImpl.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 @Scope("prototype")
@@ -63,11 +60,12 @@ public class EntityImpl implements Entity {
 		 */
 		@Inject
 		public EntityBuilderImpl(
-				@Value("#{ uuidGenerator.generateUUID() }") String id) {
+				@Value("#{ uuidGenerator.generateUUID() }") final String id) {
 			this.id = id;
-			if (id == null)
+			if (id == null) {
 				throw new NullPointerException(
 						"ID is null, check if Spring Expression term is right");
+			}
 		}
 
 		/*
@@ -78,7 +76,7 @@ public class EntityImpl implements Entity {
 		 * .agentcore.IAgent)
 		 */
 		@Override
-		public EntityBuilder agent(IAgent agent) {
+		public EntityBuilder agent(final IAgent agent) {
 			this.agent = agent;
 
 			return this;
@@ -102,7 +100,7 @@ public class EntityImpl implements Entity {
 		 * )
 		 */
 		@Override
-		public EntityBuilder fromJson(String entityAsJson) {
+		public EntityBuilder fromJson(final String entityAsJson) {
 			throw new NullPointerException(
 					"EntityBuilder from json not yet implemented!");
 			// return this;
@@ -126,7 +124,8 @@ public class EntityImpl implements Entity {
 	 *            the id
 	 */
 	@Inject
-	public EntityImpl(@Value("#{ uuidGenerator.generateUUID() }") String id) {
+	public EntityImpl(
+			@Value("#{ uuidGenerator.generateUUID() }") final String id) {
 		this.id = id;
 	}
 
@@ -136,13 +135,13 @@ public class EntityImpl implements Entity {
 	 * @param entityBuilder
 	 *            the entity builder
 	 */
-	private EntityImpl(EntityBuilderImpl entityBuilder) {
+	private EntityImpl(final EntityBuilderImpl entityBuilder) {
 		this.id = entityBuilder.id;
 		this.agent = entityBuilder.agent;
 	}
 
 	@Override
-	public void joinGroup(Group group) {
+	public void joinGroup(final Group group) {
 		log.debug("Entity [entity={}] joining group [group={}]", this, group);
 		Agent agent = ((Agent) this.agent);
 		IMemory memory = agent.getMemory();
@@ -151,7 +150,7 @@ public class EntityImpl implements Entity {
 	}
 
 	@Override
-	public void leaveGroup(Group group) {
+	public void leaveGroup(final Group group) {
 		log.debug("Entity [entity={}] leaving group [group={}]", this, group);
 		Agent agent = ((Agent) this.agent);
 		IMemory memory = agent.getMemory();
@@ -167,13 +166,15 @@ public class EntityImpl implements Entity {
 	 * .IAgentBean[])
 	 */
 	@Override
-	public void addFunctionality(IAgentBean... functionality)
+	public void addFunctionality(final IAgentBean... functionality)
 			throws LifecycleException {
-		if (functionality == null)
+		if (functionality == null) {
 			throw new NullPointerException("functionality must not be null");
-		if (functionality.length == 0)
+		}
+		if (functionality.length == 0) {
 			throw new NullPointerException(
 					"functionality must contain at least one element");
+		}
 
 		if (log != null) {
 			log.debug("Adding {} functionalities to entity [{}]",
@@ -185,16 +186,18 @@ public class EntityImpl implements Entity {
 		oldBeansPlusNew.addAll(beans);
 		oldBeansPlusNew.addAll(Arrays.asList(functionality));
 
-		for (IAgentBean ab : functionality)
+		for (IAgentBean ab : functionality) {
 			ab.setThisAgent(agent);
+		}
 
 		agent.setAgentBeans(oldBeansPlusNew);
 		doInitOfNewBeans(functionality);
 		doStartOfNewBeans(functionality);
 
-		if (log != null)
+		if (log != null) {
 			log.debug("Finished adding {} functionalities to entity [{}]",
 					functionality.length, this);
+		}
 	}
 
 	/**
@@ -205,7 +208,7 @@ public class EntityImpl implements Entity {
 	 * @throws LifecycleException
 	 *             if an agent bean could not be initialized
 	 */
-	private void doInitOfNewBeans(IAgentBean... agentBeans)
+	private void doInitOfNewBeans(final IAgentBean... agentBeans)
 			throws LifecycleException {
 		Agent agent = ((Agent) this.agent);
 		IMemory memory = agent.getMemory();
@@ -260,7 +263,7 @@ public class EntityImpl implements Entity {
 	 * @throws LifecycleException
 	 *             if an agent bean could not be started
 	 */
-	private void doStartOfNewBeans(IAgentBean... agentBeans)
+	private void doStartOfNewBeans(final IAgentBean... agentBeans)
 			throws LifecycleException {
 		Agent agent = ((Agent) this.agent);
 
@@ -305,7 +308,7 @@ public class EntityImpl implements Entity {
 	 * okeanos.core.entities.Entity#setAgent(de.dailab.jiactng.agentcore.IAgent)
 	 */
 	@Override
-	public void setAgent(IAgent agent) {
+	public void setAgent(final IAgent agent) {
 		this.agent = agent;
 	}
 

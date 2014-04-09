@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * The Class GridImpl.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 @Scope("singleton")
@@ -22,7 +24,7 @@ public class GridImpl extends GroupImpl implements Grid {
 	 *            the id
 	 */
 	@Inject
-	public GridImpl(@Value("#{ uuidGenerator.generateUUID() }") String id) {
+	public GridImpl(@Value("#{ uuidGenerator.generateUUID() }") final String id) {
 		super(id);
 	}
 }

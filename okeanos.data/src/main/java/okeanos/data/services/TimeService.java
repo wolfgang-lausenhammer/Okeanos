@@ -3,7 +3,6 @@ package okeanos.data.services;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The TimeService interface provides an abstraction to the real world clock.
  * For simulations it is preferable to not have to wait for an event to happen
@@ -22,8 +21,32 @@ import org.joda.time.DateTimeUtils;
  * @see DateTimeUtils.MillisProvider
  * @see DateTimeUtils#currentTimeMillis()
  * @see System#currentTimeMillis()
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public interface TimeService {
+
+	/**
+	 * Returns the current time in millis. Is a replacement for
+	 * {@link System#currentTimeMillis()}.
+	 * 
+	 * @return the difference, measured in milliseconds, between the current
+	 *         time and midnight, January 1, 1970 UTC.
+	 * 
+	 * @see System#currentTimeMillis()
+	 * @see DateTimeUtils#currentTimeMillis()
+	 */
+	long currentTimeMillis();
+
+	/**
+	 * Sets the current date time to the specified point in time. Can be used to
+	 * skip an uninteresting part of the day or to go back to a point in time
+	 * for simulation or other use cases.
+	 * 
+	 * @param dateTime
+	 *            the new point in time
+	 */
+	void setCurrentDateTime(DateTime dateTime);
 
 	/**
 	 * Sets the pace.
@@ -41,28 +64,6 @@ public interface TimeService {
 	void setPace(double factor);
 
 	/**
-	 * Sets the current date time to the specified point in time. Can be used to
-	 * skip an uninteresting part of the day or to go back to a point in time
-	 * for simulation or other use cases.
-	 * 
-	 * @param dateTime
-	 *            the new point in time
-	 */
-	void setCurrentDateTime(DateTime dateTime);
-
-	/**
-	 * Returns the current time in millis. Is a replacement for
-	 * {@link System#currentTimeMillis()}.
-	 * 
-	 * @return the difference, measured in milliseconds, between the current
-	 *         time and midnight, January 1, 1970 UTC.
-	 * 
-	 * @see System#currentTimeMillis()
-	 * @see DateTimeUtils#currentTimeMillis()
-	 */
-	long currentTimeMillis();
-
-	/**
 	 * Puts the current thread to sleep. If the pace is changed (
 	 * {@link #setPace(double)}) the method will adjust the given time in ms
 	 * accordingly, so that it will return sooner for a higher pace or later for
@@ -70,14 +71,10 @@ public interface TimeService {
 	 * 
 	 * @param millis
 	 *            the length of time to sleep in milliseconds
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the value of millis is negative
 	 * @throws InterruptedException
 	 *             if any thread has interrupted the current thread. The
 	 *             interrupted status of the current thread is cleared when this
 	 *             exception is thrown.
-	 * 
 	 * @see Thread#sleep(long)
 	 */
 	void sleep(long millis) throws InterruptedException;
@@ -92,15 +89,10 @@ public interface TimeService {
 	 *            the length of time to sleep in milliseconds
 	 * @param nanos
 	 *            0-999999 additional nanoseconds to sleep
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the value of millis is negative, or the value of nanos is
-	 *             not in the range 0-999999
 	 * @throws InterruptedException
 	 *             if any thread has interrupted the current thread. The
 	 *             interrupted status of the current thread is cleared when this
 	 *             exception is thrown.
-	 * 
 	 * @see Thread#sleep(long,int)
 	 */
 	void sleep(long millis, int nanos) throws InterruptedException;

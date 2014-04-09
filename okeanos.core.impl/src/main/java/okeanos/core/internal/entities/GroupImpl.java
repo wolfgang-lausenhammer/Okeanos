@@ -4,9 +4,7 @@ import javax.inject.Inject;
 
 import okeanos.core.entities.Entity;
 import okeanos.core.entities.Group;
-import okeanos.core.entities.builder.EntityBuilder;
 import okeanos.core.entities.builder.GroupBuilder;
-import okeanos.core.internal.entities.EntityImpl.EntityBuilderImpl;
 import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
@@ -14,10 +12,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import de.dailab.jiactng.agentcore.IAgent;
-
 /**
  * The Class GroupImpl.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 @Scope("prototype")
@@ -46,11 +44,12 @@ public class GroupImpl extends EntityImpl implements Group {
 		 */
 		@Inject
 		public GroupBuilderImpl(
-				@Value("#{ uuidGenerator.generateUUID() }") String id) {
+				@Value("#{ uuidGenerator.generateUUID() }") final String id) {
 			this.id = id;
-			if (id == null)
+			if (id == null) {
 				throw new NullPointerException(
 						"ID is null, check if Spring Expression term is right");
+			}
 		}
 
 		/*
@@ -61,7 +60,7 @@ public class GroupImpl extends EntityImpl implements Group {
 		 * .agentcore.IAgent)
 		 */
 		@Override
-		public GroupBuilder entity(Entity entity) {
+		public GroupBuilder entity(final Entity entity) {
 			this.entity = entity;
 
 			return this;
@@ -90,7 +89,7 @@ public class GroupImpl extends EntityImpl implements Group {
 	 *            the id
 	 */
 	@Inject
-	public GroupImpl(@Value("#{ uuidGenerator.generateUUID() }") String id) {
+	public GroupImpl(@Value("#{ uuidGenerator.generateUUID() }") final String id) {
 		super(id);
 	}
 
@@ -100,7 +99,7 @@ public class GroupImpl extends EntityImpl implements Group {
 	 * @param groupBuilder
 	 *            the group builder
 	 */
-	private GroupImpl(GroupBuilderImpl groupBuilder) {
+	private GroupImpl(final GroupBuilderImpl groupBuilder) {
 		super(groupBuilder.id);
 		setAgent(groupBuilder.entity.getAgent());
 	}

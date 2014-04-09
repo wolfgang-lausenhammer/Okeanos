@@ -7,14 +7,14 @@ import okeanos.data.services.entities.CostFunction;
 
 import org.joda.time.DateTime;
 
-import com.google.gson.JsonSyntaxException;
-
 /**
  * An interface for all issues related to pricing. Every energy provider could
  * have its own pricing scheme. Agents can then choose whichever energy provider
  * they get their energy from.
  * 
  * Functions aim at providing requesters with a detailed overview of the prices.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public interface PricingService {
 
@@ -63,11 +63,9 @@ public interface PricingService {
 	/**
 	 * Refreshes the pricing resource.
 	 * 
-	 * @throws JsonSyntaxException
-	 *             if the json is malformed
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred, if the resource
 	 *             could not be read.
 	 */
-	void refreshPricingResource() throws JsonSyntaxException, IOException;
+	void refreshPricingResource() throws IOException;
 }

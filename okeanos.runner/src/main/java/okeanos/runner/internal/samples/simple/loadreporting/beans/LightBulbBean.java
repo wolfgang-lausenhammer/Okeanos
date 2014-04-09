@@ -3,7 +3,6 @@ package okeanos.runner.internal.samples.simple.loadreporting.beans;
 import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_SENDER;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -20,12 +19,10 @@ import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 import okeanos.control.entities.utilities.ScheduleUtil;
-import okeanos.data.services.TimeService;
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.data.services.entities.MessageScope;
 import okeanos.math.regression.LargeSerializableConcurrentSkipListMap;
 import okeanos.model.entities.Load;
-import okeanos.runner.internal.samples.twoagents.beans.entities.Ping;
 import okeanos.spring.misc.stereotypes.Logging;
 
 import org.apache.commons.lang3.StringUtils;
@@ -78,9 +75,6 @@ public class LightBulbBean extends AbstractAgentBean implements
 	/** The light bulb model. */
 	private Load lightBulb;
 
-	/** The action send async options. */
-	private IActionDescription actionSendAsyncOptions;
-
 	/** The my last announced schedule. */
 	private Schedule myLastAnnouncedSchedule;
 
@@ -89,12 +83,6 @@ public class LightBulbBean extends AbstractAgentBean implements
 
 	/** The my last optimized runs. */
 	private List<OptimizedRun> myLastOptimizedRuns;
-
-	/** The last change. */
-	private DateTime lastChange;
-
-	/** The time service. */
-	private TimeService timeService;
 
 	/** The task scheduler. */
 	private TaskScheduler taskScheduler;
@@ -130,17 +118,21 @@ public class LightBulbBean extends AbstractAgentBean implements
 	@Inject
 	public LightBulbBean(final ControlEntitiesProvider controlEntitiesProvider,
 			@Qualifier("lightBulb100W") final Load lightBulb,
-			final TimeService timeService,
 			final ControlAlgorithm controlAlgorithm,
 			final TaskScheduler taskScheduler) {
 		this.controlEntitiesProvider = controlEntitiesProvider;
 		this.lightBulb = lightBulb;
-		this.timeService = timeService;
 		this.controlAlgorithm = controlAlgorithm;
 		this.taskScheduler = taskScheduler;
 		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
-		this.setExecutionInterval(EXECUTION_INTERVAL);
 		random = new Random();
+	}
+
+	@Override
+	public void doInit() throws Exception {
+		super.doInit();
+
+		setExecutionInterval(EXECUTION_INTERVAL);
 	}
 
 	/*
@@ -160,13 +152,6 @@ public class LightBulbBean extends AbstractAgentBean implements
 		}
 
 		template = new Action(
-				CommunicationServiceAgentBean.ACTION_SEND_ASYNC_OPTIONS);
-		actionSendAsyncOptions = memory.read(template);
-		if (actionSendAsyncOptions == null) {
-			actionSendAsyncOptions = thisAgent.searchAction(template);
-		}
-
-		template = new Action(
 				CommunicationServiceAgentBean.ACTION_RECEIVE_MESSAGE_CALLBACK_IFACT);
 		IActionDescription actionReceiveMessageCallbackIfact = memory
 				.read(template);
@@ -177,10 +162,6 @@ public class LightBulbBean extends AbstractAgentBean implements
 		Schedule schedule = new ScheduleImpl(null);
 		invoke(actionReceiveMessageCallbackIfact, new Serializable[] { this,
 				schedule });
-
-		if (lastChange != null) {
-			lastChange = new DateTime(timeService.currentTimeMillis());
-		}
 
 	}
 
@@ -308,7 +289,7 @@ public class LightBulbBean extends AbstractAgentBean implements
 				if (log != null) {
 					log.debug("{} - Announcing new optimized schedule",
 							thisAgent.getAgentName());
-					log.debug("{}\n{}", thisAgent.getAgentName(), StringUtils
+					log.trace("{}\n{}", thisAgent.getAgentName(), StringUtils
 							.join(schedule.getSchedule().entrySet(), '\n'));
 				}
 				invoke(actionBroadcast, new Serializable[] {
@@ -324,8 +305,9 @@ public class LightBulbBean extends AbstractAgentBean implements
 				if (log != null) {
 					log.info("{} - Schedule remained unchanged.",
 							thisAgent.getAgentName());
-					log.debug("{}\n{}", thisAgent.getAgentName(), StringUtils
-							.join(latestSchedule.getSchedule().entrySet(), '\n'));
+					log.trace("{}\n{}", thisAgent.getAgentName(),
+							StringUtils.join(latestSchedule.getSchedule()
+									.entrySet(), '\n'));
 				}
 
 				// do something if all devices found their best schedules

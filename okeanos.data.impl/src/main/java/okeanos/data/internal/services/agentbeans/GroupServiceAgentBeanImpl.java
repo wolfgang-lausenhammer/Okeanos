@@ -25,6 +25,8 @@ import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
 /**
  * The Class GroupServiceAgentBeanImpl.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 @Scope("prototype")
