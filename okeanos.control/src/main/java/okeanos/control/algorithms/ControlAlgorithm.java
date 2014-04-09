@@ -15,6 +15,9 @@ import okeanos.control.entities.OptimizedRun;
  */
 public interface ControlAlgorithm {
 
+	/** The action find best configuration. */
+	String ACTION_FIND_BEST_CONFIGURATION = "okeanos.control.algorithms.ControlAlgorithm#findBestConfiguration(Configuration)";
+
 	/**
 	 * Finds the best configuration with the sum of other devices' consumptions
 	 * at different times and a list of possible runs.

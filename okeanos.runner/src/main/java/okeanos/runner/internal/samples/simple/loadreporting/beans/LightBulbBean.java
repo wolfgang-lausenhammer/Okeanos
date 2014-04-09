@@ -1,12 +1,6 @@
 package okeanos.runner.internal.samples.simple.loadreporting.beans;
 
-import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_SENDER;
-
-import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ScheduledFuture;
 
 import javax.inject.Inject;
 
@@ -15,34 +9,21 @@ import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Schedule;
-import okeanos.control.entities.Slot;
-import okeanos.control.entities.impl.ScheduleImpl;
-import okeanos.control.entities.provider.ControlEntitiesProvider;
-import okeanos.control.entities.utilities.ScheduleUtil;
-import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
-import okeanos.data.services.entities.MessageScope;
-import okeanos.math.regression.LargeSerializableConcurrentSkipListMap;
+import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
+import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
+import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
+import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
 import okeanos.model.entities.Load;
-import okeanos.spring.misc.stereotypes.Logging;
 
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.sercho.masp.space.event.SpaceEvent;
-import org.sercho.masp.space.event.SpaceObserver;
-import org.sercho.masp.space.event.WriteCallEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
-import de.dailab.jiactng.agentcore.AbstractAgentBean;
-import de.dailab.jiactng.agentcore.action.Action;
-import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
-import de.dailab.jiactng.agentcore.knowledge.IFact;
-import de.dailab.jiactng.agentcore.ontology.IActionDescription;
+import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 
+// TODO: Auto-generated Javadoc
 /**
  * The light bulb bean that provides the main action to the light bulb agent.
  * 
@@ -50,119 +31,48 @@ import de.dailab.jiactng.agentcore.ontology.IActionDescription;
  */
 @Component
 @Scope("prototype")
-public class LightBulbBean extends AbstractAgentBean implements
-		SpaceObserver<IFact> {
-
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 5311309436889351318L;
+public class LightBulbBean extends AbstractMethodExposingBean implements
+		EquilibriumFoundCallback, OptimizedRunsCallback, PossibleRunsCallback,
+		SchedulesReceivedCallback, ControlAlgorithm {
 
 	/** The Constant EXECUTION_INTERVAL. */
 	private static final int EXECUTION_INTERVAL = 8000;
 
+	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(LightBulbBean.class);
-
-	/** The log. */
-	@Logging
-	private Logger log = LoggerFactory.getLogger(LightBulbBean.class);
-
-	/** The communication action to broadcast messages. */
-	private IActionDescription actionBroadcast;
-
-	/** The control entities provider. */
-	private ControlEntitiesProvider controlEntitiesProvider;
 
 	/** The light bulb model. */
 	private Load lightBulb;
 
-	/** The my last announced schedule. */
-	private Schedule myLastAnnouncedSchedule;
-
-	/** The latest schedule. */
-	private Schedule latestSchedule;
-
-	/** The my last optimized runs. */
-	private List<OptimizedRun> myLastOptimizedRuns;
-
-	/** The task scheduler. */
-	private TaskScheduler taskScheduler;
-
-	/** The possible runs today. */
-	private List<PossibleRun> possibleRunsToday;
-
-	/** The next scheduled announce schedule. */
-	private ScheduledFuture nextScheduledAnnounceSchedule;
-
-	/** The random. */
-	private Random random;
-
 	/** The control algorithm. */
 	private ControlAlgorithm controlAlgorithm;
-
-	private ScheduleUtil scheduleUtil;
 
 	/**
 	 * Instantiates a new light bulb bean.
 	 * 
-	 * @param controlEntitiesProvider
-	 *            the control entities provider
 	 * @param lightBulb
 	 *            the light bulb
-	 * @param timeService
-	 *            the time service
 	 * @param controlAlgorithm
 	 *            the control algorithm
-	 * @param taskScheduler
-	 *            the task scheduler
 	 */
 	@Inject
-	public LightBulbBean(final ControlEntitiesProvider controlEntitiesProvider,
-			@Qualifier("lightBulb100W") final Load lightBulb,
-			final ControlAlgorithm controlAlgorithm,
-			final TaskScheduler taskScheduler) {
-		this.controlEntitiesProvider = controlEntitiesProvider;
+	public LightBulbBean(@Qualifier("lightBulb100W") final Load lightBulb,
+			final ControlAlgorithm controlAlgorithm) {
 		this.lightBulb = lightBulb;
 		this.controlAlgorithm = controlAlgorithm;
-		this.taskScheduler = taskScheduler;
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
-		random = new Random();
-	}
-
-	@Override
-	public void doInit() throws Exception {
-		super.doInit();
-
-		setExecutionInterval(EXECUTION_INTERVAL);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.dailab.jiactng.agentcore.AbstractAgentBean#doStart()
+	 * @see de.dailab.jiactng.agentcore.AbstractAgentBean#doInit()
 	 */
 	@Override
-	public void doStart() throws Exception {
-		super.doStart();
+	public void doInit() throws Exception {
+		super.doInit();
 
-		IActionDescription template = new Action(
-				CommunicationServiceAgentBean.ACTION_BROADCAST);
-		actionBroadcast = memory.read(template);
-		if (actionBroadcast == null) {
-			actionBroadcast = thisAgent.searchAction(template);
-		}
-
-		template = new Action(
-				CommunicationServiceAgentBean.ACTION_RECEIVE_MESSAGE_CALLBACK_IFACT);
-		IActionDescription actionReceiveMessageCallbackIfact = memory
-				.read(template);
-		if (actionReceiveMessageCallbackIfact == null) {
-			actionReceiveMessageCallbackIfact = thisAgent
-					.searchAction(template);
-		}
-		Schedule schedule = new ScheduleImpl(null);
-		invoke(actionReceiveMessageCallbackIfact, new Serializable[] { this,
-				schedule });
-
+		setExecutionInterval(EXECUTION_INTERVAL);
 	}
 
 	/**
@@ -172,146 +82,65 @@ public class LightBulbBean extends AbstractAgentBean implements
 	 */
 	@Override
 	public void execute() {
-		log.info("{} - LightBulbBean execute() called",
+		LOG.info("{} - LightBulbBean execute() called",
 				thisAgent.getAgentName());
-		possibleRunsToday = lightBulb.getPossibleRuns();
 
-		// Next schedule earliest in 1s and then randomly distributed within the
-		// next 5s so that not all device announce their schedule at the same
-		// time. If another device announced its schedule before this, the task
-		// gets cancelled and a new task will be scheduled see #notify.
-		nextScheduledAnnounceSchedule = taskScheduler.schedule(
-				new AnnounceSchedule(),
-				new DateTime(System.currentTimeMillis()).plusSeconds(1)
-						.plusMillis(random.nextInt(2500)).toDate());
-
+		// call reset of ScheduleHandlerServiceAgentBean here to make it ready
+		// for next iteration
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.sercho.masp.space.event.SpaceObserver#notify(org.sercho.masp.space
-	 * .event.SpaceEvent)
+	/* (non-Javadoc)
+	 * @see okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback#schedulesReceivedCallback(okeanos.control.entities.Schedule, java.util.List)
 	 */
-	@SuppressWarnings("unchecked")
+	@Expose(name = ACTION_SCHEDULE_RECEIVED_CALLBACK)
 	@Override
-	public void notify(final SpaceEvent<? extends IFact> event) {
-		log.trace("{} - [event={}]", thisAgent.getAgentName(), event);
-		if (event instanceof WriteCallEvent<?>) {
-			WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
-
-			// consume message
-			IJiacMessage message = memory.remove(wce.getObject());
-
-			// check if message was sent by current agent, if so, ignore it
-			if (thisAgent.getAgentDescription().getMessageBoxAddress()
-					.toString().equals(message.getHeader(COMMUNICATION_SENDER))) {
-				return;
-			}
-
-			if (log != null) {
-				log.info("{} - Broadcast Message received.",
-						thisAgent.getAgentName());
-				log.info(
-						"{} - Cancelling current announce schedule and schedule new one.",
-						thisAgent.getAgentName());
-			}
-
-			nextScheduledAnnounceSchedule.cancel(true);
-
-			latestSchedule = (Schedule) message.getPayload();
-
-			if (log != null) {
-				log.trace("{} - doing something with the message",
-						thisAgent.getAgentName());
-				log.trace("{}\n{}", thisAgent.getAgentName(), StringUtils.join(
-						latestSchedule.getSchedule().entrySet(), '\n'));
-			}
-
-			nextScheduledAnnounceSchedule = taskScheduler.schedule(
-					new AnnounceSchedule(),
-					new DateTime(System.currentTimeMillis()).plusSeconds(1)
-							.plusMillis(random.nextInt(2500)).toDate());
-		}
+	public Schedule schedulesReceivedCallback(Schedule allSchedules,
+			List<OptimizedRun> lastOptimizedRuns) {
+		LOG.info("{} - schedulesReceivedCallback!", thisAgent.getAgentName());
+		return allSchedules;
 	}
 
-	/**
-	 * The Class AnnounceSchedule.
+	/* (non-Javadoc)
+	 * @see okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback#getPossibleRuns()
 	 */
-	private class AnnounceSchedule implements Runnable {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		public void run() {
-			if (log != null) {
-				log.info("{} - {} - AnnounceSchedule execute() called",
-						thisAgent.getAgentName(), DateTime.now());
-			}
-
-			if (latestSchedule == null
-					|| scheduleUtil.compare(latestSchedule,
-							myLastAnnouncedSchedule) != 0) {
-				// first time call or schedule changed
-				// optimize my own schedule with the new information
-				if (myLastOptimizedRuns == null) {
-					myLastOptimizedRuns = new LinkedList<>();
-				}
-				if (latestSchedule == null) {
-					latestSchedule = controlEntitiesProvider.getNewSchedule();
-					latestSchedule
-							.setSchedule(new LargeSerializableConcurrentSkipListMap<DateTime, Slot>());
-				}
-
-				Schedule lastOptimizedSchedule = scheduleUtil
-						.toSchedule(myLastOptimizedRuns);
-				Schedule latestScheduleMinusMyLastAnnouncedSchedule = scheduleUtil
-						.minus(latestSchedule, lastOptimizedSchedule);
-				if (log != null) {
-					log.info("{} - latestSchedule [schedule={}]",
-							thisAgent.getAgentName(), latestSchedule);
-				}
-
-				Configuration configuration = controlEntitiesProvider
-						.getNewConfiguration();
-				configuration.setPossibleRun(possibleRunsToday);
-				configuration
-						.setSchedule(latestScheduleMinusMyLastAnnouncedSchedule);
-				List<OptimizedRun> newLastOptimizedRuns = controlAlgorithm
-						.findBestConfiguration(configuration);
-				Schedule schedule = scheduleUtil
-						.toSchedule(newLastOptimizedRuns);
-				schedule = scheduleUtil.plus(
-						latestScheduleMinusMyLastAnnouncedSchedule, schedule);
-
-				if (log != null) {
-					log.debug("{} - Announcing new optimized schedule",
-							thisAgent.getAgentName());
-					log.trace("{}\n{}", thisAgent.getAgentName(), StringUtils
-							.join(schedule.getSchedule().entrySet(), '\n'));
-				}
-				invoke(actionBroadcast, new Serializable[] {
-						MessageScope.GROUP, schedule });
-				if (log != null) {
-					log.info("{} - Announced schedule",
-							thisAgent.getAgentName());
-				}
-				myLastAnnouncedSchedule = schedule;
-				myLastOptimizedRuns = newLastOptimizedRuns;
-			} else {
-				// Schedule remained unchanged
-				if (log != null) {
-					log.info("{} - Schedule remained unchanged.",
-							thisAgent.getAgentName());
-					log.trace("{}\n{}", thisAgent.getAgentName(),
-							StringUtils.join(latestSchedule.getSchedule()
-									.entrySet(), '\n'));
-				}
-
-				// do something if all devices found their best schedules
-			}
-		}
+	@Expose(name = ACTION_GET_POSSIBLE_RUNS)
+	@Override
+	public List<PossibleRun> getPossibleRuns() {
+		LOG.info("{} - getPossibleRuns!", thisAgent.getAgentName());
+		return lightBulb.getPossibleRuns();
 	}
+
+	/* (non-Javadoc)
+	 * @see okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback#optimizedRunsCallback(java.util.List)
+	 */
+	@Expose(name = ACTION_OPTIMIZED_RUNS_CALLBACK)
+	@Override
+	public List<OptimizedRun> optimizedRunsCallback(
+			List<OptimizedRun> optimizedRuns) {
+		LOG.info("{} - optimizedRunsCallback!", thisAgent.getAgentName());
+		return optimizedRuns;
+	}
+
+	/* (non-Javadoc)
+	 * @see okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback#equilibrium(okeanos.control.entities.Schedule, java.util.List)
+	 */
+	@Expose(name = ACTION_EQUILIBRIUM)
+	@Override
+	public void equilibrium(Schedule schedule, List<OptimizedRun> optimizedRuns) {
+		LOG.info("{} - Great! Equilibrium found!", thisAgent.getAgentName());
+		LOG.info("{} - Schedule: {}", thisAgent.getAgentName(), schedule);
+		LOG.info("{} - Optimized runs: {}", thisAgent.getAgentName(), optimizedRuns);
+	}
+
+	/* (non-Javadoc)
+	 * @see okeanos.control.algorithms.ControlAlgorithm#findBestConfiguration(okeanos.control.entities.Configuration)
+	 */
+	@Expose(name = ACTION_FIND_BEST_CONFIGURATION)
+	@Override
+	public List<OptimizedRun> findBestConfiguration(
+			Configuration currentConfiguration) {
+		LOG.info("{} - findBestConfiguration!", thisAgent.getAgentName());
+		return controlAlgorithm.findBestConfiguration(currentConfiguration);
+	}
+
 }

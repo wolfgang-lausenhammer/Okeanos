@@ -15,17 +15,33 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SampleIT.
+ */
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
 public class SampleIT {
+	
+	/** The context. */
 	@Inject
 	private BundleContext context;
 
+	/**
+	 * Config.
+	 *
+	 * @return the option[]
+	 */
 	@Configuration
 	public Option[] config() {
 		return options(junitBundles());
 	}
 
+	/**
+	 * Gets the hello service.
+	 *
+	 * @return the hello service
+	 */
 	@Test
 	public void getHelloService() {
 		assertNotNull(context);

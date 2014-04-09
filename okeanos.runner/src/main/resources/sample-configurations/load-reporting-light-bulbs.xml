@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0.xsd
-		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
@@ -12,11 +11,6 @@
 	<context:annotation-config />
 	<context:component-scan
 		base-package="okeanos.runner.internal.samples.simple.loadreporting" />
-
-	<task:annotation-driven executor="myExecutor"
-		scheduler="myScheduler" />
-	<task:executor id="myExecutor" pool-size="5" />
-	<task:scheduler id="myScheduler" pool-size="10" />
 
 	<osgi:reference id="platformManagementService"
 		interface="okeanos.management.services.PlatformManagementService"
@@ -33,8 +27,8 @@
 	<osgi:reference id="timeService" interface="okeanos.data.services.TimeService"
 		availability="mandatory" />
 
-	<osgi:reference id="controlEntitiesProvider"
-		interface="okeanos.control.entities.provider.ControlEntitiesProvider"
+	<osgi:reference id="controlServicesProvider"
+		interface="okeanos.control.services.agentbeans.provider.ControlServicesProvider"
 		availability="mandatory" />
 
 	<osgi:reference id="controlAlgorithmService"

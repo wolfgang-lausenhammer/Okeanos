@@ -36,6 +36,8 @@ import de.dailab.jiactng.agentcore.ontology.ThisAgentDescription;
 
 /**
  * The Class MavenImports.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @SuppressWarnings("unused")
 public class MavenImports {

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
+// TODO: Auto-generated Javadoc
 /**
  * A simple hello world sample which demonstrates the basic interaction and
  * configuration of Okeanos.

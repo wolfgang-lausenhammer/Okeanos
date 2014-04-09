@@ -26,6 +26,8 @@ import de.dailab.jiactng.agentcore.management.jmx.JaasAuthenticator;
 
 /**
  * The Class MavenImports.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @SuppressWarnings("unused")
 public class MavenImports {
@@ -63,7 +65,10 @@ public class MavenImports {
 	private ControlAlgorithm controlAlgorithm;
 	/** The communication service agent bean. */
 	private CommunicationServiceAgentBean communicationServiceAgentBean;
-	AsyncAnnotationBeanPostProcessor asyncAnnotationBeanPostProcessor;
-	TaskExecutorFactoryBean taskExecutorFactoryBean;
-	ThreadPoolTaskScheduler threadPoolTaskScheduler;
+	/** The async annotation bean post processor. */
+	private AsyncAnnotationBeanPostProcessor asyncAnnotationBeanPostProcessor;
+	/** The task executor factory bean. */
+	private TaskExecutorFactoryBean taskExecutorFactoryBean;
+	/** The thread pool task scheduler. */
+	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 }

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Provides utility functions to start up a platform and start entities.
  */

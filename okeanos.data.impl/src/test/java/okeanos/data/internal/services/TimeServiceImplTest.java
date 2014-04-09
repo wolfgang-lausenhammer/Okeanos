@@ -15,6 +15,8 @@ import org.junit.Test;
 
 /**
  * The Class TimeServiceImplTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class TimeServiceImplTest {
 
@@ -37,7 +39,7 @@ public class TimeServiceImplTest {
 	private static final long THOUSAND = 1000;
 
 	/** The Constant TOLERANCE. */
-	private static final long TOLERANCE = 50;
+	private static final long TOLERANCE = 5;
 
 	/** The start nanos after. */
 	private long startNanosAfter;
@@ -75,13 +77,10 @@ public class TimeServiceImplTest {
 		long durationMillisWithoutObjectCreation = (endNanos - startNanosAfter)
 				/ THOUSAND;
 
-		assertThat(millis, is(greaterThan(START_MILLIS)));
-		assertThat(
-				millis + 2,
-				is(anyOf(greaterThan(durationMillisWithoutObjectCreation
-						+ START_MILLIS),
-						equalTo(durationMillisWithoutObjectCreation
-								+ START_MILLIS))));
+		assertThat(millis,
+				is(anyOf(greaterThan(START_MILLIS), equalTo(START_MILLIS))));
+		assertThat(millis, is(lessThan(durationMillisWithoutObjectCreation
+				+ START_MILLIS)));
 		assertThat(millis, is(lessThan(durationMillisWithObjectCreation
 				+ START_MILLIS)));
 	}
@@ -111,26 +110,21 @@ public class TimeServiceImplTest {
 
 		timeService.setPace(pace);
 
-		long nanosBeforeBefore = System.nanoTime();
 		long millisBefore = timeService.getMillis();
 		long nanosBefore = System.nanoTime();
 		for (int i = (int) (THOUSAND * THOUSAND); i > 0; i--) {
 		}
 		long nanosAfter = System.nanoTime();
 		long millisAfter = timeService.getMillis();
-		long nanosAfterAfter = System.nanoTime();
 
 		long differenceMillis = millisAfter - millisBefore;
 		long differenceNanosInMillisInner = (nanosAfter - nanosBefore)
-				/ THOUSAND;
-		long differenceNanosInMillisOuter = (nanosAfterAfter - nanosBeforeBefore)
-				/ THOUSAND;
+				/ THOUSAND / THOUSAND;
 
-		assertThat(millisBefore, is(greaterThan(START_MILLIS)));
+		assertThat(millisBefore,
+				is(anyOf(greaterThan(START_MILLIS), equalTo(START_MILLIS))));
 		assertThat(millisAfter, is(greaterThan(START_MILLIS)));
 
-		assertThat(differenceMillis, is(lessThan(differenceNanosInMillisOuter
-				* pace)));
 		assertThat(
 				differenceMillis,
 				is(anyOf(greaterThan(differenceNanosInMillisInner * pace),
@@ -210,6 +204,7 @@ public class TimeServiceImplTest {
 	public void testTimeServiceImpl() {
 		long millis = timeService.currentTimeMillis();
 
-		assertThat(millis, is(greaterThan(START_MILLIS)));
+		assertThat(millis,
+				is(anyOf(greaterThan(START_MILLIS), equalTo(START_MILLIS))));
 	}
 }

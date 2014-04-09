@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.AbstractAgentBean;
 
+// TODO: Auto-generated Javadoc
 /**
  * HelloWorldBean provides the functionality to the hello world agent. Prints a
  * simple hello world at every execution interval.

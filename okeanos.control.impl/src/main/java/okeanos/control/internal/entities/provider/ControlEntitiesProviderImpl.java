@@ -17,7 +17,7 @@ import okeanos.control.entities.provider.ControlEntitiesProvider;
  * 
  * @author Wolfgang Lausenhammer
  */
-@Component
+@Component("controlEntitiesProvider")
 public class ControlEntitiesProviderImpl implements ControlEntitiesProvider {
 
 	/** The configuration provider. */

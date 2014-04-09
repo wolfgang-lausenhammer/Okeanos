@@ -6,6 +6,7 @@ import static okeanos.runner.internal.samples.misc.startup.StartUpHelper.startEn
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import okeanos.control.services.agentbeans.provider.ControlServicesProvider;
 import okeanos.core.entities.Entity;
 import okeanos.core.entities.Group;
 import okeanos.data.services.TimeService;
@@ -46,10 +47,14 @@ public class LoadReportingLightBulbs {
 	 *            the platform management service
 	 * @param entityManagementService
 	 *            the entity management service
+	 * @param groupManagementService
+	 *            the group management service
 	 * @param timeService
 	 *            the time service
 	 * @param beanProvider
 	 *            the bean provider
+	 * @param controlServicesProvider
+	 *            the control services provider
 	 * @throws LifecycleException
 	 *             if the entity faces any troubles while starting its agent up
 	 */
@@ -59,7 +64,8 @@ public class LoadReportingLightBulbs {
 			final EntityManagementService entityManagementService,
 			final GroupManagementService groupManagementService,
 			final TimeService timeService,
-			final Provider<LightBulbBean> beanProvider)
+			final Provider<LightBulbBean> beanProvider,
+			final ControlServicesProvider controlServicesProvider)
 			throws LifecycleException {
 		this.timeService = timeService;
 
@@ -79,5 +85,10 @@ public class LoadReportingLightBulbs {
 
 		lightBulbEntity1.addFunctionality(beanProvider.get());
 		lightBulbEntity2.addFunctionality(beanProvider.get());
+
+		lightBulbEntity1.addFunctionality(controlServicesProvider
+				.getNewScheduleHandlerServiceAgentBean());
+		lightBulbEntity2.addFunctionality(controlServicesProvider
+				.getNewScheduleHandlerServiceAgentBean());
 	}
 }

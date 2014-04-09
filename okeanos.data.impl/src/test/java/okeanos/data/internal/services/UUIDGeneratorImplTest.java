@@ -8,6 +8,8 @@ import org.junit.Test;
 
 /**
  * The Class UUIDGeneratorImplTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class UUIDGeneratorImplTest {
 

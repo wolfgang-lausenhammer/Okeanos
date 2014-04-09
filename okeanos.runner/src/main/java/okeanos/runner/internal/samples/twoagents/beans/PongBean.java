@@ -21,6 +21,7 @@ import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
+// TODO: Auto-generated Javadoc
 /**
  * Provides the receiving of pings functionality to agents. Waits for a
  * {@link Ping} to arrive and answers with a {@link Ping} with message "Pong".

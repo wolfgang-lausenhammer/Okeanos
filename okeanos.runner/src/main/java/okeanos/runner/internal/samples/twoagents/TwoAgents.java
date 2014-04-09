@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Provides a simple example of two agents interacting with each other via
  * ping-pongs. Uses synchronous sending and a callback for the receiver.

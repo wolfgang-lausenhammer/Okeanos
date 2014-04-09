@@ -15,6 +15,7 @@ import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
+// TODO: Auto-generated Javadoc
 /**
  * Sends a {@link Ping} to another agent, where it will be received by the
  * {@link PongBean}, which eventually sends a {@link Ping} with "Pong" as the
@@ -39,6 +40,9 @@ public class PingBean extends AbstractAgentBean {
 		setExecutionInterval(EXECUTION_INTERVAL);
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dailab.jiactng.agentcore.AbstractAgentBean#doStart()
+	 */
 	@Override
 	public void doStart() throws Exception {
 		super.doStart();

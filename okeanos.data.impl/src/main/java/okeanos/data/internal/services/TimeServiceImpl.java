@@ -42,26 +42,8 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	 * Instantiates a new time service impl.
 	 */
 	public TimeServiceImpl() {
-		LOG.debug("{} - 1.1Current date time [{}]", DateTime.now(),
-				DateTime.now());
-		LOG.debug("{} - 1.2Current date time [{}]", DateTime.now(),
-				DateTime.now());
-		LOG.debug("{} - 1.3Current date time [{}]", DateTime.now(),
-				DateTime.now());
-		LOG.debug("{} - 1.4Current date time [{}]", DateTime.now(),
-				DateTime.now());
 		setCurrentDateTime(DateTime.now());
 		DateTimeUtils.setCurrentMillisProvider(this);
-		LOG.debug("{} - 2Current date time [{}]", DateTime.now(),
-				DateTime.now());
-		LOG.debug("{} - 3Current date time [{}]", DateTime.now(),
-				DateTime.now());
-		LOG.debug("{} - 4Current date time [{}]", DateTime.now(),
-				DateTime.now());
-		LOG.debug("{} - 5Current date time [{}]", DateTime.now(),
-				DateTime.now());
-		LOG.debug("{} - 6Current date time [{}]", DateTime.now(),
-				DateTime.now());
 	}
 
 	/*
@@ -96,16 +78,11 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	 */
 	@Override
 	public void setCurrentDateTime(final DateTime dateTime) {
-		LOG.debug("{} - Current date time [{}]", DateTime.now(), DateTime.now());
-		pace.set(1);
-		long before = DateTime.now().getMillis();
-		long beforeNano = System.nanoTime();
-		referenceNano.set(beforeNano);
-		referenceMillis.set(dateTime.getMillis());
-		long after = DateTime.now().getMillis();
-		LOG.debug("{} - Current date time set to [{}]", DateTime.now(),
+		LOG.debug("Changing date time from [{}] to [{}]", DateTime.now(),
 				dateTime);
-		LOG.debug("before {}, after {}", before, after);
+		pace.set(1);
+		referenceNano.set(System.nanoTime());
+		referenceMillis.set(dateTime.getMillis());
 	}
 
 	/*
@@ -117,7 +94,7 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	public void setPace(final double factor) {
 		setCurrentDateTime(DateTime.now());
 		pace.set((factor >= 0) ? factor : -1 / factor);
-		LOG.debug("{} - Pace set to {}", DateTime.now(), pace.get());
+		LOG.debug("Pace set to {}", pace.get());
 	}
 
 	/*

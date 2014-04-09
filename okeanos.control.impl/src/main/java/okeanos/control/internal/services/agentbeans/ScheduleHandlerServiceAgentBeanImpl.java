@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ScheduledFuture;
 
 import javax.inject.Inject;
@@ -23,8 +22,8 @@ import okeanos.control.entities.utilities.ScheduleUtil;
 import okeanos.control.services.agentbeans.ScheduleHandlerServiceAgentBean;
 import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
 import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
-import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
 import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
+import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.data.services.entities.MessageScope;
 import okeanos.math.regression.LargeSerializableConcurrentSkipListMap;
@@ -38,10 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Component;
 
-import aQute.bnd.annotation.component.Component;
 import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 import de.dailab.jiactng.agentcore.action.Action;
+import de.dailab.jiactng.agentcore.action.ActionResult;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
@@ -62,18 +62,18 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 
 	private ScheduleMessageHandler scheduleMessageHandlerCallback;
 
-	public TaskScheduler taskScheduler;
-	public Random random;
-	public ScheduleUtil scheduleUtil;
-	public Schedule latestAnnouncedSchedule;
-	public ControlEntitiesProvider controlEntitiesProvider;
-	public List<OptimizedRun> latestOptimizedRuns;
+	private TaskScheduler taskScheduler;
+	private ScheduleUtil scheduleUtil;
+	private ControlEntitiesProvider controlEntitiesProvider;
+	private List<OptimizedRun> latestOptimizedRuns;
 
 	@Inject
-	public ScheduleHandlerServiceAgentBeanImpl(ScheduleUtil scheduleUtil,
-			ControlEntitiesProvider controlEntitiesProvider) {
-		this.scheduleUtil = scheduleUtil;
+	public ScheduleHandlerServiceAgentBeanImpl(
+			final ControlEntitiesProvider controlEntitiesProvider,
+			final TaskScheduler taskScheduler) {
 		this.controlEntitiesProvider = controlEntitiesProvider;
+		this.taskScheduler = taskScheduler;
+		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
 		state = State.STOPPED;
 	}
 
@@ -87,6 +87,13 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 		if (actionBroadcast == null) {
 			actionBroadcast = thisAgent.searchAction(template);
 		}
+
+		ProxyCallbacks callbacks = new ProxyCallbacks();
+		schedulesReceivedCallback = callbacks;
+		possibleRunsCallback = callbacks;
+		optimizedRunsCallback = callbacks;
+		equilibriumFoundCallback = callbacks;
+		controlAlgorithm = callbacks;
 
 		scheduleMessageHandlerCallback = new ScheduleMessageHandler();
 
@@ -104,43 +111,20 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 	}
 
 	@Override
-	public void registerOtherSchedulesArrivedCallback(
-			final SchedulesReceivedCallback schedulesReceivedCallback) {
-		this.schedulesReceivedCallback = schedulesReceivedCallback;
-	}
-
-	@Override
-	public void registerPossibleRunsCallback(
-			final PossibleRunsCallback possibleRunsCallback) {
-		this.possibleRunsCallback = possibleRunsCallback;
-	}
-
-	@Override
-	public void registerOptimizedRunsCallback(
-			final OptimizedRunsCallback optimizedRunsCallback) {
-		this.optimizedRunsCallback = optimizedRunsCallback;
-	}
-
-	@Override
-	public void registerEquilibriumFoundCallback(
-			final EquilibriumFoundCallback equilibriumFoundCallback) {
-		this.equilibriumFoundCallback = equilibriumFoundCallback;
-	}
-
-	@Override
 	public void reset(final boolean cancelRunningOperation) {
 
 	}
 
-	@Override
-	public void setControlAlgorithm(final ControlAlgorithm controlAlgorithm) {
-		this.controlAlgorithm = controlAlgorithm;
-	}
-
 	private class ScheduleMessageHandler implements SpaceObserver<IFact> {
-		public ScheduledFuture scheduledBroadcast;
+		private static final long serialVersionUID = 5191791309923785942L;
+
+		@SuppressWarnings("rawtypes")
+		private ScheduledFuture scheduledBroadcast;
+		private Random random;
 
 		public ScheduleMessageHandler() {
+			random = new Random();
+
 			// get action to register callback
 			IActionDescription template = new Action(
 					CommunicationServiceAgentBean.ACTION_RECEIVE_MESSAGE_CALLBACK_IFACT);
@@ -157,6 +141,10 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			invoke(actionReceiveMessageCallbackIfact, new Serializable[] {
 					this, schedule });
 
+			// Next schedule randomly distributed within the next 5s so that not
+			// all device announce their schedule at the same time. If another
+			// device announced its schedule before this, the task gets
+			// cancelled and a new task will be scheduled see #notify.
 			scheduledBroadcast = taskScheduler.schedule(
 					new ScheduleMessageBroadcaster(null),
 					new DateTime(System.currentTimeMillis()).plusMillis(
@@ -166,6 +154,9 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 		@SuppressWarnings("unchecked")
 		@Override
 		public void notify(final SpaceEvent<? extends IFact> event) {
+			if (isEquilibriumReached()) {
+				return;
+			}
 			LOG.trace("{} - [event={}]", thisAgent.getAgentName(), event);
 			if (event instanceof WriteCallEvent<?>) {
 				WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
@@ -187,10 +178,12 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 						thisAgent.getAgentName());
 
 				Schedule latestSchedule = (Schedule) message.getPayload();
+				scheduledBroadcast.cancel(true);
 
 				LOG.debug(
 						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
-						state, State.CALLING_SCHEDULE_CALLBACK);
+						thisAgent.getAgentName(), state,
+						State.CALLING_SCHEDULE_CALLBACK);
 				state = State.CALLING_SCHEDULE_CALLBACK;
 				latestSchedule = schedulesReceivedCallback
 						.schedulesReceivedCallback(latestSchedule,
@@ -206,7 +199,8 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 
 				LOG.debug(
 						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
-						state, State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND);
+						thisAgent.getAgentName(), state,
+						State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND);
 				state = State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND;
 			}
 		}
@@ -221,8 +215,14 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 
 		@Override
 		public void run() {
+			if (isEquilibriumReached()) {
+				return;
+			}
 			LOG.debug("{} - ScheduleMessageBroadcaster execute() called",
 					thisAgent.getAgentName());
+			if (scheduledEquilibriumWaiter != null) {
+				scheduledEquilibriumWaiter.cancel(false);
+			}
 
 			if (latestOptimizedRuns == null) {
 				latestOptimizedRuns = new LinkedList<>();
@@ -234,18 +234,20 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 						.setSchedule(new LargeSerializableConcurrentSkipListMap<DateTime, Slot>());
 			}
 
-			// calculating schedules of other devices (=all schedules - own schedule)
-			Schedule lastOptimizedSchedule = scheduleUtil
+			// calculating schedules of other devices (=all schedules - own
+			// schedule)
+			Schedule latestOptimizedSchedule = scheduleUtil
 					.toSchedule(latestOptimizedRuns);
 			Schedule latestReceivedScheduleMinusLatestOptimizedSchedule = scheduleUtil
-					.minus(latestReceivedSchedule, lastOptimizedSchedule);
+					.minus(latestReceivedSchedule, latestOptimizedSchedule);
 			LOG.debug(
 					"{} - subtracted lastOptimizedSchedule from latestReceivedSchedule to get demand from others.",
 					thisAgent.getAgentName(), latestReceivedSchedule);
 
 			LOG.debug(
 					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
-					state, State.CALLING_POSSIBLE_RUNS_CALLBACK);
+					thisAgent.getAgentName(), state,
+					State.CALLING_POSSIBLE_RUNS_CALLBACK);
 			state = State.CALLING_POSSIBLE_RUNS_CALLBACK;
 			List<PossibleRun> possibleRunsToday = possibleRunsCallback
 					.getPossibleRuns();
@@ -259,7 +261,7 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			// optimize schedule
 			LOG.debug(
 					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
-					state, State.OPTIMIZING_SCHEDULE);
+					thisAgent.getAgentName(), state, State.OPTIMIZING_SCHEDULE);
 			state = State.OPTIMIZING_SCHEDULE;
 			List<OptimizedRun> optimizedRuns = controlAlgorithm
 					.findBestConfiguration(configuration);
@@ -267,49 +269,87 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 			// allow agent bean to correct optimized runs
 			LOG.debug(
 					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
-					state, State.CALLING_OPTIMIZED_RUNS_CALLBACK);
+					thisAgent.getAgentName(), state,
+					State.CALLING_OPTIMIZED_RUNS_CALLBACK);
 			state = State.CALLING_OPTIMIZED_RUNS_CALLBACK;
 			optimizedRuns = optimizedRunsCallback
 					.optimizedRunsCallback(optimizedRuns);
 
 			Schedule schedule = scheduleUtil.toSchedule(optimizedRuns);
-			if (scheduleUtil.compare(lastOptimizedSchedule, schedule) == 0) {
+			if (scheduleUtil.compare(latestOptimizedSchedule, schedule) == 0) {
 				// own schedule not changed despite new schedule from others
 				// do not announce new schedule!
 				LOG.info("{} - Schedule remained unchanged.",
 						thisAgent.getAgentName());
-				LOG.trace("{}\n{}", thisAgent.getAgentName(), StringUtils.join(
+				LOG.debug("{}\n{}", thisAgent.getAgentName(), StringUtils.join(
 						latestReceivedSchedule.getSchedule().entrySet(), '\n'));
-				
-				// do something if all devices found their best schedules
-				return;
+			} else {
+
+				schedule = scheduleUtil.plus(
+						latestReceivedScheduleMinusLatestOptimizedSchedule,
+						schedule);
+
+				LOG.debug(
+						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+						thisAgent.getAgentName(), state, State.SENDING_SCHEDULE);
+				state = State.SENDING_SCHEDULE;
+
+				LOG.debug("{} - Announcing new optimized schedule",
+						thisAgent.getAgentName());
+				LOG.trace("{}\n{}", thisAgent.getAgentName(), StringUtils.join(
+						schedule.getSchedule().entrySet(), '\n'));
+
+				invoke(actionBroadcast, new Serializable[] {
+						MessageScope.GROUP, schedule });
+				LOG.debug("{} - Announced schedule", thisAgent.getAgentName());
+
+				latestOptimizedRuns = optimizedRuns;
 			}
 
-			schedule = scheduleUtil.plus(
-					latestReceivedScheduleMinusLatestOptimizedSchedule,
-					schedule);
-
 			LOG.debug(
 					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
-					state, State.SENDING_SCHEDULE);
-			state = State.SENDING_SCHEDULE;
-
-			LOG.debug("{} - Announcing new optimized schedule",
-					thisAgent.getAgentName());
-			LOG.trace("{}\n{}", thisAgent.getAgentName(),
-					StringUtils.join(schedule.getSchedule().entrySet(), '\n'));
-
-			invoke(actionBroadcast, new Serializable[] { MessageScope.GROUP,
-					schedule });
-			LOG.debug("{} - Announced schedule", thisAgent.getAgentName());
-
-			latestAnnouncedSchedule = schedule;
-			latestOptimizedRuns = optimizedRuns;
-
-			LOG.debug(
-					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
-					state, State.WAITING_FOR_SCHEDULES);
+					thisAgent.getAgentName(), state,
+					State.WAITING_FOR_SCHEDULES);
 			state = State.WAITING_FOR_SCHEDULES;
+
+			scheduledEquilibriumWaiter = taskScheduler.schedule(
+					new EquilibriumWaiter(schedule, optimizedRuns),
+					new DateTime(System.currentTimeMillis()).plusSeconds(5)
+							.toDate());
+		}
+
+		@SuppressWarnings("rawtypes")
+		private ScheduledFuture scheduledEquilibriumWaiter;
+
+		private class EquilibriumWaiter implements Runnable {
+			private Schedule latestSchedule;
+			private List<OptimizedRun> optimizedRuns;
+
+			public EquilibriumWaiter(Schedule latestSchedule,
+					List<OptimizedRun> optimizedRuns) {
+				this.latestSchedule = latestSchedule;
+				this.optimizedRuns = optimizedRuns;
+			}
+
+			@Override
+			public void run() {
+				if (!State.WAITING_FOR_SCHEDULES.equals(state)) {
+					return;
+				}
+
+				LOG.debug(
+						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+						thisAgent.getAgentName(), state,
+						State.EQUILIBRIUM_REACHED);
+				state = State.EQUILIBRIUM_REACHED;
+
+				// do something if all devices found their best schedules
+				// schedule task in a few seconds, that will call
+				// equilibriumFoundCallback to notify bean of the completion and
+				// the final schedule
+				equilibriumFoundCallback.equilibrium(latestSchedule,
+						optimizedRuns);
+			}
 		}
 	}
 
@@ -320,5 +360,149 @@ public class ScheduleHandlerServiceAgentBeanImpl extends
 	@Override
 	public boolean isEquilibriumReached() {
 		return State.EQUILIBRIUM_REACHED.equals(state);
+	}
+
+	@SuppressWarnings("unchecked")
+	private class ProxyCallbacks extends AbstractMethodExposingBean implements
+			EquilibriumFoundCallback, OptimizedRunsCallback,
+			PossibleRunsCallback, SchedulesReceivedCallback, ControlAlgorithm {
+		private IActionDescription actionEquilibrium;
+		private IActionDescription actionOptimizedRunsCallback;
+		private IActionDescription actionGetPossibleRuns;
+		private IActionDescription actionSchedulesReceivedCallback;
+		private IActionDescription actionFindBestConfiguration;
+
+		public ProxyCallbacks() {
+			actionEquilibrium = getAction(ACTION_EQUILIBRIUM);
+			actionOptimizedRunsCallback = getAction(ACTION_OPTIMIZED_RUNS_CALLBACK);
+			actionGetPossibleRuns = getAction(ACTION_GET_POSSIBLE_RUNS);
+			actionSchedulesReceivedCallback = getAction(ACTION_SCHEDULE_RECEIVED_CALLBACK);
+			actionFindBestConfiguration = getAction(ACTION_FIND_BEST_CONFIGURATION);
+		}
+
+		private IActionDescription getAction(String actionString) {
+			IActionDescription template = new Action(actionString);
+			IActionDescription action = ScheduleHandlerServiceAgentBeanImpl.this.memory
+					.read(template);
+			if (action == null) {
+				action = ScheduleHandlerServiceAgentBeanImpl.this.thisAgent
+						.searchAction(template);
+			}
+			return action;
+		}
+
+		@Override
+		public Schedule schedulesReceivedCallback(Schedule allSchedules,
+				List<OptimizedRun> lastOptimizedRuns) {
+			if (actionSchedulesReceivedCallback == null) {
+				actionSchedulesReceivedCallback = getAction(ACTION_SCHEDULE_RECEIVED_CALLBACK);
+			}
+			if (actionSchedulesReceivedCallback == null) {
+				LOG.info("{} - No action called {} available",
+						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						ACTION_SCHEDULE_RECEIVED_CALLBACK);
+				return allSchedules;
+			}
+
+			LinkedList<OptimizedRun> list;
+			if (lastOptimizedRuns == null) {
+				list = new LinkedList<>();
+			} else {
+				list = new LinkedList<>(lastOptimizedRuns);
+			}
+			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+					.invokeAndWaitForResult(actionSchedulesReceivedCallback,
+							new Serializable[] { allSchedules, list });
+
+			return (Schedule) result.getResults()[0];
+		}
+
+		@Override
+		public List<PossibleRun> getPossibleRuns() {
+			if (actionGetPossibleRuns == null) {
+				actionGetPossibleRuns = getAction(ACTION_GET_POSSIBLE_RUNS);
+			}
+			if (actionGetPossibleRuns == null) {
+				LOG.info("{} - No action called {} available",
+						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						ACTION_GET_POSSIBLE_RUNS);
+				return null;
+			}
+
+			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+					.invokeAndWaitForResult(actionGetPossibleRuns,
+							new Serializable[] {});
+
+			return (List<PossibleRun>) result.getResults()[0];
+		}
+
+		@Override
+		public List<OptimizedRun> optimizedRunsCallback(
+				List<OptimizedRun> optimizedRuns) {
+			if (actionOptimizedRunsCallback == null) {
+				actionOptimizedRunsCallback = getAction(ACTION_OPTIMIZED_RUNS_CALLBACK);
+			}
+			if (actionOptimizedRunsCallback == null) {
+				LOG.info("{} - No action called {} available",
+						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						ACTION_OPTIMIZED_RUNS_CALLBACK);
+				return optimizedRuns;
+			}
+
+			LinkedList<OptimizedRun> list;
+			if (optimizedRuns == null) {
+				list = new LinkedList<>();
+			} else {
+				list = new LinkedList<>(optimizedRuns);
+			}
+			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+					.invokeAndWaitForResult(actionOptimizedRunsCallback,
+							new Serializable[] { list });
+
+			return (List<OptimizedRun>) result.getResults()[0];
+		}
+
+		@Override
+		public void equilibrium(Schedule schedule,
+				List<OptimizedRun> optimizedRuns) {
+			if (actionEquilibrium == null) {
+				actionEquilibrium = getAction(ACTION_EQUILIBRIUM);
+			}
+			if (actionEquilibrium == null) {
+				LOG.info("{} - No action called {} available",
+						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						ACTION_EQUILIBRIUM);
+				return;
+			}
+
+			LinkedList<OptimizedRun> list;
+			if (optimizedRuns == null) {
+				list = new LinkedList<>();
+			} else {
+				list = new LinkedList<>(optimizedRuns);
+			}
+			ScheduleHandlerServiceAgentBeanImpl.this.invoke(actionEquilibrium,
+					new Serializable[] { schedule, list });
+		}
+
+		@Override
+		public List<OptimizedRun> findBestConfiguration(
+				Configuration currentConfiguration) {
+			if (actionFindBestConfiguration == null) {
+				actionFindBestConfiguration = getAction(ACTION_FIND_BEST_CONFIGURATION);
+			}
+			if (actionFindBestConfiguration == null) {
+				LOG.info("{} - No action called {} available",
+						ScheduleHandlerServiceAgentBeanImpl.this.thisAgent,
+						ACTION_FIND_BEST_CONFIGURATION);
+				return null;
+			}
+
+			ActionResult result = ScheduleHandlerServiceAgentBeanImpl.this
+					.invokeAndWaitForResult(actionFindBestConfiguration,
+							new Serializable[] { currentConfiguration });
+
+			return (List<OptimizedRun>) result.getResults()[0];
+		}
 	}
 }
