@@ -27,7 +27,7 @@ public class ControlServicesProviderImpl implements ControlServicesProvider {
 	 */
 	@Inject
 	public ControlServicesProviderImpl(
-			ScheduleHandlerServiceAgentBeanProviderFactory providerCreatingFactoryBean) {
+			final ScheduleHandlerServiceAgentBeanProviderFactory providerCreatingFactoryBean) {
 		this.scheduleHandlerServiceAgentBeanProvider = providerCreatingFactoryBean
 				.createInstance();
 	}

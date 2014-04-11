@@ -27,7 +27,7 @@
 		interface="okeanos.core.entities.builder.EntityBuilder" availability="mandatory" />
 	<osgi:reference id="groupBuilderOsgi"
 		interface="okeanos.core.entities.builder.GroupBuilder" availability="mandatory" />
-	<osgi:reference id="timerServiceOsgi" interface="okeanos.data.services.TimeService"
+	<osgi:reference id="timeServiceOsgi" interface="okeanos.data.services.TimeService"
 		availability="mandatory" />
 	<osgi:reference id="dataServicesProviderOsgi"
 		interface="okeanos.data.services.agentbeans.provider.DataServicesProvider"

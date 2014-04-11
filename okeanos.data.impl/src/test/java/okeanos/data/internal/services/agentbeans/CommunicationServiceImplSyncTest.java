@@ -47,6 +47,8 @@ import de.dailab.jiactng.agentcore.ontology.IAgentDescription;
 
 /**
  * The Class CommunicationServiceImplSyncTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CommunicationServiceImplSyncTest {

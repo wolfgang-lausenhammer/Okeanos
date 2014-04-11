@@ -7,14 +7,12 @@ import okeanos.data.services.entities.MessageScope;
 
 import org.sercho.masp.space.event.SpaceObserver;
 
-import de.dailab.jiactng.agentcore.IAgentBean;
 import de.dailab.jiactng.agentcore.comm.CommunicationException;
 import de.dailab.jiactng.agentcore.comm.ICommunicationAddress;
 import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.environment.IEffector;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 
-// TODO: Auto-generated Javadoc
 /**
  * An interface for all inter-agent communication services. Methods include the
  * synchronous and asynchronous sending and receiving of messages. Moreover,
@@ -34,12 +32,6 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	 */
 	public final class Header {
 
-		/**
-		 * Private constructor to prevent instantiation.
-		 */
-		private Header() {
-		}
-
 		/** The Constant COMMUNICATION_CORRELATION_ID. */
 		public static final String COMMUNICATION_CORRELATION_ID = "OkeanosCommunicationCorrelationId";
 
@@ -48,10 +40,19 @@ public interface CommunicationServiceAgentBean extends IEffector {
 
 		/** The Constant COMMUNICATION_SENDER. */
 		public static final String COMMUNICATION_SENDER = "OkeanosCommunicationSender";
+
+		/**
+		 * Private constructor to prevent instantiation.
+		 */
+		private Header() {
+		}
 	}
 
 	/** The Constant ACTION_BROADCAST. */
 	String ACTION_BROADCAST = "okeanos.data.services.CommunicationService#broadcast(MessageScope, IFact)";
+
+	/** The Constant ACTION_BROADCAST_OPTIONS. */
+	String ACTION_BROADCAST_OPTIONS = "okeanos.data.services.CommunicationService#broadcast(MessageScope, IFact, Map<String, String>)";
 
 	/** The Constant ACTION_RECEIVE_MESSAGE. */
 	String ACTION_RECEIVE_MESSAGE = "okeanos.data.services.CommunicationService#receiveMessage()";
@@ -115,6 +116,25 @@ public interface CommunicationServiceAgentBean extends IEffector {
 			throws CommunicationException;
 
 	/**
+	 * Broadcasts a message to the system with the given options set for the
+	 * message. Depending on the scope, the message will be forwarded to a
+	 * different number of receivers. Further, it is not guaranteed, that any
+	 * agent reacts to a broadcast message, because an appropriate callback
+	 * function needs to have been set previously.
+	 * 
+	 * @param scope
+	 *            the scope of the message
+	 * @param message
+	 *            the message itself
+	 * @param options
+	 *            the options
+	 * @throws CommunicationException
+	 *             if any error occurs during sending or waiting for an answer
+	 */
+	void broadcast(MessageScope scope, IFact message,
+			Map<String, String> options) throws CommunicationException;
+
+	/**
 	 * Returns the next received message of any kind.
 	 * 
 	 * @return the received message
@@ -134,7 +154,7 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	 * Returns a future, which returns the next received message of any kind.
 	 * 
 	 * @return a future for the received message
-	 * @see CommunicationServiceAgentBean#receiveMessage(IAgentBean)
+	 * @see CommunicationServiceAgentBean#receiveMessage(de.dailab.jiactng.agentcore.IAgentBean)
 	 */
 	Future<IJiacMessage> receiveMessageAsync();
 
@@ -145,14 +165,15 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	 * @param factToListenFor
 	 *            a template for the fact to listen for
 	 * @return a future for the received message
-	 * @see CommunicationServiceAgentBean#receiveMessage(IAgentBean, IFact)
+	 * @see CommunicationServiceAgentBean#receiveMessage(de.dailab.jiactng.agentcore.IAgentBean,
+	 *      IFact)
 	 */
 	Future<IJiacMessage> receiveMessageAsync(IFact factToListenFor);
 
 	/**
 	 * Registers a listener, which is called for all upcoming messages. Call
-	 * {@link #receiveMessageDetachCallback(IAgentBean, SpaceObserver)} to stop
-	 * listening for messages.
+	 * {@link #receiveMessageDetachCallback(de.dailab.jiactng.agentcore.IAgentBean, SpaceObserver)}
+	 * to stop listening for messages.
 	 * 
 	 * @param listener
 	 *            a listener, which will be called for the next received
@@ -163,8 +184,8 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	/**
 	 * Registers a listener, which is called for all upcoming messages that
 	 * comply with the given template. Call
-	 * {@link #receiveMessageDetachCallback(IAgentBean, SpaceObserver)} to stop
-	 * listening for messages.
+	 * {@link #receiveMessageDetachCallback(de.dailab.jiactng.agentcore.IAgentBean, SpaceObserver)}
+	 * to stop listening for messages.
 	 * 
 	 * @param listener
 	 *            a listener, which will be called for the next received
@@ -187,8 +208,8 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	/**
 	 * Sends a message to a communication address and wait for an answer to that
 	 * message by listening out for the message id in the header. Use
-	 * {@link #sendAsync(IAgentBean, ICommunicationAddress, IFact)} if no answer
-	 * is expected, otherwise the method will never return.
+	 * {@link #sendAsync(de.dailab.jiactng.agentcore.IAgentBean, ICommunicationAddress, IFact)}
+	 * if no answer is expected, otherwise the method will never return.
 	 * 
 	 * @param receiver
 	 *            the receiver of the message
@@ -220,8 +241,8 @@ public interface CommunicationServiceAgentBean extends IEffector {
 	/**
 	 * Sends a message to a communication address and wait for an answer to that
 	 * message by listening out for the message id in the header. Use
-	 * {@link #sendAsync(IAgentBean, String, IFact)} if no answer is expected,
-	 * otherwise the method will never return.
+	 * {@link #sendAsync(de.dailab.jiactng.agentcore.IAgentBean, String, IFact)}
+	 * if no answer is expected, otherwise the method will never return.
 	 * 
 	 * @param receiver
 	 *            the receiver of the message

@@ -2,10 +2,11 @@ package okeanos.runner.internal.samples.twoagents.beans.entities;
 
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 
-// TODO: Auto-generated Javadoc
 /**
  * A simple Ping object that can contain a message. Derived from IFact to be
  * sendable by the communication services.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class Ping implements IFact {
 

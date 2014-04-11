@@ -10,9 +10,10 @@ import org.slf4j.LoggerFactory;
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Provides utility functions to start up a platform and start entities.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public final class StartUpHelper {
 
@@ -21,7 +22,7 @@ public final class StartUpHelper {
 			.getLogger(StartUpHelper.class);
 
 	/**
-	 * Start an agent node.
+	 * Starts an agent node.
 	 * 
 	 * @param platformManagementService
 	 *            the platform management service
@@ -44,7 +45,7 @@ public final class StartUpHelper {
 	}
 
 	/**
-	 * Start an entity.
+	 * Starts an entity.
 	 * 
 	 * @param entityManagementService
 	 *            the entity management service

@@ -12,6 +12,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.scheduling.TaskScheduler;
 
 /**
  * The Class TimeServiceImplTest.
@@ -50,6 +53,10 @@ public class TimeServiceImplTest {
 	/** The time service. */
 	private TimeServiceImpl timeService;
 
+	/** The task scheduler. */
+	@Mock
+	private TaskScheduler taskScheduler;
+
 	/**
 	 * Sets the up.
 	 * 
@@ -58,9 +65,11 @@ public class TimeServiceImplTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
+
 		DateTimeUtils.setCurrentMillisFixed(START_MILLIS);
 		startNanosBefore = System.nanoTime();
-		timeService = new TimeServiceImpl();
+		timeService = new TimeServiceImpl(taskScheduler);
 		startNanosAfter = System.nanoTime();
 	}
 

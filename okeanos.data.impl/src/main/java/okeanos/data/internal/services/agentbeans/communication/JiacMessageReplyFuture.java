@@ -31,7 +31,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 		CANCELLED, DONE, WAITING
 	}
 
-	private static final Logger log = LoggerFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(JiacMessageReplyFuture.class);
 
 	private static final long serialVersionUID = 1012633574132382647L;
@@ -75,7 +75,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 		if (factToListenFor != null) {
 			listenerTemplate.setPayload(factToListenFor);
 		}
-		log.debug("Adding listener [callback={}] for [message={}]",
+		LOG.trace("Adding listener [callback={}] for [message={}]",
 				this.callback, listenerTemplate);
 
 		// register listener
@@ -90,13 +90,13 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 	}
 
 	private void cleanUp() {
-		log.trace("Cleaning up, removing event handler from memory");
+		LOG.trace("Cleaning up, removing event handler from memory");
 		memory.detach(callback);
 	}
 
 	@Override
 	public IJiacMessage get() throws InterruptedException, ExecutionException {
-		log.trace("Trying to get item from Future");
+		LOG.trace("Trying to get item from Future");
 		IJiacMessage msg = reply.take();
 
 		return msg;
@@ -105,7 +105,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 	@Override
 	public IJiacMessage get(final long timeout, final TimeUnit unit)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		log.trace("Trying to get item from Future, waiting maximal {}ms",
+		LOG.trace("Trying to get item from Future, waiting maximal {}ms",
 				unit.toMillis(timeout));
 		final IJiacMessage replyOrNull = reply.poll(timeout, unit);
 		if (replyOrNull == null) {
@@ -131,7 +131,7 @@ public class JiacMessageReplyFuture implements Future<IJiacMessage>,
 		if (event instanceof WriteCallEvent<?>) {
 			WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
 			try {
-				log.trace("Future received message to provide to receiver.");
+				LOG.trace("Future received message to provide to receiver.");
 				reply.put(wce.getObject());
 				state = State.DONE;
 

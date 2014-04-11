@@ -39,6 +39,8 @@ import de.dailab.jiactng.agentcore.knowledge.IMemory;
 
 /**
  * The Class CommunicationServiceImplReceiveTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class CommunicationServiceImplReceiveTest {
 

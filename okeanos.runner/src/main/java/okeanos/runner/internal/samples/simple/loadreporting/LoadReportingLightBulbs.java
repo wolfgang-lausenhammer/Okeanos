@@ -23,7 +23,8 @@ import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 /**
- * The Class LoadReportingLightBulbs.
+ * Sample that demonstartes a set of light bulbs that report their schedule and
+ * try to find an equilibrium.
  * 
  * @author Wolfgang Lausenhammer
  */
@@ -51,7 +52,7 @@ public class LoadReportingLightBulbs {
 	 *            the group management service
 	 * @param timeService
 	 *            the time service
-	 * @param beanProvider
+	 * @param lightBulbBeanProvider
 	 *            the bean provider
 	 * @param controlServicesProvider
 	 *            the control services provider
@@ -64,7 +65,7 @@ public class LoadReportingLightBulbs {
 			final EntityManagementService entityManagementService,
 			final GroupManagementService groupManagementService,
 			final TimeService timeService,
-			final Provider<LightBulbBean> beanProvider,
+			final Provider<LightBulbBean> lightBulbBeanProvider,
 			final ControlServicesProvider controlServicesProvider)
 			throws LifecycleException {
 		this.timeService = timeService;
@@ -74,21 +75,27 @@ public class LoadReportingLightBulbs {
 				"light-bulb-1");
 		Entity lightBulbEntity2 = startEntity(entityManagementService, node,
 				"light-bulb-2");
+		Entity lightBulbEntity3 = startEntity(entityManagementService, node,
+				"light-bulb-3");
 
 		Group group = groupManagementService.loadGroup();
 		groupManagementService.startGroup(group);
 
 		lightBulbEntity1.joinGroup(group);
 		lightBulbEntity2.joinGroup(group);
+		lightBulbEntity3.joinGroup(group);
 
 		this.timeService.setPace(PACE);
 
-		lightBulbEntity1.addFunctionality(beanProvider.get());
-		lightBulbEntity2.addFunctionality(beanProvider.get());
+		lightBulbEntity1.addFunctionality(lightBulbBeanProvider.get());
+		lightBulbEntity2.addFunctionality(lightBulbBeanProvider.get());
+		lightBulbEntity3.addFunctionality(lightBulbBeanProvider.get());
 
 		lightBulbEntity1.addFunctionality(controlServicesProvider
 				.getNewScheduleHandlerServiceAgentBean());
 		lightBulbEntity2.addFunctionality(controlServicesProvider
+				.getNewScheduleHandlerServiceAgentBean());
+		lightBulbEntity3.addFunctionality(controlServicesProvider
 				.getNewScheduleHandlerServiceAgentBean());
 	}
 }

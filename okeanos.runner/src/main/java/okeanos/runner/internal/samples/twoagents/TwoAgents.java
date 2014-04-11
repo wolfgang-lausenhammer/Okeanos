@@ -19,20 +19,21 @@ import org.springframework.stereotype.Component;
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Provides a simple example of two agents interacting with each other via
  * ping-pongs. Uses synchronous sending and a callback for the receiver.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 public class TwoAgents {
 
+	/** The entity management service. */
+	private EntityManagementService entityManagementService;
+
 	/** The logger. */
 	@Logging
 	private Logger log;
-
-	/** The entity management service. */
-	private EntityManagementService entityManagementService;
 
 	/** The platform management service. */
 	private PlatformManagementService platformManagementService;
@@ -61,8 +62,10 @@ public class TwoAgents {
 		this.entityManagementService = entityManagementService;
 
 		IAgentNode node = startAgentNode(platformManagementService);
-		Entity entity1 = startEntity(entityManagementService, node, "ping-agent");
-		Entity entity2 = startEntity(entityManagementService, node, "pong-agent");
+		Entity entity1 = startEntity(entityManagementService, node,
+				"ping-agent");
+		Entity entity2 = startEntity(entityManagementService, node,
+				"pong-agent");
 
 		if (log != null) {
 			log.debug(

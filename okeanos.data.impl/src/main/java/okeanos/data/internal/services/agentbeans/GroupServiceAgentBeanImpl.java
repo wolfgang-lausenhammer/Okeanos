@@ -24,7 +24,9 @@ import de.dailab.jiactng.agentcore.knowledge.IFact;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
 /**
- * The Class GroupServiceAgentBeanImpl.
+ * Provides an interface whose implementations are responsible for handling
+ * group management events. That is group join and leave events will be
+ * processed and listeners (de)registered as needed.
  * 
  * @author Wolfgang Lausenhammer
  */
@@ -64,8 +66,6 @@ public class GroupServiceAgentBeanImpl extends AbstractMethodExposingBean
 			actionJoinGroup = thisAgent.searchAction(template);
 		}
 
-		LOG.info("action join group: {}", actionJoinGroup);
-
 		template = new Action(CommunicationBean.ACTION_LEAVE_GROUP);
 		actionLeaveGroup = memory.read(template);
 		if (actionLeaveGroup == null) {
@@ -93,11 +93,9 @@ public class GroupServiceAgentBeanImpl extends AbstractMethodExposingBean
 	public void notify(final SpaceEvent<? extends IFact> event) {
 		if (event instanceof WriteCallEvent<?>) {
 			WriteCallEvent<GroupFact> wce = (WriteCallEvent<GroupFact>) event;
-			if (LOG != null) {
-				LOG.info(
-						"GroupServiceAgentBeanImpl [{}] - Group join event raised [{}]",
-						thisAgent.getAgentName(), wce);
-			}
+			LOG.info(
+					"GroupServiceAgentBeanImpl [{}] - Group join event raised [{}]",
+					thisAgent.getAgentName(), wce);
 
 			// consume message
 			GroupFact groupFact = wce.getObject();
@@ -107,15 +105,12 @@ public class GroupServiceAgentBeanImpl extends AbstractMethodExposingBean
 
 		} else if (event instanceof RemoveCallEvent<?>) {
 			RemoveCallEvent<GroupFact> rce = (RemoveCallEvent<GroupFact>) event;
-			if (LOG != null) {
-				LOG.info(
-						"GroupServiceAgentBeanImpl [{}] - Group leave event raised [{}]",
-						thisAgent.getAgentName(), rce);
-			}
+			LOG.info(
+					"GroupServiceAgentBeanImpl [{}] - Group leave event raised [{}]",
+					thisAgent.getAgentName(), rce);
 
 			// consume message
 			GroupFact groupFact = rce.getRemoved();
-			LOG.info("groupFact [{}]", groupFact);
 			invoke(actionLeaveGroup,
 					new Serializable[] { CommunicationAddressFactory
 							.createGroupAddress(groupFact.getGroupId()) });

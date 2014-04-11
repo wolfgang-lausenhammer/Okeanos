@@ -42,9 +42,10 @@ import de.dailab.jiactng.agentcore.knowledge.IMemory;
 import de.dailab.jiactng.agentcore.ontology.AgentDescription;
 import de.dailab.jiactng.agentcore.ontology.IAgentDescription;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CommunicationServiceImplAsyncTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class CommunicationServiceImplAsyncTest {
 

@@ -2,7 +2,6 @@ package okeanos.runner.internal.samples.twoagents.beans;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.runner.internal.samples.twoagents.beans.entities.Ping;
@@ -21,10 +20,11 @@ import de.dailab.jiactng.agentcore.comm.message.IJiacMessage;
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
-// TODO: Auto-generated Javadoc
 /**
  * Provides the receiving of pings functionality to agents. Waits for a
  * {@link Ping} to arrive and answers with a {@link Ping} with message "Pong".
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 @Scope("prototype")
@@ -89,7 +89,7 @@ public class PongBean extends AbstractAgentBean {
 				HashMap<String, String> options = new HashMap<>();
 				options.put("OkeanosCommunicationCorrelationId",
 						message.getHeader("OkeanosCommunicationCorrelationId"));
-				
+
 				invoke(actionSendAsyncOptions,
 						new Serializable[] { message.getSender(), answer,
 								options });

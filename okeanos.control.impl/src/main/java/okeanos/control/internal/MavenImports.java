@@ -1,6 +1,8 @@
-package okeanos.control.internal.algorithms;
+package okeanos.control.internal;
 
 import javax.management.NotificationBroadcasterSupport;
+
+import okeanos.data.services.UUIDGenerator;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cglib.core.ReflectUtils;
@@ -11,7 +13,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.TaskExecutorFactoryBean;
 
 import de.dailab.jiactng.agentcore.lifecycle.AbstractLifecycle;
-import okeanos.data.services.UUIDGenerator;
 
 /**
  * The Class MavenImports.
@@ -20,20 +21,24 @@ import okeanos.data.services.UUIDGenerator;
  */
 @SuppressWarnings("unused")
 public class MavenImports {
+	/** The abstract lifecycle. */
+	private AbstractLifecycle abstractLifecycle;
+	/** The async annotation bean post processor. */
+	private AsyncAnnotationBeanPostProcessor asyncAnnotationBeanPostProcessor;
 	/** The disposable bean. */
 	private DisposableBean disposableBean;
 	/** The fast class. */
 	private FastClass fastClass;
 	/** The method proxy. */
 	private MethodProxy methodProxy;
+	/** The notification broadcaster support. */
+	private NotificationBroadcasterSupport notificationBroadcasterSupport;
 	/** The reflect utils. */
 	private ReflectUtils reflectUtils;
+	/** The task executor factory bean. */
+	private TaskExecutorFactoryBean taskExecutorFactoryBean;
+	/** The thread pool task scheduler. */
+	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 	/** The uuid generator. */
 	private UUIDGenerator uuidGenerator;
-	/** The abstract lifecycle. */
-	private AbstractLifecycle abstractLifecycle;
-	private NotificationBroadcasterSupport notificationBroadcasterSupport;
-	private AsyncAnnotationBeanPostProcessor asyncAnnotationBeanPostProcessor;
-	private TaskExecutorFactoryBean taskExecutorFactoryBean;
-	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 }

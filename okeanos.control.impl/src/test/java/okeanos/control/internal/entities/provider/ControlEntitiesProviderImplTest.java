@@ -25,6 +25,8 @@ import org.mockito.MockitoAnnotations;
 
 /**
  * The Class ControlEntitiesProviderImplTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class ControlEntitiesProviderImplTest {
 

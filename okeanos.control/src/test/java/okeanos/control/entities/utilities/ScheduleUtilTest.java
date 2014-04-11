@@ -54,6 +54,12 @@ public class ScheduleUtilTest {
 	private static final Amount<Power> TWENTY_WATT = Amount.valueOf(20,
 			Power.UNIT);
 
+	/** The Constant FIFTEEN_MINUTES. */
+	private static final int FIFTEEN_MINUTES = 15;
+
+	/** The Constant THREE_TIMES. */
+	private static final int THREE_TIMES = 3;
+
 	/** The control entities provider. */
 	@Mock
 	private ControlEntitiesProvider controlEntitiesProvider;
@@ -82,6 +88,12 @@ public class ScheduleUtilTest {
 	/** The result to schedule. */
 	private Schedule resultToSchedule;
 
+	/** The result sum schedule1. */
+	private Schedule resultSumSchedule1;
+
+	/** The result sum schedule2. */
+	private Schedule resultSumSchedule2;
+
 	/**
 	 * Instantiates a new schedule util test.
 	 * 
@@ -99,11 +111,16 @@ public class ScheduleUtilTest {
 	 *            the optimized runs
 	 * @param resultToSchedule
 	 *            the result to schedule
+	 * @param resultSumSchedule1
+	 *            the result sum schedule1
+	 * @param resultSumSchedule2
+	 *            the result sum schedule2
 	 */
 	public ScheduleUtilTest(final Schedule schedule1, final Schedule schedule2,
 			final Schedule resultPlus, final Schedule resultMinus,
 			final int resultCompare, final List<OptimizedRun> optimizedRuns,
-			final Schedule resultToSchedule) {
+			final Schedule resultToSchedule, final Schedule resultSumSchedule1,
+			final Schedule resultSumSchedule2) {
 		this.schedule1 = schedule1;
 		this.schedule2 = schedule2;
 		this.resultPlus = resultPlus;
@@ -111,6 +128,8 @@ public class ScheduleUtilTest {
 		this.resultCompare = resultCompare;
 		this.optimizedRuns = optimizedRuns;
 		this.resultToSchedule = resultToSchedule;
+		this.resultSumSchedule1 = resultSumSchedule1;
+		this.resultSumSchedule2 = resultSumSchedule2;
 	}
 
 	/**
@@ -175,9 +194,26 @@ public class ScheduleUtilTest {
 				"my-schedule-result-to-schedule-compare-id-1");
 		Map<DateTime, Slot> mapResultToSchedule1 = new ConcurrentSkipListMap<>();
 		mapResultToSchedule1.put(time1, slot1);
-		mapResultToSchedule1.put(time1.plusMinutes(15), slot2);
-		mapResultToSchedule1.put(time1.plusMinutes(2 * 15), slot3);
+		mapResultToSchedule1.put(time1.plusMinutes(FIFTEEN_MINUTES), slot2);
+		mapResultToSchedule1.put(time1.plusMinutes(2 * FIFTEEN_MINUTES), slot3);
 		resultToSchedule1.setSchedule(mapResultToSchedule1);
+
+		Schedule resultSumSchedule11 = new ScheduleImpl(
+				"my-schedule-result-sum-schedule-1-id-1");
+		Map<DateTime, Slot> mapResultSumSchedule11 = new ConcurrentSkipListMap<>();
+		Slot slotSum111 = new SlotImpl("my-slot-sum-111");
+		slotSum111.setLoad(slot1.getLoad().times(THREE_TIMES));
+		Slot slotSum112 = new SlotImpl("my-slot-sum-112");
+		slotSum112.setLoad(slot2.getLoad().times(THREE_TIMES));
+		Slot slotSum113 = new SlotImpl("my-slot-sum-113");
+		slotSum113.setLoad(slot3.getLoad().times(THREE_TIMES));
+		mapResultSumSchedule11.put(time1, slotSum111);
+		mapResultSumSchedule11.put(time2, slotSum112);
+		mapResultSumSchedule11.put(time3, slotSum113);
+		resultSumSchedule11.setSchedule(mapResultSumSchedule11);
+
+		// resultSumSchedule12 is same as resultSumSchedule11
+		Schedule resultSumSchedule12 = resultSumSchedule11;
 
 		OptimizedRun optimizedRun1 = new OptimizedRunImpl(
 				"my-optimized-run-id-1");
@@ -234,9 +270,37 @@ public class ScheduleUtilTest {
 				"my-schedule-result-to-schedule-compare-id-1");
 		Map<DateTime, Slot> mapResultToSchedule2 = new ConcurrentSkipListMap<>();
 		mapResultToSchedule2.put(time1, slot3);
-		mapResultToSchedule2.put(time1.plusMinutes(15), slot2);
-		mapResultToSchedule2.put(time1.plusMinutes(2 * 15), slot1);
+		mapResultToSchedule2.put(time1.plusMinutes(FIFTEEN_MINUTES), slot2);
+		mapResultToSchedule2.put(time1.plusMinutes(2 * FIFTEEN_MINUTES), slot1);
 		resultToSchedule2.setSchedule(mapResultToSchedule2);
+
+		Schedule resultSumSchedule21 = new ScheduleImpl(
+				"my-schedule-result-sum-schedule-1-id-1");
+		Map<DateTime, Slot> mapResultSumSchedule21 = new ConcurrentSkipListMap<>();
+		Slot slotSum211 = new SlotImpl("my-slot-sum-211");
+		slotSum211.setLoad(slot1.getLoad().times(THREE_TIMES));
+		Slot slotSum212 = new SlotImpl("my-slot-sum-212");
+		slotSum212.setLoad(slot2.getLoad().times(THREE_TIMES));
+		Slot slotSum213 = new SlotImpl("my-slot-sum-213");
+		slotSum213.setLoad(slot3.getLoad().times(THREE_TIMES));
+		mapResultSumSchedule21.put(time1, slotSum211);
+		mapResultSumSchedule21.put(time2, slotSum212);
+		mapResultSumSchedule21.put(time3, slotSum213);
+		resultSumSchedule21.setSchedule(mapResultSumSchedule21);
+
+		Schedule resultSumSchedule22 = new ScheduleImpl(
+				"my-schedule-result-sum-schedule-1-id-2");
+		Map<DateTime, Slot> mapResultSumSchedule22 = new ConcurrentSkipListMap<>();
+		Slot slotSum221 = new SlotImpl("my-slot-sum-221");
+		slotSum221.setLoad(slot3.getLoad().times(THREE_TIMES));
+		Slot slotSum222 = new SlotImpl("my-slot-sum-222");
+		slotSum222.setLoad(slot1.getLoad().times(THREE_TIMES));
+		Slot slotSum223 = new SlotImpl("my-slot-sum-223");
+		slotSum223.setLoad(slot2.getLoad().times(THREE_TIMES));
+		mapResultSumSchedule22.put(time1, slotSum221);
+		mapResultSumSchedule22.put(time2, slotSum222);
+		mapResultSumSchedule22.put(time3, slotSum223);
+		resultSumSchedule22.setSchedule(mapResultSumSchedule22);
 
 		OptimizedRun optimizedRun2 = new OptimizedRunImpl(
 				"my-optimized-run-id-1");
@@ -247,9 +311,11 @@ public class ScheduleUtilTest {
 
 		return Arrays.asList(new Object[][] {
 				{ schedule11, schedule12, resultPlus1, resultMinus1,
-						resultCompare1, optimizedRuns1, resultToSchedule1 },
+						resultCompare1, optimizedRuns1, resultToSchedule1,
+						resultSumSchedule11, resultSumSchedule12 },
 				{ schedule21, schedule22, resultPlus2, resultMinus2,
-						resultCompare2, optimizedRuns2, resultToSchedule2 } });
+						resultCompare2, optimizedRuns2, resultToSchedule2,
+						resultSumSchedule21, resultSumSchedule22 } });
 	}
 
 	/**
@@ -323,6 +389,30 @@ public class ScheduleUtilTest {
 		assertThat(
 				scheduleUtil.compare(resultToSchedule, this.resultToSchedule),
 				is(equalTo(0)));
+	}
+
+	/**
+	 * Test sum schedule1.
+	 */
+	@Test
+	public void testSumSchedule1() {
+		Schedule resultSumSchedule1 = scheduleUtil.sum(schedule1, schedule1,
+				schedule1);
+
+		assertThat(scheduleUtil.compare(resultSumSchedule1,
+				this.resultSumSchedule1), is(equalTo(0)));
+	}
+
+	/**
+	 * Test sum schedule2.
+	 */
+	@Test
+	public void testSumSchedule2() {
+		Schedule resultSumSchedule2 = scheduleUtil.sum(schedule2, schedule2,
+				schedule2);
+
+		assertThat(scheduleUtil.compare(resultSumSchedule2,
+				this.resultSumSchedule2), is(equalTo(0)));
 	}
 
 }

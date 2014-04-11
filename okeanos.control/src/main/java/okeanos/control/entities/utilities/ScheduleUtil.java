@@ -3,7 +3,9 @@ package okeanos.control.entities.utilities;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.measure.quantity.Power;
 
@@ -11,7 +13,6 @@ import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
-import okeanos.math.regression.LargeSerializableConcurrentSkipListMap;
 
 import org.joda.time.DateTime;
 import org.jscience.physics.amount.Amount;
@@ -93,7 +94,7 @@ public class ScheduleUtil implements Comparator<Schedule> {
 	public Schedule minus(final Schedule schedule1, final Schedule schedule2) {
 		Schedule difference = controlEntitiesProvider.getNewSchedule();
 
-		LargeSerializableConcurrentSkipListMap<DateTime, Slot> schedule = new LargeSerializableConcurrentSkipListMap<>();
+		Map<DateTime, Slot> schedule = new ConcurrentSkipListMap<>();
 		schedule.putAll(schedule1.getSchedule());
 		for (Entry<DateTime, Slot> entry : schedule2.getSchedule().entrySet()) {
 			DateTime key = entry.getKey();
@@ -104,7 +105,7 @@ public class ScheduleUtil implements Comparator<Schedule> {
 				newSlot.setLoad(schedule.get(key).getLoad()
 						.minus(value.getLoad()));
 			} else {
-				newSlot.setLoad(value.getLoad().times(-1));
+				newSlot.setLoad(value.getLoad());
 			}
 			schedule.put(key, newSlot);
 		}
@@ -125,10 +126,20 @@ public class ScheduleUtil implements Comparator<Schedule> {
 	 */
 	public Schedule plus(final Schedule schedule1, final Schedule schedule2) {
 		Schedule sum = controlEntitiesProvider.getNewSchedule();
+		Map<DateTime, Slot> scheduleMap1 = schedule1.getSchedule();
+		Map<DateTime, Slot> scheduleMap2 = schedule2.getSchedule();
 
-		LargeSerializableConcurrentSkipListMap<DateTime, Slot> schedule = new LargeSerializableConcurrentSkipListMap<>();
-		schedule.putAll(schedule1.getSchedule());
-		for (Entry<DateTime, Slot> entry : schedule2.getSchedule().entrySet()) {
+		if (scheduleMap1 == null) {
+			scheduleMap1 = new ConcurrentSkipListMap<>();
+		}
+		if (scheduleMap2 == null) {
+			scheduleMap2 = new ConcurrentSkipListMap<>();
+		}
+
+		Map<DateTime, Slot> schedule = new ConcurrentSkipListMap<>();
+		schedule.putAll(scheduleMap1);
+
+		for (Entry<DateTime, Slot> entry : scheduleMap2.entrySet()) {
 			DateTime key = entry.getKey();
 			Slot value = entry.getValue();
 
@@ -137,7 +148,8 @@ public class ScheduleUtil implements Comparator<Schedule> {
 				newSlot.setLoad(schedule.get(key).getLoad()
 						.plus(value.getLoad()));
 			} else {
-				newSlot.setLoad(value.getLoad());
+				newSlot.setLoad(value.getLoad().plus(
+						Amount.valueOf(0, Power.UNIT)));
 			}
 			schedule.put(key, newSlot);
 		}
@@ -160,7 +172,7 @@ public class ScheduleUtil implements Comparator<Schedule> {
 		}
 		Schedule schedule = controlEntitiesProvider.getNewSchedule();
 
-		LargeSerializableConcurrentSkipListMap<DateTime, Slot> scheduleMap = new LargeSerializableConcurrentSkipListMap<>();
+		Map<DateTime, Slot> scheduleMap = new ConcurrentSkipListMap<>();
 		for (OptimizedRun run : optimizedRunsAdapted) {
 			DateTime currentEntryTime = run.getStartTime();
 
@@ -180,5 +192,23 @@ public class ScheduleUtil implements Comparator<Schedule> {
 
 		schedule.setSchedule(scheduleMap);
 		return schedule;
+	}
+
+	/**
+	 * Calculates the sum of two or more schedule instances.
+	 * {@code schedule1 + schedule2 + schedule 3 + ...}.
+	 * 
+	 * @param schedule
+	 *            the schedules
+	 * @return the sum
+	 */
+	public Schedule sum(final Schedule... schedule) {
+		Schedule finalSchedule = controlEntitiesProvider.getNewSchedule();
+
+		for (Schedule currentSchedule : schedule) {
+			finalSchedule = plus(finalSchedule, currentSchedule);
+		}
+
+		return finalSchedule;
 	}
 }

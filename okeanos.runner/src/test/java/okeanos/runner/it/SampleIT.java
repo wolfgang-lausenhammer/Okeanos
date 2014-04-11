@@ -22,14 +22,14 @@ import org.osgi.framework.BundleContext;
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
 public class SampleIT {
-	
+
 	/** The context. */
 	@Inject
 	private BundleContext context;
 
 	/**
 	 * Config.
-	 *
+	 * 
 	 * @return the option[]
 	 */
 	@Configuration
@@ -39,12 +39,12 @@ public class SampleIT {
 
 	/**
 	 * Gets the hello service.
-	 *
+	 * 
 	 * @return the hello service
 	 */
 	@Test
 	public void getHelloService() {
 		assertNotNull(context);
-		//assertEquals("Hello Pax!", context.toString());
+		// assertEquals("Hello Pax!", context.toString());
 	}
 }

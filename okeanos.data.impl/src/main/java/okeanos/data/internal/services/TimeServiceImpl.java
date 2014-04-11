@@ -1,14 +1,19 @@
 package okeanos.data.internal.services;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.inject.Inject;
 
 import okeanos.data.services.TimeService;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeUtils.MillisProvider;
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 import com.google.common.util.concurrent.AtomicDouble;
@@ -18,11 +23,18 @@ import com.google.common.util.concurrent.AtomicDouble;
  * 
  * @author Wolfgang Lausenhammer
  */
+@SuppressWarnings("rawtypes")
 @Component("timeService")
 public class TimeServiceImpl implements TimeService, MillisProvider {
 	/** The Logger. */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(TimeServiceImpl.class);
+
+	/** The Constant MILLIS_IN_SECONDS. */
+	private static final int MILLIS_IN_SECONDS = 1000;
+
+	/** The Constant NANOS_IN_MILLIS. */
+	private static final long NANOS_IN_MILLIS = 1000000;
 
 	/** The pace. */
 	private AtomicDouble pace = new AtomicDouble();
@@ -38,12 +50,20 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	 */
 	private AtomicLong referenceNano = new AtomicLong();
 
+	/** The default task scheduler. */
+	private TaskScheduler defaultTaskScheduler;
+
 	/**
 	 * Instantiates a new time service impl.
+	 * 
+	 * @param defaultTaskScheduler
+	 *            the default task scheduler
 	 */
-	public TimeServiceImpl() {
+	@Inject
+	public TimeServiceImpl(final TaskScheduler defaultTaskScheduler) {
 		setCurrentDateTime(DateTime.now());
 		DateTimeUtils.setCurrentMillisProvider(this);
+		this.defaultTaskScheduler = defaultTaskScheduler;
 	}
 
 	/*
@@ -65,8 +85,8 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	public long getMillis() {
 		long difference = System.nanoTime() - referenceNano.get();
 
-		return referenceMillis.get() + (long) (difference * pace.get()) / 1000
-				/ 1000;
+		return referenceMillis.get() + (long) (difference * pace.get())
+				/ NANOS_IN_MILLIS;
 	}
 
 	/*
@@ -93,7 +113,11 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	@Override
 	public void setPace(final double factor) {
 		setCurrentDateTime(DateTime.now());
-		pace.set((factor >= 0) ? factor : -1 / factor);
+		if (factor >= 0) {
+			pace.set(factor);
+		} else {
+			pace.set(-1 / factor);
+		}
 		LOG.debug("Pace set to {}", pace.get());
 	}
 
@@ -125,5 +149,59 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 
 		LOG.trace("{} - Thread {} - Waked up", DateTime.now(),
 				Thread.currentThread());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#schedule(java.lang.Runnable,
+	 * org.joda.time.DateTime)
+	 */
+	@Override
+	public ScheduledFuture schedule(final Runnable task,
+			final DateTime startTime) {
+		return schedule(task, startTime, defaultTaskScheduler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#schedule(java.lang.Runnable,
+	 * org.joda.time.Period)
+	 */
+	@Override
+	public ScheduledFuture schedule(final Runnable task, final Period duration) {
+		return schedule(task, duration, defaultTaskScheduler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#schedule(java.lang.Runnable,
+	 * org.joda.time.DateTime, org.springframework.scheduling.TaskScheduler)
+	 */
+	@Override
+	public ScheduledFuture schedule(final Runnable task,
+			final DateTime startTime, final TaskScheduler taskScheduler) {
+		return taskScheduler.schedule(task, startTime.toDate());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.data.services.TimeService#schedule(java.lang.Runnable,
+	 * org.joda.time.Period, org.springframework.scheduling.TaskScheduler)
+	 */
+	@Override
+	public ScheduledFuture schedule(final Runnable task, final Period duration,
+			final TaskScheduler taskScheduler) {
+		long millis = (long) ((duration.getMillis() + (duration
+				.toStandardSeconds().getSeconds() - duration.getMillis()
+				/ MILLIS_IN_SECONDS)
+				* MILLIS_IN_SECONDS) / pace.get());
+		LOG.trace("{} - Going to sleep for {}ms", DateTime.now(), millis);
+		return schedule(task,
+				new DateTime(System.currentTimeMillis()).plus(millis),
+				taskScheduler);
 	}
 }

@@ -52,12 +52,12 @@ import de.dailab.jiactng.agentcore.ontology.IAgentDescription;
 public class CommunicationServiceAgentBeanImpl extends
 		AbstractMethodExposingBean implements CommunicationServiceAgentBean {
 
-	/** The communication bean provider. */
-	private Provider<ICommunicationBean> communicationBeanProvider;
-
 	/** The logger. */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(CommunicationServiceAgentBeanImpl.class);
+
+	/** The communication bean provider. */
+	private Provider<ICommunicationBean> communicationBeanProvider;
 
 	/** The uuid generator. */
 	private UUIDGenerator uuidGenerator;
@@ -90,7 +90,23 @@ public class CommunicationServiceAgentBeanImpl extends
 	@Override
 	public void broadcast(final MessageScope scope, final IFact message)
 			throws CommunicationException {
-		LOG.trace("Broadcasting [message={}] to [scope={}]", message, scope);
+		broadcast(scope, message, Collections.<String, String> emptyMap());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.data.services.agentbeans.CommunicationServiceAgentBean#broadcast
+	 * (okeanos.data.services.entities.MessageScope,
+	 * de.dailab.jiactng.agentcore.knowledge.IFact, java.util.Map)
+	 */
+	@Expose(name = ACTION_BROADCAST_OPTIONS)
+	@Override
+	public void broadcast(final MessageScope scope, final IFact message,
+			final Map<String, String> options) throws CommunicationException {
+		LOG.trace("Broadcasting [message={}] to [scope={}] with [options={}]",
+				message, scope, options);
 
 		switch (scope) {
 		case GROUP:
@@ -99,22 +115,21 @@ public class CommunicationServiceAgentBeanImpl extends
 			for (GroupFact group : groups) {
 				ICommunicationAddress receiver = CommunicationAddressFactory
 						.createGroupAddress(group.getGroupId());
-				LOG.debug("Sending to [groupAddress={}]", receiver);
-				sendAsync(receiver, message);
+				LOG.trace("Broadcasting to [groupAddress={}]", receiver);
+				sendAsync(receiver, message, options);
 			}
 			break;
 		case GRID:
 			GridFact grid = memory.read(new GridFact(null));
 			ICommunicationAddress gridAddress = CommunicationAddressFactory
 					.createGroupAddress(grid.getGroupId());
-			LOG.trace("Sending to [gridAddress={}]", gridAddress);
-			sendAsync(gridAddress, message);
+			LOG.trace("Broadcasting to [gridAddress={}]", gridAddress);
+			sendAsync(gridAddress, message, options);
 			break;
 		default:
 			throw new UnsupportedOperationException(String.format(
 					"MessageScope [%s] is not supported yet.", scope));
 		}
-
 	}
 
 	/*
@@ -202,7 +217,7 @@ public class CommunicationServiceAgentBeanImpl extends
 	@Override
 	public void receiveMessageCallback(final SpaceObserver<IFact> listener,
 			final IFact factToListenFor) {
-		LOG.debug(
+		LOG.trace(
 				"Registering message callback for [receivingAgent={}] [factToListenFor={}]",
 				thisAgent, factToListenFor);
 
@@ -310,7 +325,7 @@ public class CommunicationServiceAgentBeanImpl extends
 	 * @see
 	 * okeanos.data.services.agentbeans.CommunicationServiceAgentBean#sendAsync
 	 * (de.dailab.jiactng.agentcore.comm.ICommunicationAddress,
-	 * de.dailab.jiactng.agentcore.knowledge.IFact)
+	 * de.dailab.jiactng.agentcore.knowledge.IFact, java.util.Map)
 	 */
 	@Expose(name = ACTION_SEND_ASYNC_OPTIONS)
 	@Override
@@ -341,7 +356,7 @@ public class CommunicationServiceAgentBeanImpl extends
 		Future<IJiacMessage> replyFuture = new JiacMessageReplyFuture(
 				thisAgent, messageId, null);
 
-		LOG.debug(
+		LOG.trace(
 				"Sending [message={}] asynchronously from [sender={}] to [receiver={}]",
 				StringUtils.abbreviate(jiacMessage.toString(), 1000),
 				getAddressOfAgent(), receiver);

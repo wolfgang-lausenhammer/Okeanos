@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * A factory for creating ScheduleHandlerServiceAgentBeanProvider objects.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Component
 public class ScheduleHandlerServiceAgentBeanProviderFactory extends
@@ -24,7 +26,7 @@ public class ScheduleHandlerServiceAgentBeanProviderFactory extends
 	 */
 	@Inject
 	public ScheduleHandlerServiceAgentBeanProviderFactory(
-			@Value("sendOwnScheduleOnlyScheduleHandlerServiceAgentBean") String scheduleHandlerServiceAgentBean) {
+			@Value("sendOwnScheduleOnlyScheduleHandlerServiceAgentBean") final String scheduleHandlerServiceAgentBean) {
 		setTargetBeanName(scheduleHandlerServiceAgentBean);
 	}
 

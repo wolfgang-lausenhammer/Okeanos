@@ -9,15 +9,14 @@ import javax.inject.Provider;
 import okeanos.core.entities.Entity;
 import okeanos.management.services.EntityManagementService;
 import okeanos.management.services.PlatformManagementService;
-import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
-// TODO: Auto-generated Javadoc
 /**
  * A simple hello world sample which demonstrates the basic interaction and
  * configuration of Okeanos.
@@ -27,12 +26,11 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 @Component
 public class HelloWorld {
 
-	/** The logger. */
-	@Logging
-	private Logger log;
-
 	/** The entity management service. */
 	private EntityManagementService entityManagementService;
+
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory.getLogger(HelloWorld.class);
 
 	/** The platform management service. */
 	private PlatformManagementService platformManagementService;
@@ -61,14 +59,15 @@ public class HelloWorld {
 		this.entityManagementService = entityManagementService;
 
 		IAgentNode node = startAgentNode(platformManagementService);
-		Entity entity = startEntity(entityManagementService, node, "hello-world");
+		Entity entity = startEntity(entityManagementService, node,
+				"hello-world");
 
-		if (log != null) {
-			log.debug("Adding Hello World functionality to entity [{}]", entity);
+		if (LOG != null) {
+			LOG.debug("Adding Hello World functionality to entity [{}]", entity);
 		}
 		entity.addFunctionality(beanProvider.get());
-		if (log != null) {
-			log.debug(
+		if (LOG != null) {
+			LOG.debug(
 					"Finished adding Hello World functionality to entity [{}]",
 					entity);
 		}

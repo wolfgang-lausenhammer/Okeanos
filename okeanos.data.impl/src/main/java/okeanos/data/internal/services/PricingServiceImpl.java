@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.inject.Inject;
 
@@ -16,7 +17,6 @@ import okeanos.data.internal.services.pricing.entities.serialization.PriceDeseri
 import okeanos.data.services.PricingService;
 import okeanos.data.services.entities.CostFunction;
 import okeanos.data.services.entities.Price;
-import okeanos.math.regression.LargeSerializableConcurrentSkipListMap;
 import okeanos.spring.misc.stereotypes.Logging;
 
 import org.apache.commons.io.IOUtils;
@@ -177,7 +177,7 @@ public class PricingServiceImpl implements PricingService {
 				new TypeToken<List<CostFunction>>() {
 				}.getType());
 
-		Map<DateTime, CostFunction> costFunctionsMap = new LargeSerializableConcurrentSkipListMap<>();
+		Map<DateTime, CostFunction> costFunctionsMap = new ConcurrentSkipListMap<>();
 		for (CostFunction func : costFunctionsList) {
 			costFunctionsMap.put(func.getValidFromDateTime(), func);
 		}

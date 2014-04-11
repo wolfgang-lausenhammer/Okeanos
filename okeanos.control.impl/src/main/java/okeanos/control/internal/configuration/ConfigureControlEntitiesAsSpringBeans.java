@@ -19,23 +19,14 @@ import org.springframework.context.annotation.Scope;
 
 /**
  * Configuration class to let Spring know about all the control entities.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @Configuration
 public class ConfigureControlEntitiesAsSpringBeans {
 
 	/** The uuid generator. */
 	private UUIDGenerator uuidGenerator;
-
-	/**
-	 * Sets the uuid generator.
-	 * 
-	 * @param uuidGenerator
-	 *            the new uuid generator
-	 */
-	@Inject
-	public void setUuidGenerator(final UUIDGenerator uuidGenerator) {
-		this.uuidGenerator = uuidGenerator;
-	}
 
 	/**
 	 * Configuration.
@@ -79,6 +70,17 @@ public class ConfigureControlEntitiesAsSpringBeans {
 	@Scope("prototype")
 	public Schedule schedule() {
 		return new ScheduleImpl(uuidGenerator.generateUUID());
+	}
+
+	/**
+	 * Sets the uuid generator.
+	 * 
+	 * @param uuidGenerator
+	 *            the new uuid generator
+	 */
+	@Inject
+	public void setUuidGenerator(final UUIDGenerator uuidGenerator) {
+		this.uuidGenerator = uuidGenerator;
 	}
 
 	/**

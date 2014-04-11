@@ -1,7 +1,10 @@
 package okeanos.data.services;
 
+import java.util.concurrent.ScheduledFuture;
+
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
+import org.joda.time.Period;
+import org.springframework.scheduling.TaskScheduler;
 
 /**
  * The TimeService interface provides an abstraction to the real world clock.
@@ -18,12 +21,12 @@ import org.joda.time.DateTimeUtils;
  * {@link #setCurrentDateTime(DateTime)} and {@link #setPace(double)}. The
  * method can be seen as a replacement to {@link System#currentTimeMillis()}.
  * 
- * @see DateTimeUtils.MillisProvider
- * @see DateTimeUtils#currentTimeMillis()
- * @see System#currentTimeMillis()
- * 
  * @author Wolfgang Lausenhammer
+ * @see org.joda.time.DateTimeUtils.MillisProvider
+ * @see org.joda.time.DateTimeUtils#currentTimeMillis()
+ * @see System#currentTimeMillis()
  */
+@SuppressWarnings("rawtypes")
 public interface TimeService {
 
 	/**
@@ -34,9 +37,68 @@ public interface TimeService {
 	 *         time and midnight, January 1, 1970 UTC.
 	 * 
 	 * @see System#currentTimeMillis()
-	 * @see DateTimeUtils#currentTimeMillis()
+	 * @see org.joda.time.DateTimeUtils#currentTimeMillis()
 	 */
 	long currentTimeMillis();
+
+	/**
+	 * Schedules a task on the default task scheduler at a certain point in
+	 * time.
+	 * 
+	 * @param task
+	 *            the task
+	 * @param startTime
+	 *            the start time
+	 * @return the scheduled future
+	 * 
+	 * @see TaskScheduler#schedule(Runnable, java.util.Date)
+	 */
+	ScheduledFuture schedule(Runnable task, DateTime startTime);
+
+	/**
+	 * Schedules a task on a given task scheduler at a certain point in time.
+	 * 
+	 * @param task
+	 *            the task
+	 * @param startTime
+	 *            the start time
+	 * @param taskScheduler
+	 *            the task scheduler
+	 * @return the scheduled future
+	 * 
+	 * @see TaskScheduler#schedule(Runnable, java.util.Date)
+	 */
+	ScheduledFuture schedule(Runnable task, DateTime startTime,
+			TaskScheduler taskScheduler);
+
+	/**
+	 * Schedules a task on the default task scheduler after a certain period.
+	 * 
+	 * @param task
+	 *            the task
+	 * @param duration
+	 *            the duration
+	 * @return the scheduled future
+	 * 
+	 * @see TaskScheduler#schedule(Runnable, java.util.Date)
+	 */
+	ScheduledFuture schedule(Runnable task, Period duration);
+
+	/**
+	 * Schedules a task on a given task scheduler after a certain period.
+	 * 
+	 * @param task
+	 *            the task
+	 * @param duration
+	 *            the duration
+	 * @param taskScheduler
+	 *            the task scheduler
+	 * @return the scheduled future
+	 * 
+	 * @see TaskScheduler#schedule(Runnable, java.util.Date)
+	 */
+	ScheduledFuture schedule(Runnable task, Period duration,
+			TaskScheduler taskScheduler);
 
 	/**
 	 * Sets the current date time to the specified point in time. Can be used to
