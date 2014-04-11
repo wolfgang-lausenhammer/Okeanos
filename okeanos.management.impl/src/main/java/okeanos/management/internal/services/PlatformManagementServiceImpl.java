@@ -8,35 +8,64 @@ import javax.inject.Provider;
 
 import okeanos.management.internal.services.platformmanagement.OkeanosBasicAgentNode;
 import okeanos.management.services.PlatformManagementService;
-import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.SimpleAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
+/**
+ * Provides functions for managing the platform.
+ * 
+ * @author Wolfgang Lausenhammer
+ */
 @Component
 public class PlatformManagementServiceImpl implements PlatformManagementService {
+
+	/** The agent node provider. */
 	private Provider<OkeanosBasicAgentNode> agentNodeProvider;
 
-	@Logging
-	private Logger log;
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PlatformManagementServiceImpl.class);
 
+	/** The managed agent nodes. */
 	private Map<String, IAgentNode> managedAgentNodes = new ConcurrentHashMap<>();
 
+	/**
+	 * Instantiates a new platform management service.
+	 * 
+	 * @param agentNodeProvider
+	 *            the agent node provider
+	 */
 	@Inject
 	public PlatformManagementServiceImpl(
 			Provider<OkeanosBasicAgentNode> agentNodeProvider) {
 		this.agentNodeProvider = agentNodeProvider;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.PlatformManagementService#getAgentNode(java
+	 * .lang.String)
+	 */
 	@Override
 	public IAgentNode getAgentNode(String id) {
 		return managedAgentNodes.get(id);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.PlatformManagementService#getDefaultAgentNode
+	 * ()
+	 */
 	@Override
 	public IAgentNode getDefaultAgentNode() {
 		try {
@@ -46,14 +75,19 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 				return managedAgentNodes.values().iterator().next();
 			}
 		} catch (LifecycleException e) {
-			if (log != null)
-				log.error(
-						"Encountered a LivecycleException when starting an agent node [{}]",
-						e);
+			LOG.error(
+					"Encountered a LivecycleException when starting an agent node [{}]",
+					e);
 			return null;
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.PlatformManagementService#startAgentNode()
+	 */
 	@Override
 	public IAgentNode startAgentNode() throws LifecycleException {
 		IAgentNode node = agentNodeProvider.get();
@@ -61,11 +95,17 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 		// node will be started by spring!
 		// node.start();
 
-		if (log != null)
-			log.debug("Started new agent node [node={}]", node);
+		LOG.debug("Started new agent node [node={}]", node);
 		return node;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.management.services.PlatformManagementService#stopAgentNode(de
+	 * .dailab.jiactng.agentcore.IAgentNode)
+	 */
 	@Override
 	public void stopAgentNode(IAgentNode agentNode) throws LifecycleException {
 		managedAgentNodes.remove(agentNode.getUUID());
@@ -78,10 +118,8 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 			agentNode.cleanup();
 		}
 
-		if (log != null)
-			log.debug("Stopped {} agents on agent node [node={}]", agentNode
-					.findAgents().size(), agentNode);
-		if (log != null)
-			log.debug("Stopped agent node [node={}]", agentNode);
+		LOG.debug("Stopped {} agents on agent node [node={}]", agentNode
+				.findAgents().size(), agentNode);
+		LOG.debug("Stopped agent node [node={}]", agentNode);
 	}
 }

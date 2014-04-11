@@ -8,9 +8,9 @@ import okeanos.core.entities.Group;
 import okeanos.core.entities.builder.GroupBuilder;
 import okeanos.management.services.EntityManagementService;
 import okeanos.management.services.GroupManagementService;
-import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import de.dailab.jiactng.agentcore.IAgentNode;
@@ -33,8 +33,8 @@ public class GroupManagementServiceImpl implements GroupManagementService {
 	private Provider<GroupBuilder> groupBuilderProvider;
 
 	/** The logger. */
-	@Logging
-	private Logger log;
+	private static final Logger LOG = LoggerFactory
+			.getLogger(GroupManagementServiceImpl.class);
 
 	/**
 	 * Instantiates a new group management service.
@@ -73,13 +73,11 @@ public class GroupManagementServiceImpl implements GroupManagementService {
 	 */
 	@Override
 	public Group loadGroup() {
-		if (log != null)
-			log.debug("Loading group with default configuration");
+		LOG.debug("Loading group with default configuration");
 		Entity entity = entityManagementService.loadEntity();
 		GroupBuilder builder = loadConfigurableGroup();
 		builder.entity(entity);
-		if (log != null)
-			log.debug("Successfully loaded group with default configuration");
+		LOG.debug("Successfully loaded group with default configuration");
 
 		return builder.build();
 	}

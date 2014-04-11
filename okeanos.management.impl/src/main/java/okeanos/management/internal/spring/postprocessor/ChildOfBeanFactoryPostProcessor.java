@@ -1,10 +1,9 @@
 package okeanos.management.internal.spring.postprocessor;
 
-
 import okeanos.spring.misc.stereotypes.ChildOf;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -26,10 +25,21 @@ import org.springframework.util.StringUtils;
 @Component
 public class ChildOfBeanFactoryPostProcessor implements
 		BeanFactoryPostProcessor, PriorityOrdered {
-	protected final Log logger = LogFactory.getLog(getClass());
+
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ChildOfBeanFactoryPostProcessor.class);
+
+	/** The order. */
 	private int order = Ordered.LOWEST_PRECEDENCE; // default: same as
 													// non-Ordered
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.springframework.core.Ordered#getOrder()
+	 */
+	@Override
 	public int getOrder() {
 		return this.order;
 	}
@@ -42,10 +52,11 @@ public class ChildOfBeanFactoryPostProcessor implements
 	 * 
 	 * @param beanFactory
 	 *            the bean factory used by the application context
-	 * @throws org.springframework.beans.BeansException
-	 *             in case of errors
+	 * @throws BeansException
+	 *             the beans exception
 	 */
 	@SuppressWarnings("rawtypes")
+	@Override
 	public void postProcessBeanFactory(
 			ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		String[] beanNames = beanFactory.getBeanDefinitionNames();
@@ -68,16 +79,16 @@ public class ChildOfBeanFactoryPostProcessor implements
 								"ChildOf Annotation of bean [" + beanName
 										+ "] has no parent Value");
 					}
-					if (logger.isDebugEnabled()) {
-						logger.debug("Found parentName [" + parentName
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Found parentName [" + parentName
 								+ "] for bean [" + beanName + "]");
 					}
 					// is there already a different parent ?
 					String oldParentName = bd.getParentName();
 					if (StringUtils.hasText(oldParentName)
 							&& !parentName.equals(oldParentName)) {
-						logger.warn("bean [" + beanName
-								+ "] has already parent [" + oldParentName
+						LOG.warn("bean [" + beanName + "] has already parent ["
+								+ oldParentName
 								+ "] set - new annotated parent[" + parentName
 								+ "] will be ignored");
 					}
@@ -85,13 +96,19 @@ public class ChildOfBeanFactoryPostProcessor implements
 					bd.setParentName(parentName);
 				}
 			} catch (ClassNotFoundException e) {
-				logger.warn("Bean [" + beanName + "] has invalid ClassName["
+				LOG.warn("Bean [" + beanName + "] has invalid ClassName["
 						+ bd.getBeanClassName()
 						+ "] - Exception will be ignored");
 			}
 		}
 	}
 
+	/**
+	 * Sets the order.
+	 * 
+	 * @param order
+	 *            the new order
+	 */
 	public void setOrder(int order) {
 		this.order = order;
 	}

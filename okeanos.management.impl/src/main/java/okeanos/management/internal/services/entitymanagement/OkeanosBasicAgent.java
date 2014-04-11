@@ -9,9 +9,9 @@ import javax.inject.Inject;
 
 import okeanos.data.services.TimeService;
 import okeanos.spring.misc.stereotypes.ChildOf;
-import okeanos.spring.misc.stereotypes.Logging;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +26,8 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 public class OkeanosBasicAgent extends Agent {
 	private boolean active;
 	private Future<?> executionFuture;
-	@Logging
-	private Logger log;
+	private static final Logger LOG = LoggerFactory
+			.getLogger(OkeanosBasicAgent.class);
 	private TimeService timeService;
 
 	@Inject
@@ -89,8 +89,7 @@ public class OkeanosBasicAgent extends Agent {
 							t.get(getBeanExecutionTimeout(),
 									TimeUnit.MILLISECONDS);
 						} catch (TimeoutException to) {
-							if (log != null)
-								log.error("ExecutionCycle did not return: ", to);
+							LOG.error("ExecutionCycle did not return: ", to);
 							t.cancel(true);
 							this.stop();
 						}
@@ -99,17 +98,14 @@ public class OkeanosBasicAgent extends Agent {
 					}
 				}
 			} catch (Exception e) {
-				if (log != null)
-					log.error("Critical error in controlcycle of agent: "
-							+ getAgentName() + ". Stopping Agent! Exception: ",
-							e);
+				LOG.error("Critical error in controlcycle of agent: "
+						+ getAgentName() + ". Stopping Agent! Exception: ", e);
 
 				try {
 					this.stop();
 				} catch (LifecycleException lex) {
-					if (log != null)
-						log.error("Agent " + getAgentName()
-								+ " could not be stopped because of: {}", lex);
+					LOG.error("Agent " + getAgentName()
+							+ " could not be stopped because of: {}", lex);
 				}
 			}
 		}
