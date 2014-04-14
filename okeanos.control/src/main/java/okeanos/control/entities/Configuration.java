@@ -43,10 +43,10 @@ public interface Configuration extends IFact {
 	void setPossibleRun(List<PossibleRun> possibleRuns);
 
 	/**
-	 * Sets the schedule.
+	 * Sets the schedule of all other devices.
 	 * 
 	 * @param scheduleOfOtherDevices
 	 *            the new schedule
 	 */
-	void setSchedule(Schedule scheduleOfOtherDevices);
+	void setScheduleOfOtherDevices(Schedule scheduleOfOtherDevices);
 }

@@ -21,11 +21,25 @@
 		interface="okeanos.control.entities.provider.ControlEntitiesProvider"
 		availability="mandatory" />
 
-	<osgi:service ref="lightBulb100W" interface="okeanos.model.entities.Load">
+	<osgi:service ref="Light_Bulb_100W" interface="okeanos.model.entities.Load">
 		<osgi:service-properties>
 			<entry key="brand" value="general" />
-			<entry key="name" value="LIGHT_BULB_100W" />
+			<entry key="name" value="Light_Bulb_100W" />
 			<entry key="description" value="100W standard light bulb" />
+			<entry key="category" value="lightbulb" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="Kenmore_665_13242K900">
+		<osgi:interfaces>
+			<value>okeanos.model.entities.Load</value>
+			<value>okeanos.model.entities.RegulableLoad</value>
+		</osgi:interfaces>
+		<osgi:service-properties>
+			<entry key="brand" value="kenmore" />
+			<entry key="name" value="Kenmore_665_13242K900" />
+			<entry key="description" value="Kenmore 665.13242K900 dishwasher" />
+			<entry key="category" value="dishwasher" />
 		</osgi:service-properties>
 	</osgi:service>
 </beans>

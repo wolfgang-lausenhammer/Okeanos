@@ -34,6 +34,11 @@
 			<version>${okeanos-data-version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>edu.gmu.cs</groupId>
+			<artifactId>ecj</artifactId>
+			<version>${ecj-version}</version>
+		</dependency>
 	</dependencies>
 
 </project>

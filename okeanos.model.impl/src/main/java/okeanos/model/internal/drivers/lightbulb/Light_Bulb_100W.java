@@ -1,6 +1,5 @@
-package okeanos.model.internal.drivers.lightbulbs;
+package okeanos.model.internal.drivers.lightbulb;
 
-import static javax.measure.unit.SI.SECOND;
 import static javax.measure.unit.SI.WATT;
 
 import java.io.IOException;
@@ -9,41 +8,51 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.measure.Measurable;
-import javax.measure.Measure;
-import javax.measure.quantity.Duration;
 import javax.measure.quantity.Power;
 
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
+import okeanos.data.services.Constants;
 import okeanos.math.regression.PreviousValueTrendLine;
 import okeanos.math.regression.TrendLine;
 import okeanos.math.regression.periodic.Periodic24hTrendline;
 import okeanos.model.entities.Load;
-import okeanos.model.internal.drivers.lightbulbs.StaticLoadLoadProfileReader.XYEntity;
+import okeanos.model.internal.drivers.readers.StaticLoadLoadProfileReader;
+import okeanos.model.internal.drivers.readers.StaticLoadLoadProfileReader.XYEntity;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Period;
 import org.jscience.physics.amount.Amount;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 /**
- * The Class LightBulb100W.
+ * Driver for a common 100W light bulb. Represents a static load, i.e. the load
+ * cannot be influenced in any way.
+ * 
+ * @author Wolfgang Lausenhammer
  */
-@Component
-public class LightBulb100W implements Load {
+@Component("Light_Bulb_100W")
+public class Light_Bulb_100W implements Load {
 
-	/** The load profile. */
-	private TrendLine loadProfile;
+	/** The Constant FIFTY_NINE. */
+	private static final int FIFTY_NINE = 59;
+
+	/** The Constant TWENTY_THREE. */
+	private static final int TWENTY_THREE = 23;
+
+	/** The control entities provider. */
+	private ControlEntitiesProvider controlEntitiesProvider;
 
 	/** The id. */
 	private String id;
 
-	/** The control entities provider. */
-	private ControlEntitiesProvider controlEntitiesProvider;
+	/** The load profile. */
+	private TrendLine loadProfile;
 
 	/**
 	 * Instantiates a new light bulb100 w.
@@ -58,8 +67,8 @@ public class LightBulb100W implements Load {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Inject
-	public LightBulb100W(
-			@Value("${okeanos.model.internal.drivers.lightbulbs.LightBulb100W.loadProfilePath}") final Resource resource,
+	public Light_Bulb_100W(
+			@Value("${okeanos.model.internal.drivers.lightbulb.Light_Bulb_100W.loadProfilePath}") final Resource resource,
 			@Value("#{ uuidGenerator.generateUUID() }") final String id,
 			final ControlEntitiesProvider controlEntitiesProvider)
 			throws IOException {
@@ -76,21 +85,11 @@ public class LightBulb100W implements Load {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.model.entities.Load#getId()
-	 */
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see okeanos.model.entities.Load#getConsumption()
 	 */
 	@Override
-	public Measurable<Power> getConsumption() {
-		return Measure.valueOf(loadProfile.predict(DateTime.now().getMillis()),
+	public Amount<Power> getConsumption() {
+		return Amount.valueOf(loadProfile.predict(DateTime.now().getMillis()),
 				WATT);
 	}
 
@@ -101,12 +100,20 @@ public class LightBulb100W implements Load {
 	 * okeanos.model.entities.Load#getConsumptionIn(javax.measure.Measurable)
 	 */
 	@Override
-	public Measurable<Power> getConsumptionIn(
-			final Measurable<Duration> duration) {
-		DateTime pointInTime = DateTime.now().plusSeconds(
-				(int) duration.longValue(SECOND));
-		return Measure.valueOf(loadProfile.predict(pointInTime.getMillis()),
+	public Amount<Power> getConsumptionIn(final Period duration) {
+		DateTime pointInTime = DateTime.now().plus(duration);
+		return Amount.valueOf(loadProfile.predict(pointInTime.getMillis()),
 				WATT);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.model.entities.Load#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	/*
@@ -116,19 +123,20 @@ public class LightBulb100W implements Load {
 	 */
 	@Override
 	public List<PossibleRun> getPossibleRuns() {
-		DateTime startOfToday = DateTime.now().withTimeAtStartOfDay();
-		DateTime endOfToday = startOfToday.withHourOfDay(23)
-				.withMinuteOfHour(59).withSecondOfMinute(59);
+		DateTime startOfToday = DateTime.now(DateTimeZone.UTC)
+				.withTimeAtStartOfDay();
+		DateTime endOfToday = startOfToday.withHourOfDay(TWENTY_THREE)
+				.withMinuteOfHour(FIFTY_NINE).withSecondOfMinute(FIFTY_NINE);
 		List<Slot> neededSlots = new LinkedList<>();
 
 		for (DateTime instant = startOfToday; instant.isBefore(endOfToday); instant = instant
-				.plusMinutes(15)) {
+				.plusMinutes(Constants.SLOT_INTERVAL)) {
 			Slot currentSlot = controlEntitiesProvider.getNewSlot();
 			currentSlot.setLoad(Amount.valueOf(
 					loadProfile.predict(instant.getMillis()), WATT));
 			neededSlots.add(currentSlot);
 		}
-		
+
 		PossibleRun run = controlEntitiesProvider.getNewPossibleRun();
 		run.setEarliestStartTime(startOfToday);
 		run.setLatestEndTime(endOfToday);

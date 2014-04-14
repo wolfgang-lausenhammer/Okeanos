@@ -86,7 +86,7 @@ public class ConfigurationImpl implements Configuration {
 	 * .Schedule)
 	 */
 	@Override
-	public void setSchedule(final Schedule scheduleOfOtherDevices) {
+	public void setScheduleOfOtherDevices(final Schedule scheduleOfOtherDevices) {
 		this.scheduleOfOtherDevices = scheduleOfOtherDevices;
 	}
 

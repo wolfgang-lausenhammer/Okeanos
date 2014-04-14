@@ -149,8 +149,9 @@ public class LightBulbBean extends AbstractMethodExposingBean implements
 	 *            the control algorithm
 	 */
 	@Inject
-	public LightBulbBean(@Qualifier("lightBulb100W") final Load lightBulb,
-			final ControlAlgorithm controlAlgorithm) {
+	public LightBulbBean(
+			@Qualifier("lightBulb100W") final Load lightBulb,
+			@Qualifier("controlAlgorithmService") final ControlAlgorithm controlAlgorithm) {
 		this.lightBulb = lightBulb;
 		this.controlAlgorithm = controlAlgorithm;
 	}

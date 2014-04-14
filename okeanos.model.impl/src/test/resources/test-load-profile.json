@@ -1,18 +1,18 @@
 [
 	{
-		"dateTime":"2014-03-20T00:00:00-05:00",
+		"dateTime":"2014-03-20T00:00:00Z",
 		"consumption":0
 	},
 	{
-		"dateTime":"2014-03-20T00:15:00-05:00",
+		"dateTime":"2014-03-20T00:15:00Z",
 		"consumption":0
 	},
 	{
-		"dateTime":"2014-03-20T00:30:00-05:00",
+		"dateTime":"2014-03-20T00:30:00Z",
 		"consumption":100
 	},
 	{
-		"dateTime":"2014-03-20T00:45:00-05:00",
+		"dateTime":"2014-03-20T00:45:00Z",
 		"consumption":100
 	}
 	

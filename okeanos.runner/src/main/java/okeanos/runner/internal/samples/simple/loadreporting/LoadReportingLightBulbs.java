@@ -23,7 +23,7 @@ import de.dailab.jiactng.agentcore.IAgentNode;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 /**
- * Sample that demonstartes a set of light bulbs that report their schedule and
+ * Sample that demonstrates a set of light bulbs that report their schedule and
  * try to find an equilibrium.
  * 
  * @author Wolfgang Lausenhammer

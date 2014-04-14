@@ -397,7 +397,7 @@ public class LocalSumScheduleHandlerServiceAgentBean extends
 					.getNewConfiguration();
 			configuration.setPossibleRun(possibleRunsToday);
 			configuration
-					.setSchedule(latestReceivedScheduleMinusLatestOptimizedSchedule);
+					.setScheduleOfOtherDevices(latestReceivedScheduleMinusLatestOptimizedSchedule);
 
 			// optimize schedule
 			LOG.debug(

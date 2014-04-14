@@ -70,6 +70,7 @@
 		<howl-version>1.0.1-1</howl-version>
 		<javax-annotation-version>1.0</javax-annotation-version>
 		<javax-inject-version>1</javax-inject-version>
+		<ecj-version>21</ecj-version>
 		<jscience-version>4.3.1</jscience-version>
 		<quartz-version>2.2.1</quartz-version>
 		<commons-math-version>3.2</commons-math-version>

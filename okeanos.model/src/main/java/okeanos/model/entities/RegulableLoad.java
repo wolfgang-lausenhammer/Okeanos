@@ -1,5 +1,7 @@
 package okeanos.model.entities;
 
-public interface RegulableLoad extends Load {
+import okeanos.control.entities.Schedule;
 
+public interface RegulableLoad extends Load {
+	void applySchedule(Schedule schedule);
 }

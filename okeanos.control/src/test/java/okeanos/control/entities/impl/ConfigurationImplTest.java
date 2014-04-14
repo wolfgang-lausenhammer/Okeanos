@@ -125,7 +125,7 @@ public class ConfigurationImplTest {
 	 */
 	@Test
 	public void testScheduleOfOtherDevices() {
-		configuration.setSchedule(scheduleOfOtherDevices);
+		configuration.setScheduleOfOtherDevices(scheduleOfOtherDevices);
 
 		Schedule scheduleOfOtherDevices = configuration
 				.getScheduleOfOtherDevices();

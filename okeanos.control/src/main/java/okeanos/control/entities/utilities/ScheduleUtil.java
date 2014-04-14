@@ -13,6 +13,7 @@ import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
+import okeanos.data.services.Constants;
 
 import org.joda.time.DateTime;
 import org.jscience.physics.amount.Amount;
@@ -186,7 +187,7 @@ public class ScheduleUtil implements Comparator<Schedule> {
 				}
 
 				scheduleMap.put(currentEntryTime, newSlot);
-				currentEntryTime = currentEntryTime.plusMinutes(15);
+				currentEntryTime = currentEntryTime.plusMinutes(Constants.SLOT_INTERVAL);
 			}
 		}
 

@@ -18,8 +18,19 @@
 	<task:scheduler id="myScheduler" pool-size="10" />
 
 	<!-- OSGi published services -->
-	<osgi:service id="controlAlgorithmOsgi" ref="noOpControlAlgorithm"
-		interface="okeanos.control.algorithms.ControlAlgorithm" />
+	<osgi:service id="noOpControlAlgorithmOsgi" ref="noOpControlAlgorithm"
+		interface="okeanos.control.algorithms.ControlAlgorithm">
+		<osgi:service-properties>
+			<entry key="name" value="NoOpControlAlgorithm" />
+		</osgi:service-properties>
+	</osgi:service>
+	<osgi:service id="particleSwarmOptimizationControlAlgorithmOsgi"
+		ref="particleSwarmOptimizationControlAlgorithm" interface="okeanos.control.algorithms.ControlAlgorithm">
+		<osgi:service-properties>
+			<entry key="name" value="ParticleSwarmOptimizationControlAlgorithm" />
+		</osgi:service-properties>
+	</osgi:service>
+
 	<osgi:service id="controlEntitiesProviderOsgi" ref="controlEntitiesProvider"
 		interface="okeanos.control.entities.provider.ControlEntitiesProvider" />
 	<osgi:service id="controlServicesProviderOsgi" ref="controlServicesProvider"

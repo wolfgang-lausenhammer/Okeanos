@@ -1,9 +1,13 @@
-package okeanos.model.internal.drivers.lightbulbs;
+package okeanos.model.internal.drivers.readers;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
+
+import javax.measure.quantity.Power;
+
+import okeanos.control.entities.Slot;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +25,8 @@ import com.google.gson.JsonObject;
  * Static Load Load Profile Reader reads the load profile from a resource and
  * provides a method to convert it to a x/y form, so that it can be used for
  * interpolating.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public final class StaticLoadLoadProfileReader {
 
@@ -100,6 +106,32 @@ public final class StaticLoadLoadProfileReader {
 		for (Entry<DateTime, Double> entry : loadProfile.entrySet()) {
 			x[i] = entry.getKey().getMillis();
 			y[i] = entry.getValue();
+			i++;
+		}
+
+		XYEntity<double[]> xy = new XYEntity<>();
+		xy.setX(x);
+		xy.setY(y);
+
+		return xy;
+	}
+
+	/**
+	 * Gets the X/Y values from the load profile.
+	 * 
+	 * @param loadProfile
+	 *            the load profile
+	 * @return the X/Y values from load profile
+	 */
+	public static XYEntity<double[]> getXYFromLoadProfileSlot(
+			final Map<DateTime, Slot> loadProfile) {
+		double[] x = new double[loadProfile.size()];
+		double[] y = new double[loadProfile.size()];
+		int i = 0;
+
+		for (Entry<DateTime, Slot> entry : loadProfile.entrySet()) {
+			x[i] = entry.getKey().getMillis();
+			y[i] = entry.getValue().getLoad().doubleValue(Power.UNIT);
 			i++;
 		}
 

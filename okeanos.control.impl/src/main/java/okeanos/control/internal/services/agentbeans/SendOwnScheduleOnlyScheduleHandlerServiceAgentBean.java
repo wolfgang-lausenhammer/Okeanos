@@ -303,8 +303,8 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					return;
 				}
 
-				LOG.debug(
-						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+				LOG.trace(
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 						thisAgent.getAgentName(), state,
 						State.EQUILIBRIUM_REACHED);
 				state = State.EQUILIBRIUM_REACHED;
@@ -361,7 +361,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			}
 
 			LOG.trace(
-					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 					thisAgent.getAgentName(), state,
 					State.CALLING_POSSIBLE_RUNS_CALLBACK);
 			state = State.CALLING_POSSIBLE_RUNS_CALLBACK;
@@ -371,12 +371,12 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			Configuration configuration = controlEntitiesProvider
 					.getNewConfiguration();
 			configuration.setPossibleRun(possibleRunsToday);
-			configuration.setSchedule(scheduleUtil.sum(scheduleOfEntities
-					.values().toArray(new Schedule[0])));
+			configuration.setScheduleOfOtherDevices(scheduleUtil
+					.sum(scheduleOfEntities.values().toArray(new Schedule[0])));
 
 			// optimize schedule
 			LOG.trace(
-					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 					thisAgent.getAgentName(), state, State.OPTIMIZING_SCHEDULE);
 			state = State.OPTIMIZING_SCHEDULE;
 			List<OptimizedRun> optimizedRuns = controlAlgorithm
@@ -384,7 +384,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 			// allow agent bean to correct optimized runs
 			LOG.trace(
-					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 					thisAgent.getAgentName(), state,
 					State.CALLING_OPTIMIZED_RUNS_CALLBACK);
 			state = State.CALLING_OPTIMIZED_RUNS_CALLBACK;
@@ -403,7 +403,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 								schedule));
 			} else {
 				LOG.trace(
-						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 						thisAgent.getAgentName(), state, State.SENDING_SCHEDULE);
 				state = State.SENDING_SCHEDULE;
 
@@ -421,14 +421,14 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			latestOptimizedRuns = optimizedRuns;
 
 			LOG.trace(
-					"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 					thisAgent.getAgentName(), state,
 					State.WAITING_FOR_SCHEDULES);
 			state = State.WAITING_FOR_SCHEDULES;
 
 			scheduledEquilibriumWaiter = timeService
 					.schedule(equilibriumWaiter,
-							Period.seconds(WAIT_FOR_EQUILIBRIUM_TIMEOUT),
+							Period.millis(WAIT_FOR_EQUILIBRIUM_TIMEOUT),
 							taskScheduler);
 		}
 	}
@@ -516,7 +516,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 				scheduledBroadcast.cancel(false);
 
 				LOG.trace(
-						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 						thisAgent.getAgentName(), state,
 						State.CALLING_SCHEDULE_CALLBACK);
 				state = State.CALLING_SCHEDULE_CALLBACK;
@@ -540,7 +540,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 										.toDate());
 
 				LOG.trace(
-						"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 						thisAgent.getAgentName(), state,
 						State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND);
 				state = State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND;
@@ -750,7 +750,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		scheduleMessageHandler = new ScheduleMessageHandler();
 
 		LOG.trace(
-				"{} - ScheduleHandlerServiceAgentBeanImpl changing state from {} to {}",
+				"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 				state, State.WAITING_FOR_SCHEDULES);
 		state = State.WAITING_FOR_SCHEDULES;
 	}

@@ -163,14 +163,13 @@ public class PricingServiceImpl implements PricingService {
 	 */
 	@Override
 	@Scheduled(fixedRate = 1000)
-	public void refreshPricingResource() throws JsonSyntaxException,
-			IOException {
+	public void refreshPricingResource() throws IOException {
 		String jsonString = IOUtils.toString(pricingResource.getInputStream());
 		if (log != null) {
 			log.trace("New pricing resource with content: {}", jsonString);
 		}
 		if (log != null) {
-			log.debug("refreshing....");
+			log.debug("{}: refreshing....", DateTime.now());
 		}
 
 		List<CostFunction> costFunctionsList = gson.fromJson(jsonString,
