@@ -31,7 +31,7 @@
 		availability="mandatory" />
 
 	<osgi:reference id="controlAlgorithmService"
-		interface="okeanos.control.algorithms.ControlAlgorithm" filter="(name=NoOpControlAlgorithm)"
+		interface="okeanos.control.algorithms.ControlAlgorithm" filter="(name=ParticleSwarmOptimizationControlAlgorithm)"
 		availability="mandatory" />
 
 	<osgi:reference id="controlEntitiesProvider"

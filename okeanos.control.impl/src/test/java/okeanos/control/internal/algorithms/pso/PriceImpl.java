@@ -1,4 +1,4 @@
-package okeanos.data.internal.services.pricing.entities;
+package okeanos.control.internal.algorithms.pso;
 
 import java.util.Arrays;
 

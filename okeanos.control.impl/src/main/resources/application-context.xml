@@ -40,4 +40,6 @@
 		availability="mandatory" />
 	<osgi:reference id="uuidGenerator" interface="okeanos.data.services.UUIDGenerator"
 		availability="mandatory" />
+	<osgi:reference id="pricingService"
+		interface="okeanos.data.services.PricingService" availability="mandatory" />
 </beans>
