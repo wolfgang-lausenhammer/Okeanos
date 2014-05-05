@@ -42,7 +42,7 @@ public class TimeServiceImplTest {
 	private static final long THOUSAND = 1000;
 
 	/** The Constant TOLERANCE. */
-	private static final long TOLERANCE = 5;
+	private static final long TOLERANCE = 15;
 
 	/** The start nanos after. */
 	private long startNanosAfter;
@@ -178,7 +178,8 @@ public class TimeServiceImplTest {
 		assertThat(difference, is(lessThan(SLEEP_TIME)));
 		assertThat(
 				difference,
-				is(allOf(greaterThan((long) ((SLEEP_TIME - TOLERANCE) / pace)),
+				is(allOf(
+						greaterThan((long) ((SLEEP_TIME - 2 * TOLERANCE) / pace)),
 						lessThan((long) ((SLEEP_TIME + 2 * TOLERANCE) / pace)))));
 	}
 

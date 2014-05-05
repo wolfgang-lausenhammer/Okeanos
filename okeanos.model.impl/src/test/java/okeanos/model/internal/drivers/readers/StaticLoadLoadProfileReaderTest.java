@@ -75,16 +75,16 @@ public class StaticLoadLoadProfileReaderTest {
 
 		assertThat(loadProfile.entrySet(), hasSize(equalTo(FOUR)));
 		assertThat(
-				loadProfile.get(DateTime.parse("2014-03-20T00:00:00-05:00")),
+				loadProfile.get(DateTime.parse("2014-03-20T00:00:00Z")),
 				is(equalTo(0.0)));
 		assertThat(
-				loadProfile.get(DateTime.parse("2014-03-20T00:15:00-05:00")),
+				loadProfile.get(DateTime.parse("2014-03-20T00:15:00Z")),
 				is(equalTo(0.0)));
 		assertThat(
-				loadProfile.get(DateTime.parse("2014-03-20T00:30:00-05:00")),
+				loadProfile.get(DateTime.parse("2014-03-20T00:30:00Z")),
 				is(equalTo(HUNDRED)));
 		assertThat(
-				loadProfile.get(DateTime.parse("2014-03-20T00:45:00-05:00")),
+				loadProfile.get(DateTime.parse("2014-03-20T00:45:00Z")),
 				is(equalTo(HUNDRED)));
 	}
 }
