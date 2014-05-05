@@ -34,7 +34,7 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 public class LightBulbsAndDishwasher {
 
 	/** The Constant PACE. */
-	public static final int PACE = 100;
+	public static final int PACE = 10;
 
 	/** The Constant PLANNING_INTERVAL. */
 	public static final int PLANNING_INTERVAL = Days.ONE.toStandardSeconds()

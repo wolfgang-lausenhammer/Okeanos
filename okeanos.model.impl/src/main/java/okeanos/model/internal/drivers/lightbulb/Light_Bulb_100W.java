@@ -39,8 +39,8 @@ import org.springframework.stereotype.Component;
 @Component("Light_Bulb_100W")
 public class Light_Bulb_100W implements Load {
 
-	/** The Constant FIFTY_NINE. */
-	private static final int FIFTY_NINE = 59;
+	/** The Constant FOURTY_FIVE. */
+	private static final int FOURTY_FIVE = 45;
 
 	/** The Constant TWENTY_THREE. */
 	private static final int TWENTY_THREE = 23;
@@ -125,8 +125,7 @@ public class Light_Bulb_100W implements Load {
 	public List<PossibleRun> getPossibleRuns() {
 		DateTime startOfToday = DateTime.now(DateTimeZone.UTC)
 				.withTimeAtStartOfDay();
-		DateTime endOfToday = startOfToday.withHourOfDay(TWENTY_THREE)
-				.withMinuteOfHour(FIFTY_NINE).withSecondOfMinute(FIFTY_NINE);
+		DateTime endOfToday = startOfToday.withTime(TWENTY_THREE, FOURTY_FIVE, 00, 0);
 		List<Slot> neededSlots = new LinkedList<>();
 
 		for (DateTime instant = startOfToday; instant.isBefore(endOfToday); instant = instant

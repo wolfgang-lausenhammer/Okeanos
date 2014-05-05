@@ -5,6 +5,7 @@ import java.util.Arrays;
 import okeanos.math.regression.TrendLine;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public class Periodic24hTrendline implements PeriodicTrendLine {
 	private PeriodicTrendLine periodicTrendLine;
@@ -18,7 +19,7 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 	@Override
 	public void setValues(double[] y, double[] x) {
 		trendLine.setValues(y, x);
-		DateTime beginning = new DateTime((long) x[0]);
+		DateTime beginning = new DateTime((long) x[0], DateTimeZone.UTC);
 		DateTime nextDay = beginning.plusHours(24);
 		int numberOfItemsToCopy = 0;
 		for (double item : x) {

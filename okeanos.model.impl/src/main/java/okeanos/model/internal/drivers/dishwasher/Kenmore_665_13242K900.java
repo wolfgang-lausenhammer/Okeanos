@@ -43,8 +43,8 @@ import com.google.common.collect.Iterables;
 @Component("Kenmore_665_13242K900")
 public class Kenmore_665_13242K900 implements RegulableLoad {
 
-	/** The Constant FITFY_NINE. */
-	private static final int FITFY_NINE = 59;
+	/** The Constant FOURTY_FIVE. */
+	private static final int FOURTY_FIVE = 45;
 
 	/** The Constant TWENTY_THREE. */
 	private static final int TWENTY_THREE = 23;
@@ -177,8 +177,8 @@ public class Kenmore_665_13242K900 implements RegulableLoad {
 
 		DateTime startOfToday = DateTime.now(DateTimeZone.UTC)
 				.withTimeAtStartOfDay();
-		DateTime endOfToday = startOfToday.withHourOfDay(TWENTY_THREE)
-				.withMinuteOfHour(FITFY_NINE).withSecondOfMinute(FITFY_NINE);
+		DateTime endOfToday = startOfToday.withTime(TWENTY_THREE, FOURTY_FIVE,
+				00, 0);
 
 		PossibleRun run = controlEntitiesProvider.getNewPossibleRun();
 		run.setEarliestStartTime(startOfToday);

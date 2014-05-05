@@ -406,6 +406,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 						thisAgent.getAgentName(), state, State.SENDING_SCHEDULE);
 				state = State.SENDING_SCHEDULE;
+				LOG.info("{} - old: {}", thisAgent.getAgentName(),
+						scheduleUtil.toSchedule(latestOptimizedRuns));
+				LOG.info("{} - new: {}", thisAgent.getAgentName(), schedule);
 
 				LOG.debug("{} - Announcing my new optimized schedule",
 						thisAgent.getAgentName());
@@ -426,10 +429,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					State.WAITING_FOR_SCHEDULES);
 			state = State.WAITING_FOR_SCHEDULES;
 
-			scheduledEquilibriumWaiter = timeService
-					.schedule(equilibriumWaiter,
-							Period.millis(WAIT_FOR_EQUILIBRIUM_TIMEOUT),
-							taskScheduler);
+			scheduledEquilibriumWaiter = timeService.schedule(
+					equilibriumWaiter,
+					Period.millis(WAIT_FOR_EQUILIBRIUM_TIMEOUT), taskScheduler);
 		}
 	}
 

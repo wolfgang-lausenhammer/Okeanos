@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -164,6 +165,7 @@ public class TimeServiceImplTest {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
+	@Ignore
 	@Test
 	public void testSleepMillisHighPace() throws InterruptedException {
 		int pace = HIGH_PACE;
