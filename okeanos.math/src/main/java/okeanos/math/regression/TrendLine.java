@@ -3,6 +3,8 @@ package okeanos.math.regression;
 /**
  * Provides a common interface for all trendline functions. That is, regression
  * functions.
+ * 
+ * @author maybeWeCouldStealAVa @ stackoverflow.com
  */
 public interface TrendLine {
 

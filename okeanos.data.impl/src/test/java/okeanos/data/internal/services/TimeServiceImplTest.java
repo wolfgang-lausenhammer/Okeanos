@@ -165,24 +165,23 @@ public class TimeServiceImplTest {
 	 * @throws InterruptedException
 	 *             the interrupted exception
 	 */
-	@Ignore
 	@Test
 	public void testSleepMillisHighPace() throws InterruptedException {
 		int pace = HIGH_PACE;
 
 		timeService.setPace(pace);
-		long before = System.nanoTime();
+		long before = System.currentTimeMillis();
 
 		timeService.sleep(SLEEP_TIME);
 
-		long after = System.nanoTime();
-		long difference = (after - before) / THOUSAND / THOUSAND;
+		long after = System.currentTimeMillis();
+		long difference = after - before;
+
 		assertThat(difference, is(lessThan(SLEEP_TIME)));
 		assertThat(
 				difference,
-				is(allOf(
-						greaterThan((long) ((SLEEP_TIME - 2 * TOLERANCE) / pace)),
-						lessThan((long) ((SLEEP_TIME + 2 * TOLERANCE) / pace)))));
+				is(allOf(greaterThan((long) ((SLEEP_TIME - TOLERANCE) / pace)),
+						lessThan((long) ((SLEEP_TIME + TOLERANCE) / pace)))));
 	}
 
 	/**
@@ -196,12 +195,13 @@ public class TimeServiceImplTest {
 		double pace = SLOW_PACE;
 
 		timeService.setPace(pace);
-		long before = System.nanoTime();
 
+		long before = System.currentTimeMillis();
 		timeService.sleep(SLEEP_TIME);
+		long after = System.currentTimeMillis();
 
-		long after = System.nanoTime();
-		long difference = (after - before) / THOUSAND / THOUSAND;
+		long difference = after - before;
+
 		assertThat(difference, is(greaterThan(SLEEP_TIME)));
 		assertThat(
 				difference,

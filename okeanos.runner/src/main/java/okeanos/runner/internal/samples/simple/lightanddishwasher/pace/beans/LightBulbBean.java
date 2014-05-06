@@ -1,4 +1,4 @@
-package okeanos.runner.internal.samples.simple.lightanddishwasher.beans;
+package okeanos.runner.internal.samples.simple.lightanddishwasher.pace.beans;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,15 +10,13 @@ import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Schedule;
-import okeanos.control.entities.provider.ControlEntitiesProvider;
-import okeanos.control.entities.utilities.ScheduleUtil;
 import okeanos.control.services.agentbeans.ScheduleHandlerServiceAgentBean;
 import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
 import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
-import okeanos.model.entities.RegulableLoad;
-import okeanos.runner.internal.samples.simple.lightanddishwasher.LightBulbsAndDishwasher;
+import okeanos.model.entities.Load;
+import okeanos.runner.internal.samples.simple.lightanddishwasher.pace.LightBulbsAndDishwasher;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -32,13 +30,13 @@ import de.dailab.jiactng.agentcore.action.Action;
 import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 
 /**
- * The dishwasher bean that provides the main action to the dishwasher agent.
+ * The light bulb bean that provides the main action to the light bulb agent.
  * 
  * @author Wolfgang Lausenhammer
  */
 @Component
 @Scope("prototype")
-public class DishwasherBean extends AbstractMethodExposingBean implements
+public class LightBulbBean extends AbstractMethodExposingBean implements
 		EquilibriumFoundCallback, OptimizedRunsCallback, PossibleRunsCallback,
 		SchedulesReceivedCallback, ControlAlgorithm {
 
@@ -77,12 +75,12 @@ public class DishwasherBean extends AbstractMethodExposingBean implements
 			}
 			if (actionIsEquilibriumReached == null) {
 				LOG.info("{} - No action called {} available",
-						DishwasherBean.this.thisAgent,
+						LightBulbBean.this.thisAgent,
 						ACTION_IS_EQUILIBRIUM_REACHED);
 				return false;
 			}
 
-			return (Boolean) DishwasherBean.this.invokeAndWaitForResult(
+			return (Boolean) LightBulbBean.this.invokeAndWaitForResult(
 					actionIsEquilibriumReached, new Serializable[] {})
 					.getResults()[0];
 		}
@@ -102,11 +100,11 @@ public class DishwasherBean extends AbstractMethodExposingBean implements
 			}
 			if (actionReset == null) {
 				LOG.info("{} - No action called {} available",
-						DishwasherBean.this.thisAgent, ACTION_RESET);
+						LightBulbBean.this.thisAgent, ACTION_RESET);
 				return;
 			}
 
-			DishwasherBean.this.invoke(actionReset,
+			LightBulbBean.this.invoke(actionReset,
 					new Serializable[] { cancelRunningOperation });
 		}
 
@@ -119,10 +117,10 @@ public class DishwasherBean extends AbstractMethodExposingBean implements
 		 */
 		private IActionDescription getAction(final String actionString) {
 			IActionDescription template = new Action(actionString);
-			IActionDescription action = DishwasherBean.this.memory
+			IActionDescription action = LightBulbBean.this.memory
 					.read(template);
 			if (action == null) {
-				action = DishwasherBean.this.thisAgent.searchAction(template);
+				action = LightBulbBean.this.thisAgent.searchAction(template);
 			}
 			return action;
 		}
@@ -133,38 +131,31 @@ public class DishwasherBean extends AbstractMethodExposingBean implements
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory
-			.getLogger(DishwasherBean.class);
+			.getLogger(LightBulbBean.class);
 
 	/** The control algorithm. */
 	private ControlAlgorithm controlAlgorithm;
 
 	/** The light bulb model. */
-	private RegulableLoad dishwasher;
+	private Load lightBulb;
 
 	/** The schedule handler service agent bean. */
 	private ScheduleHandlerServiceAgentBean scheduleHandlerServiceAgentBean;
 
-	/** The schedule util. */
-	private ScheduleUtil scheduleUtil;
-
 	/**
 	 * Instantiates a new light bulb bean.
 	 * 
-	 * @param dishwasher
+	 * @param lightBulb
 	 *            the light bulb
 	 * @param controlAlgorithm
 	 *            the control algorithm
-	 * @param controlEntitiesProvider
-	 *            the control entities provider
 	 */
 	@Inject
-	public DishwasherBean(
-			@Qualifier("dishwasher") final RegulableLoad dishwasher,
-			@Qualifier("controlAlgorithmService") final ControlAlgorithm controlAlgorithm,
-			final ControlEntitiesProvider controlEntitiesProvider) {
-		this.dishwasher = dishwasher;
+	public LightBulbBean(
+			@Qualifier("lightBulb100W") final Load lightBulb,
+			@Qualifier("controlAlgorithmService") final ControlAlgorithm controlAlgorithm) {
+		this.lightBulb = lightBulb;
 		this.controlAlgorithm = controlAlgorithm;
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
 	}
 
 	/*
@@ -210,13 +201,11 @@ public class DishwasherBean extends AbstractMethodExposingBean implements
 				thisAgent.getAgentName(), schedule);
 		LOG.info("{} {} - Optimized runs: {}", DateTime.now(),
 				thisAgent.getAgentName(), optimizedRuns);
-
-		dishwasher.applySchedule(scheduleUtil.toSchedule(optimizedRuns));
 	}
 
 	/**
 	 * The actual work happens here. Called once every
-	 * {@link DishwasherBean#EXECUTION_INTERVAL} to get ready for the next
+	 * {@link LightBulbBean#EXECUTION_INTERVAL} to get ready for the next
 	 * iteration.
 	 */
 	@Override
@@ -254,7 +243,7 @@ public class DishwasherBean extends AbstractMethodExposingBean implements
 	@Override
 	public List<PossibleRun> getPossibleRuns() {
 		LOG.info("{} - getPossibleRuns!", thisAgent.getAgentName());
-		return dishwasher.getPossibleRuns();
+		return lightBulb.getPossibleRuns();
 	}
 
 	/*

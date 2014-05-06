@@ -9,7 +9,7 @@
 
 	<context:annotation-config />
 	<context:component-scan
-		base-package="okeanos.runner.internal.samples.simple.lightanddishwasher" />
+		base-package="okeanos.runner.internal.samples.simple.lightanddishwasher.setdate" />
 
 	<osgi:reference id="platformManagementService"
 		interface="okeanos.management.services.PlatformManagementService"

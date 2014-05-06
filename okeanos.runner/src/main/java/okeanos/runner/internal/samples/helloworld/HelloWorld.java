@@ -26,11 +26,11 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 @Component
 public class HelloWorld {
 
-	/** The entity management service. */
-	private EntityManagementService entityManagementService;
-
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(HelloWorld.class);
+
+	/** The entity management service. */
+	private EntityManagementService entityManagementService;
 
 	/** The platform management service. */
 	private PlatformManagementService platformManagementService;

@@ -2,6 +2,8 @@ package okeanos.math.regression;
 
 /**
  * Models a trendline which approximates the data with a power of model.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class PowerTrendLine extends OLSTrendLine {
 
@@ -11,7 +13,7 @@ public class PowerTrendLine extends OLSTrendLine {
 	 * @see okeanos.math.regression.OLSTrendLine#xVector(double)
 	 */
 	@Override
-	protected double[] xVector(double x) {
+	protected double[] xVector(final double x) {
 		return new double[] { 1, Math.log(x) };
 	}
 

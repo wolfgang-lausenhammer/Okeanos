@@ -7,4 +7,5 @@
 #Spring-Context: classpath:sample-configurations/two-agents.xml
 #Spring-Context: classpaph:sample-configurations/hello-world.xml
 #Spring-Context: classpath:sample-configurations/load-reporting-light-bulbs.xml
-Spring-Context: classpath:sample-configurations/light-and-dishwasher.xml
+#Spring-Context: classpath:sample-configurations/light-and-dishwasher-pace.xml
+Spring-Context: classpath:sample-configurations/light-and-dishwasher-setdate.xml

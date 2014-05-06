@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 public class GroupImpl extends EntityImpl implements Group {
 
 	/**
-	 * Represents an entity builder. Can be used to create new entities in a
-	 * fluent API.
+	 * Represents a group builder. Can be used to create new groups in a fluent
+	 * API.
 	 */
 	@Component("groupBuilder")
 	@Scope("prototype")

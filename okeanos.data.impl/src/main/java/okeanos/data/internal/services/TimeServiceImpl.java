@@ -10,6 +10,7 @@ import okeanos.data.services.TimeService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeUtils.MillisProvider;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,13 +140,15 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	@Override
 	public void sleep(final long millis, final int nanos)
 			throws InterruptedException {
+
+		long realMillis = (long) (millis / pace.get());
+		int realNanos = (int) (nanos / pace.get());
 		LOG.trace(
 				"{} - Thread {} - Requested to go to sleep for {}ms and {}ns, actually {}ms and {}ns @ {}",
 				DateTime.now(), Thread.currentThread(), millis, nanos,
-				(long) (millis / pace.get()), (int) (nanos / pace.get()),
-				pace.get());
+				realMillis, realNanos, pace.get());
 
-		Thread.sleep((long) (millis / pace.get()), (int) (nanos / pace.get()));
+		Thread.sleep(realMillis, realNanos);
 
 		LOG.trace("{} - Thread {} - Waked up", DateTime.now(),
 				Thread.currentThread());
@@ -199,7 +202,8 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 				.toStandardSeconds().getSeconds() - duration.getMillis()
 				/ MILLIS_IN_SECONDS)
 				* MILLIS_IN_SECONDS) / pace.get());
-		LOG.trace("{} - Going to sleep for {}ms", DateTime.now(), millis);
+		LOG.trace("{} - Scheduled future to run in {}ms",
+				DateTime.now(DateTimeZone.UTC), millis);
 		return schedule(task,
 				new DateTime(System.currentTimeMillis()).plus(millis),
 				taskScheduler);

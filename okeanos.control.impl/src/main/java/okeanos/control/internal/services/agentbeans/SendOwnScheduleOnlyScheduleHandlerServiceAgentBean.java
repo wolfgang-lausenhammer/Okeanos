@@ -634,6 +634,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.class);
 
+	/** The Constant RESET_SLEEP_BEFORE_CONTINUE. */
+	private static final long RESET_SLEEP_BEFORE_CONTINUE = 1000;
+
 	/** The action broadcast options. */
 	private IActionDescription actionBroadcastOptions;
 
@@ -782,6 +785,12 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		LOG.debug("reset called!");
 		scheduleOfEntities.clear();
 		latestOptimizedRuns.clear();
+
+		try {
+			timeService.sleep(RESET_SLEEP_BEFORE_CONTINUE);
+		} catch (InterruptedException e) {
+		}
+
 		state = State.WAITING_FOR_SCHEDULES;
 		currentId = uuidGenerator.generateUUID();
 

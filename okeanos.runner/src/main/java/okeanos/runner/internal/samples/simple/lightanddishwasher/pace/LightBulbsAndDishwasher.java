@@ -1,4 +1,4 @@
-package okeanos.runner.internal.samples.simple.lightanddishwasher;
+package okeanos.runner.internal.samples.simple.lightanddishwasher.pace;
 
 import static okeanos.runner.internal.samples.misc.startup.StartUpHelper.startAgentNode;
 import static okeanos.runner.internal.samples.misc.startup.StartUpHelper.startEntity;
@@ -13,8 +13,8 @@ import okeanos.data.services.TimeService;
 import okeanos.management.services.EntityManagementService;
 import okeanos.management.services.GroupManagementService;
 import okeanos.management.services.PlatformManagementService;
-import okeanos.runner.internal.samples.simple.lightanddishwasher.beans.DishwasherBean;
-import okeanos.runner.internal.samples.simple.lightanddishwasher.beans.LightBulbBean;
+import okeanos.runner.internal.samples.simple.lightanddishwasher.pace.beans.DishwasherBean;
+import okeanos.runner.internal.samples.simple.lightanddishwasher.pace.beans.LightBulbBean;
 import okeanos.spring.misc.stereotypes.Logging;
 
 import org.joda.time.Days;
@@ -34,11 +34,11 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 public class LightBulbsAndDishwasher {
 
 	/** The Constant PACE. */
-	public static final int PACE = 10;
+	public static final int PACE = 4000;
 
 	/** The Constant PLANNING_INTERVAL. */
 	public static final int PLANNING_INTERVAL = Days.ONE.toStandardSeconds()
-			.getSeconds() * 1000;
+			.getSeconds();
 
 	/** The logger. */
 	@Logging

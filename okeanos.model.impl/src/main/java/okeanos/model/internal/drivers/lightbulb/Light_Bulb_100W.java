@@ -15,6 +15,7 @@ import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 import okeanos.data.services.Constants;
+import okeanos.math.regression.PreviousValueInsideZeroOutsideTrendLine;
 import okeanos.math.regression.PreviousValueTrendLine;
 import okeanos.math.regression.TrendLine;
 import okeanos.math.regression.periodic.Periodic24hTrendline;
@@ -78,7 +79,8 @@ public class Light_Bulb_100W implements Load {
 				.getXYFromLoadProfile(StaticLoadLoadProfileReader
 						.readLoadProfile(resource));
 
-		loadProfile = new Periodic24hTrendline(new PreviousValueTrendLine());
+		loadProfile = new Periodic24hTrendline(
+				new PreviousValueInsideZeroOutsideTrendLine());
 		loadProfile.setValues(xyEntries.getY(), xyEntries.getX());
 	}
 
@@ -89,8 +91,9 @@ public class Light_Bulb_100W implements Load {
 	 */
 	@Override
 	public Amount<Power> getConsumption() {
-		return Amount.valueOf(loadProfile.predict(DateTime.now().getMillis()),
-				WATT);
+		return Amount
+				.valueOf(loadProfile.predict(DateTime.now(DateTimeZone.UTC)
+						.getMillis()), WATT);
 	}
 
 	/*
@@ -101,7 +104,7 @@ public class Light_Bulb_100W implements Load {
 	 */
 	@Override
 	public Amount<Power> getConsumptionIn(final Period duration) {
-		DateTime pointInTime = DateTime.now().plus(duration);
+		DateTime pointInTime = DateTime.now(DateTimeZone.UTC).plus(duration);
 		return Amount.valueOf(loadProfile.predict(pointInTime.getMillis()),
 				WATT);
 	}
@@ -125,7 +128,8 @@ public class Light_Bulb_100W implements Load {
 	public List<PossibleRun> getPossibleRuns() {
 		DateTime startOfToday = DateTime.now(DateTimeZone.UTC)
 				.withTimeAtStartOfDay();
-		DateTime endOfToday = startOfToday.withTime(TWENTY_THREE, FOURTY_FIVE, 00, 0);
+		DateTime endOfToday = startOfToday.withTime(TWENTY_THREE, FOURTY_FIVE,
+				00, 0);
 		List<Slot> neededSlots = new LinkedList<>();
 
 		for (DateTime instant = startOfToday; instant.isBefore(endOfToday); instant = instant

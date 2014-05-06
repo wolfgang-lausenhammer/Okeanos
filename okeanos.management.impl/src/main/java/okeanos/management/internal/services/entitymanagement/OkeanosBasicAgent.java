@@ -20,33 +20,70 @@ import de.dailab.jiactng.agentcore.comm.ICommunicationBean;
 import de.dailab.jiactng.agentcore.knowledge.IMemory;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
+/**
+ * Base class for all agents. Overwrites the run method of the default agent
+ * defined by JIAC to account for the time service and to be simulation ready.
+ * 
+ * @author Wolfgang Lausenhammer
+ */
 @Component
 @ChildOf(parent = "NonBlockingAgent")
 @Scope("prototype")
 public class OkeanosBasicAgent extends Agent {
+
+	/** The Constant EXECUTION_INTERVAL. */
+	private static final int EXECUTION_INTERVAL = 10;
+
+	/** The active. */
 	private boolean active;
+
+	/** The execution future. */
 	private Future<?> executionFuture;
+
+	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(OkeanosBasicAgent.class);
+
+	/** The time service. */
 	private TimeService timeService;
 
+	/**
+	 * Instantiates a new okeanos basic agent.
+	 * 
+	 * @param timeService
+	 *            the time service
+	 * @param communication
+	 *            the communication
+	 * @param memory
+	 *            the memory
+	 */
 	@Inject
-	public OkeanosBasicAgent(TimeService timeService,
-			ICommunicationBean communication, IMemory memory) {
+	public OkeanosBasicAgent(final TimeService timeService,
+			final ICommunicationBean communication, final IMemory memory) {
 		super();
 		this.timeService = timeService;
 		setCommunication(communication);
 		setMemory(memory);
-		setExecutionInterval(1000);
+		setExecutionInterval(EXECUTION_INTERVAL);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.dailab.jiactng.agentcore.Agent#doInit()
+	 */
 	@Override
 	public void doInit() throws LifecycleException {
 		super.doInit();
 
-		setExecutionInterval(1000);
+		setExecutionInterval(EXECUTION_INTERVAL);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.dailab.jiactng.agentcore.Agent#doCleanup()
+	 */
 	@Override
 	public void doCleanup() throws LifecycleException {
 		synchronized (this) {
@@ -58,12 +95,22 @@ public class OkeanosBasicAgent extends Agent {
 		super.doCleanup();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.dailab.jiactng.agentcore.Agent#doStart()
+	 */
 	@Override
 	public void doStart() throws LifecycleException {
 		super.doStart();
 		active = true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.dailab.jiactng.agentcore.Agent#doStop()
+	 */
 	@Override
 	public void doStop() throws LifecycleException {
 		synchronized (this) {
@@ -75,6 +122,11 @@ public class OkeanosBasicAgent extends Agent {
 		super.doStop();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.dailab.jiactng.agentcore.Agent#run()
+	 */
 	@Override
 	public void run() {
 		while (true) {
@@ -111,6 +163,11 @@ public class OkeanosBasicAgent extends Agent {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return String.format(
