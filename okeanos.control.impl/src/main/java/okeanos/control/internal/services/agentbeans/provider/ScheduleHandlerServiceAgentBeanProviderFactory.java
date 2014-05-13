@@ -3,8 +3,6 @@ package okeanos.control.internal.services.agentbeans.provider;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import okeanos.control.services.agentbeans.ScheduleHandlerServiceAgentBean;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ProviderCreatingFactoryBean;
 import org.springframework.stereotype.Component;
@@ -37,9 +35,9 @@ public class ScheduleHandlerServiceAgentBeanProviderFactory extends
 	 * org.springframework.beans.factory.config.ProviderCreatingFactoryBean#
 	 * createInstance()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Provider<ScheduleHandlerServiceAgentBean> createInstance() {
+	public Provider createInstance() {
 		return super.createInstance();
 	}
 

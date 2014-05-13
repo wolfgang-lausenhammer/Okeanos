@@ -11,7 +11,6 @@ import static org.junit.Assert.assertThat;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -180,8 +179,9 @@ public class TimeServiceImplTest {
 		assertThat(difference, is(lessThan(SLEEP_TIME)));
 		assertThat(
 				difference,
-				is(allOf(greaterThan((long) ((SLEEP_TIME - TOLERANCE) / pace)),
-						lessThan((long) ((SLEEP_TIME + TOLERANCE) / pace)))));
+				is(allOf(
+						greaterThan((long) ((SLEEP_TIME - 2 * TOLERANCE - TOLERANCE) / pace)),
+						lessThan((long) ((SLEEP_TIME + 2 * TOLERANCE) / pace)))));
 	}
 
 	/**

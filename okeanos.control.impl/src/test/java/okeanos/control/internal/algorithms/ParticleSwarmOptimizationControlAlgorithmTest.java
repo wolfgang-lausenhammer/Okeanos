@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.measure.quantity.Power;
 
@@ -16,29 +18,29 @@ import okeanos.control.entities.Configuration;
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.ConfigurationImpl;
 import okeanos.control.entities.impl.OptimizedRunImpl;
 import okeanos.control.entities.impl.PossibleRunImpl;
+import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 import okeanos.control.internal.algorithms.pso.CostFunctionImpl;
 import okeanos.control.internal.algorithms.pso.PriceImpl;
+import okeanos.data.services.Constants;
 import okeanos.data.services.PricingService;
 import okeanos.data.services.entities.CostFunction;
 import okeanos.data.services.entities.Price;
 
-import org.hamcrest.collection.IsCollectionWithSize;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.jscience.physics.amount.Amount;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.matchers.Contains;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -131,6 +133,20 @@ public class ParticleSwarmOptimizationControlAlgorithmTest {
 		possibleRun.setNeededSlots(neededSlots);
 		List<PossibleRun> possibleRuns = Arrays.asList(possibleRun);
 		currentConfiguration.setPossibleRun(possibleRuns);
+		Schedule scheduleOfOtherDevices = new ScheduleImpl(
+				"schedule-of-other-devices");
+		DateTime currentDateTime = ONE_OCLOCK.withTimeAtStartOfDay();
+		DateTime end = currentDateTime.withTime(23, 45, 0, 0);
+		Map<DateTime, Slot> scheduleOfOtherDevicesSchedule = new ConcurrentSkipListMap<>();
+		while (currentDateTime.isBefore(end) || currentDateTime.isEqual(end)) {
+			Slot slot = new SlotImpl("slot...");
+			slot.setLoad(Amount.valueOf(0, Power.UNIT));
+			scheduleOfOtherDevicesSchedule.put(currentDateTime, slot);
+			currentDateTime = currentDateTime
+					.plusMinutes(Constants.SLOT_INTERVAL);
+		}
+		scheduleOfOtherDevices.setSchedule(scheduleOfOtherDevicesSchedule);
+		currentConfiguration.setScheduleOfOtherDevices(scheduleOfOtherDevices);
 
 		List<OptimizedRun> result = pso
 				.findBestConfiguration(currentConfiguration);

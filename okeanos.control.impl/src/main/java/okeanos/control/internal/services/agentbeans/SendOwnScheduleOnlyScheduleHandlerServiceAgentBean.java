@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 import javax.inject.Inject;
+import javax.measure.quantity.Power;
 
 import okeanos.control.algorithms.ControlAlgorithm;
 import okeanos.control.entities.Configuration;
@@ -26,14 +27,18 @@ import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
 import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
+import okeanos.data.services.PricingService;
 import okeanos.data.services.TimeService;
 import okeanos.data.services.UUIDGenerator;
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.data.services.entities.MessageScope;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
+import org.jscience.physics.amount.Amount;
 import org.sercho.masp.space.event.SpaceEvent;
 import org.sercho.masp.space.event.SpaceObserver;
 import org.sercho.masp.space.event.WriteCallEvent;
@@ -42,6 +47,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Iterables;
 
 import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 import de.dailab.jiactng.agentcore.action.Action;
@@ -406,9 +413,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 						thisAgent.getAgentName(), state, State.SENDING_SCHEDULE);
 				state = State.SENDING_SCHEDULE;
-				LOG.info("{} - old: {}", thisAgent.getAgentName(),
+				LOG.trace("{} - old: {}", thisAgent.getAgentName(),
 						scheduleUtil.toSchedule(latestOptimizedRuns));
-				LOG.info("{} - new: {}", thisAgent.getAgentName(), schedule);
+				LOG.trace("{} - new: {}", thisAgent.getAgentName(), schedule);
 
 				LOG.debug("{} - Announcing my new optimized schedule",
 						thisAgent.getAgentName());
@@ -685,6 +692,8 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	/** The schedule message handler. */
 	private ScheduleMessageHandler scheduleMessageHandler;
 
+	private PricingService pricingService;
+
 	/**
 	 * Instantiates a new send own schedule only schedule handler service agent
 	 * bean.
@@ -702,6 +711,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	public SendOwnScheduleOnlyScheduleHandlerServiceAgentBean(
 			final ControlEntitiesProvider controlEntitiesProvider,
 			final TimeService timeService, final TaskScheduler taskScheduler,
+			final PricingService pricingService,
 			final UUIDGenerator uuidGenerator) {
 		super();
 
@@ -710,6 +720,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		this.taskScheduler = taskScheduler;
 		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
 		this.uuidGenerator = uuidGenerator;
+		this.pricingService = pricingService;
 		scheduleOfEntities = new ConcurrentHashMap<>();
 		state = State.STOPPED;
 	}

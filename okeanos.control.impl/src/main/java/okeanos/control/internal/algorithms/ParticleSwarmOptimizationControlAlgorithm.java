@@ -1,6 +1,5 @@
 package okeanos.control.internal.algorithms;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +12,7 @@ import okeanos.control.algorithms.ControlAlgorithm;
 import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 import okeanos.control.internal.algorithms.pso.Particle;
@@ -20,7 +20,6 @@ import okeanos.data.services.Constants;
 import okeanos.data.services.PricingService;
 import okeanos.data.services.entities.CostFunction;
 
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
@@ -105,7 +104,8 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 				randomPosition.put(possibleRun, position);
 			}
 
-			double fitness = objectiveFunction(randomPosition);
+			double fitness = objectiveFunction(randomPosition,
+					currentConfiguration.getScheduleOfOtherDevices());
 			Map<PossibleRun, Period> randomVelocity = new HashMap<>();
 			for (PossibleRun possibleRun : currentConfiguration
 					.getPossibleRuns()) {
@@ -136,7 +136,6 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		double r1, r2; // randomizations
 
 		// do real work
-
 		while (iteration < numberIterations) {
 			++iteration;
 
@@ -193,7 +192,8 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 				}
 				currP.setPosition(newPosition);
 
-				newFitness = objectiveFunction(newPosition);
+				newFitness = objectiveFunction(newPosition,
+						currentConfiguration.getScheduleOfOtherDevices());
 				// if no cost function is available for the current position
 				// or if the schedules of one device overlap (not possible to
 				// more
@@ -251,9 +251,17 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		}
 
 		if (returnPosition.isBefore(minX)) {
+			LOG.debug("returnPosition.isBefore(minX), before {}, now {}",
+					returnPosition, minX);
 			returnPosition = minX;
 		} else if (returnPosition.isAfter(maxX)) {
-			returnPosition = maxX;
+			LOG.debug(
+					"returnPosition.isAfter(minX), before {}, now {}",
+					returnPosition,
+					maxX.minusMinutes(Constants.SLOT_INTERVAL
+							* currentPossibleRun.getNeededSlots().size()));
+			returnPosition = maxX.minusMinutes(Constants.SLOT_INTERVAL
+					* currentPossibleRun.getNeededSlots().size());
 		}
 
 		return returnPosition;
@@ -289,7 +297,8 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		return false;
 	}
 
-	private double objectiveFunction(Map<PossibleRun, DateTime> randomPosition) {
+	private double objectiveFunction(Map<PossibleRun, DateTime> randomPosition,
+			Schedule scheduleOfOtherDevices) {
 		double fitness = 0;
 
 		for (PossibleRun currentRun : randomPosition.keySet()) {
@@ -313,8 +322,18 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 					 */
 					fitness += DEFAULT_COSTS;
 				} else {
-					fitness += costFunction.getPrice().getCostAtConsumption(
-							slot.getLoad());
+					Map<DateTime, Slot> schedule = scheduleOfOtherDevices
+							.getSchedule();
+					if (schedule == null || schedule.get(currentTime) == null) {
+						fitness += costFunction.getPrice()
+								.getCostAtConsumption(slot.getLoad());
+					} else {
+						fitness += costFunction.getPrice()
+								.getCostAtConsumption(
+										slot.getLoad().plus(
+												schedule.get(currentTime)
+														.getLoad()));
+					}
 				}
 				currentTime = currentTime.plusMinutes(Constants.SLOT_INTERVAL);
 			}

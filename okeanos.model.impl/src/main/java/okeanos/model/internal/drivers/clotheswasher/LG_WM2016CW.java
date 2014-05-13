@@ -61,6 +61,10 @@ public class LG_WM2016CW implements RegulableLoad {
 	/** The todays schedule. */
 	private TrendLine todaysSchedule;
 
+	private Map<DateTime, Double> loadProfile;
+
+	private PreviousValueTrendLine trendLine;
+
 	/**
 	 * Instantiates a new LG WM2016CW.
 	 * 
@@ -82,15 +86,12 @@ public class LG_WM2016CW implements RegulableLoad {
 		this.id = id;
 		this.controlEntitiesProvider = controlEntitiesProvider;
 
-		Map<DateTime, Double> loadProfile = StaticLoadLoadProfileReader
-				.readLoadProfile(resource);
+		loadProfile = StaticLoadLoadProfileReader.readLoadProfile(resource);
 		XYEntity<double[]> xyEntries = StaticLoadLoadProfileReader
 				.getXYFromLoadProfile(loadProfile);
 
-		PreviousValueTrendLine trendLine = new PreviousValueTrendLine();
+		trendLine = new PreviousValueTrendLine();
 		trendLine.setValues(xyEntries.getY(), xyEntries.getX());
-
-		possibleRuns = createPossibleRunsFromLoadProfile(loadProfile, trendLine);
 	}
 
 	/*
@@ -149,6 +150,21 @@ public class LG_WM2016CW implements RegulableLoad {
 	 */
 	@Override
 	public List<PossibleRun> getPossibleRuns() {
+		if (possibleRuns == null) {
+			possibleRuns = createPossibleRunsFromLoadProfile(loadProfile,
+					trendLine);
+		} else if (possibleRuns.size() > 0
+				&& !possibleRuns
+						.get(0)
+						.getEarliestStartTime()
+						.withTimeAtStartOfDay()
+						.equals(DateTime.now(DateTimeZone.UTC)
+								.withTimeAtStartOfDay())) {
+			System.out.println("recalculate possible runs");
+			possibleRuns = createPossibleRunsFromLoadProfile(loadProfile,
+					trendLine);
+		}
+
 		return possibleRuns;
 	}
 

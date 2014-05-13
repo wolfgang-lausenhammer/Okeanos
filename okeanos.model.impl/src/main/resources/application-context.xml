@@ -30,6 +30,24 @@
 		</osgi:service-properties>
 	</osgi:service>
 
+	<osgi:service ref="Kenmore_790_91312013" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="kenmore" />
+			<entry key="name" value="Kenmore_790_91312013" />
+			<entry key="description" value="Oven, 7am small burner, 12am large burner, 6pm bake" />
+			<entry key="category" value="oven" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="Maytag_MSD2641KEW" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="maytag" />
+			<entry key="name" value="Maytag_MSD2641KEW" />
+			<entry key="description" value="Maytag MSD2641KEW refrigerator" />
+			<entry key="category" value="refrigerator" />
+		</osgi:service-properties>
+	</osgi:service>
+
 	<osgi:service ref="Kenmore_665_13242K900">
 		<osgi:interfaces>
 			<value>okeanos.model.entities.Load</value>
@@ -40,6 +58,32 @@
 			<entry key="name" value="Kenmore_665_13242K900" />
 			<entry key="description" value="Kenmore 665.13242K900 dishwasher" />
 			<entry key="category" value="dishwasher" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="LG_DLE2516W">
+		<osgi:interfaces>
+			<value>okeanos.model.entities.Load</value>
+			<value>okeanos.model.entities.RegulableLoad</value>
+		</osgi:interfaces>
+		<osgi:service-properties>
+			<entry key="brand" value="lg" />
+			<entry key="name" value="LG_DLE2516W" />
+			<entry key="description" value="LG DLE2516W clothesdryer" />
+			<entry key="category" value="clothesdryer" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="LG_WM2016CW">
+		<osgi:interfaces>
+			<value>okeanos.model.entities.Load</value>
+			<value>okeanos.model.entities.RegulableLoad</value>
+		</osgi:interfaces>
+		<osgi:service-properties>
+			<entry key="brand" value="lg" />
+			<entry key="name" value="LG_WM2016CW" />
+			<entry key="description" value="LG WM2016CW clotheswasher" />
+			<entry key="category" value="clotheswasher" />
 		</osgi:service-properties>
 	</osgi:service>
 </beans>

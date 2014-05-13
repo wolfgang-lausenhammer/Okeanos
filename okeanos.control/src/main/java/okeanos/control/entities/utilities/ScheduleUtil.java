@@ -1,6 +1,9 @@
 package okeanos.control.entities.utilities;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -177,6 +180,20 @@ public class ScheduleUtil implements Comparator<Schedule> {
 		for (OptimizedRun run : optimizedRunsAdapted) {
 			DateTime currentEntryTime = run.getStartTime();
 
+			// set all slots to 0
+			DateTime currentTime = currentEntryTime.withTimeAtStartOfDay();
+			DateTime endOfCurrentEntryTime = currentTime.withTime(23, 45, 0, 0);
+			while (currentTime.isBefore(endOfCurrentEntryTime)
+					|| currentTime.isEqual(endOfCurrentEntryTime)) {
+				if (!scheduleMap.containsKey(currentTime)) {
+					Slot newSlot = controlEntitiesProvider.getNewSlot();
+					newSlot.setLoad(Amount.valueOf(0, Power.UNIT));
+					scheduleMap.put(currentTime, newSlot);
+				}
+
+				currentTime = currentTime.plusMinutes(Constants.SLOT_INTERVAL);
+			}
+
 			for (Slot slot : run.getNeededSlots()) {
 				Slot newSlot = controlEntitiesProvider.getNewSlot();
 				if (scheduleMap.containsKey(currentEntryTime)) {
@@ -187,12 +204,134 @@ public class ScheduleUtil implements Comparator<Schedule> {
 				}
 
 				scheduleMap.put(currentEntryTime, newSlot);
-				currentEntryTime = currentEntryTime.plusMinutes(Constants.SLOT_INTERVAL);
+				currentEntryTime = currentEntryTime
+						.plusMinutes(Constants.SLOT_INTERVAL);
 			}
 		}
 
 		schedule.setSchedule(scheduleMap);
 		return schedule;
+	}
+
+	/**
+	 * Write schedule to stream.
+	 * 
+	 * @param schedule
+	 *            the schedule
+	 * @param os
+	 *            the OutputStream
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public void writeScheduleToStream(Schedule schedule, OutputStream os)
+			throws IOException {
+		writeScheduleToStream(schedule, null, os);
+	}
+
+	/**
+	 * Write schedule to stream.
+	 * 
+	 * @param schedulesPerDay
+	 *            the schedules per day
+	 * @param os
+	 *            the OutputStream
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public void writeScheduleToStream(Map<DateTime, Schedule> schedulesPerDay,
+			OutputStream os) throws IOException {
+		writeScheduleToStream(schedulesPerDay,
+				new HashMap<DateTime, Map<String, Schedule>>(), os);
+	}
+
+	/**
+	 * Write a schedule (usually the total schedule) to a stream and the
+	 * schedule of certain devices too.
+	 * 
+	 * @param schedulesPerDay
+	 *            the schedules per day
+	 * @param deviceSchedulesPerDay
+	 *            the device schedules per day
+	 * @param os
+	 *            the OutputStream
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public void writeScheduleToStream(Map<DateTime, Schedule> schedulesPerDay,
+			Map<DateTime, Map<String, Schedule>> deviceSchedulesPerDay,
+			OutputStream os) throws IOException {
+		List<String> deviceNames = new LinkedList<>();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("Date\tTotal Consumption");
+		if (deviceSchedulesPerDay != null && !deviceSchedulesPerDay.isEmpty()) {
+			Map<String, Schedule> deviceSchedule = deviceSchedulesPerDay
+					.values().iterator().next();
+			if (deviceSchedule != null && !deviceSchedule.isEmpty()) {
+				for (String deviceName : deviceSchedule.keySet()) {
+					sb.append(String.format("\t%s", deviceName));
+					deviceNames.add(deviceName);
+				}
+			}
+		}
+		sb.append("\n");
+
+		for (DateTime day : schedulesPerDay.keySet()) {
+			Schedule scheduleOfDay = schedulesPerDay.get(day);
+			Map<String, Schedule> deviceSchedulesOfDay = deviceSchedulesPerDay
+					.get(day);
+
+			for (DateTime time : scheduleOfDay.getSchedule().keySet()) {
+				sb.append(String.format("%s",
+						time.toString("yyyy-MM-dd HH:mm")));
+				sb.append(String.format("\t%.1f", scheduleOfDay.getSchedule()
+						.get(time).getLoad().doubleValue(Power.UNIT)));
+
+				if (deviceSchedulesOfDay != null) {
+					for (String currentDevice : deviceNames) {
+						Schedule scheduleOfDeviceOfDay = deviceSchedulesOfDay
+								.get(currentDevice);
+						sb.append(String.format("\t%.1f",
+								scheduleOfDeviceOfDay.getSchedule().get(time)
+										.getLoad().doubleValue(Power.UNIT)));
+					}
+				}
+
+				sb.append("\n");
+			}
+		}
+
+		os.write(sb.toString().getBytes("UTF-8"));
+	}
+
+	/**
+	 * Write schedule to stream.
+	 * 
+	 * @param schedule
+	 *            the schedule
+	 * @param deviceSchedules
+	 *            the device schedules
+	 * @param os
+	 *            the OutputStream
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public void writeScheduleToStream(Schedule schedule,
+			Map<String, Schedule> deviceSchedules, OutputStream os)
+			throws IOException {
+		DateTime day = schedule.getSchedule().keySet().iterator().next();
+
+		Map<DateTime, Schedule> schedulesPerDay = new HashMap<>();
+		if (schedule != null) {
+			schedulesPerDay.put(day, schedule);
+		}
+
+		Map<DateTime, Map<String, Schedule>> deviceSchedulesPerDay = new HashMap<>();
+		if (deviceSchedules != null) {
+			deviceSchedulesPerDay.put(day, deviceSchedules);
+		}
+
+		writeScheduleToStream(schedulesPerDay, deviceSchedulesPerDay, os);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package okeanos.model.internal.drivers.oven;
+package okeanos.model.internal.drivers.refrigerator;
 
 import static javax.measure.unit.SI.WATT;
 
@@ -31,13 +31,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 /**
- * Driver for a Kenmore 790.91312013 oven. Represents a static load, i.e. the
- * load cannot be influenced in any way.
+ * Driver for a Maytag MSD2641KEW refrigerator. Represents a static load, i.e.
+ * the load cannot be influenced in any way.
  * 
  * @author Wolfgang Lausenhammer
  */
-@Component("Kenmore_790_91312013")
-public class Kenmore_790_91312013 implements Load {
+@Component("Maytag_MSD2641KEW")
+public class Maytag_MSD2641KEW implements Load {
 
 	/** The Constant FOURTY_FIVE. */
 	private static final int FOURTY_FIVE = 45;
@@ -55,7 +55,7 @@ public class Kenmore_790_91312013 implements Load {
 	private TrendLine loadProfile;
 
 	/**
-	 * Instantiates a new Kenmore 790.91312013.
+	 * Instantiates a new Maytag MSD2641KEW.
 	 * 
 	 * @param resource
 	 *            the resource
@@ -67,8 +67,8 @@ public class Kenmore_790_91312013 implements Load {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Inject
-	public Kenmore_790_91312013(
-			@Value("${okeanos.model.internal.drivers.oven.Kenmore_790_91312013.loadProfilePath}") final Resource resource,
+	public Maytag_MSD2641KEW(
+			@Value("${okeanos.model.internal.drivers.refrigerator.Maytag_MSD2641KEW.loadProfilePath}") final Resource resource,
 			@Value("#{ uuidGenerator.generateUUID() }") final String id,
 			final ControlEntitiesProvider controlEntitiesProvider)
 			throws IOException {

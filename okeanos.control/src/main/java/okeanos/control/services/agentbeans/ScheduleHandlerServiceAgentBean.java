@@ -23,7 +23,7 @@ public interface ScheduleHandlerServiceAgentBean extends IEffector {
 	String ACTION_IS_EQUILIBRIUM_REACHED = "okeanos.data.services.agentbeans.ScheduleHandlerServiceAgentBean#isEquilibriumReached()";
 
 	/** The Constant WAIT_FOR_EQUILIBRIUM_TIMEOUT. */
-	int WAIT_FOR_EQUILIBRIUM_TIMEOUT = 500000;
+	int WAIT_FOR_EQUILIBRIUM_TIMEOUT = 5000;
 
 	/** The Constant MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE. */
 	int MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE = 10;
