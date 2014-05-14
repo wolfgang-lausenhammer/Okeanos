@@ -2,7 +2,7 @@ package okeanos.math.regression.periodic;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.number.IsCloseTo.closeTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,17 +17,24 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+/**
+ * The Class Periodic24hTrendlineTest.
+ * 
+ * @author Wolfgang Lausenhammer
+ */
 @RunWith(Parameterized.class)
 public class Periodic24hTrendlineTest {
+
+	/** The Constant START_OF_DAY. */
 	private static final DateTime START_OF_DAY = DateTime.now()
 			.withTimeAtStartOfDay();
 	/** The Constant X. */
-	private static final double X[] = new double[] { START_OF_DAY.getMillis(),
+	private static final double[] X = new double[] { START_OF_DAY.getMillis(),
 			START_OF_DAY.plusHours(1).getMillis(),
 			START_OF_DAY.plusHours(2).getMillis() };
 
 	/** The Constant Y. */
-	private static final double Y[] = new double[] { 0, 1, 2 };
+	private static final double[] Y = new double[] { 0, 1, 2 };
 
 	/**
 	 * Data.
@@ -70,7 +77,8 @@ public class Periodic24hTrendlineTest {
 	 * @param yExpected
 	 *            the y expected
 	 */
-	public Periodic24hTrendlineTest(double xForecast, double yExpected) {
+	public Periodic24hTrendlineTest(final double xForecast,
+			final double yExpected) {
 		this.xForecast = xForecast;
 		this.yExpected = yExpected;
 	}

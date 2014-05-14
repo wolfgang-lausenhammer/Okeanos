@@ -9,8 +9,8 @@ import okeanos.math.regression.TrendLine;
  */
 public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 
-	/** The wrapped trend line. */
-	private TrendLine wrappedTrendLine;
+	/** The difference. */
+	private double difference = 0;
 
 	/** The lower x boundary. */
 	private double lowerXBoundary = 0;
@@ -18,8 +18,8 @@ public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 	/** The upper x boundary. */
 	private double upperXBoundary = 0;
 
-	/** The difference. */
-	private double difference = 0;
+	/** The wrapped trend line. */
+	private TrendLine wrappedTrendLine;
 
 	/**
 	 * Instantiates a new periodic all data trend line.
@@ -34,15 +34,21 @@ public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.math.regression.TrendLine#setValues(double[], double[])
+	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMax()
 	 */
 	@Override
-	public void setValues(final double[] y, final double[] x) {
-		wrappedTrendLine.setValues(y, x);
+	public double getXBoundaryMax() {
+		return upperXBoundary;
+	}
 
-		lowerXBoundary = x[0];
-		upperXBoundary = x[x.length - 1];
-		difference = upperXBoundary - lowerXBoundary;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMin()
+	 */
+	@Override
+	public double getXBoundaryMin() {
+		return lowerXBoundary;
 	}
 
 	/*
@@ -89,21 +95,15 @@ public class PeriodicAllDataTrendLine implements PeriodicTrendLine {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMin()
+	 * @see okeanos.math.regression.TrendLine#setValues(double[], double[])
 	 */
 	@Override
-	public double getXBoundaryMin() {
-		return lowerXBoundary;
-	}
+	public void setValues(final double[] y, final double[] x) {
+		wrappedTrendLine.setValues(y, x);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMax()
-	 */
-	@Override
-	public double getXBoundaryMax() {
-		return upperXBoundary;
+		lowerXBoundary = x[0];
+		upperXBoundary = x[x.length - 1];
+		difference = upperXBoundary - lowerXBoundary;
 	}
 
 }

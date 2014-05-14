@@ -37,20 +37,46 @@ import org.springframework.stereotype.Component;
 public class ParticleSwarmOptimizationControlAlgorithm implements
 		ControlAlgorithm {
 
+	private static final double DEFAULT_SOCIAL_WEIGHT = 1.49445;
+
+	private static final double DEFAULT_COGNITIVE_WEIGHT = 1.49445;
+
+	private static final double DEFAULT_INERTIA_WEIGHT = 0.729;
+
+	/** The number of particles for the PSO. */
 	private static final int NUMBER_OF_PARTICLES = 10;
+
+	/** The number of iterations to run the PSO. */
 	private static final int NUMBER_OF_ITERATIONS = 100;
+
+	/** The default costs if no costs are assigned at a certain price range. */
 	private static final double DEFAULT_COSTS = Double.NaN;
+
+	/** The random. */
 	private Random random;
+
+	/** The pricing service. */
 	private PricingService pricingService;
+
+	/** The control entities provider. */
 	private ControlEntitiesProvider controlEntitiesProvider;
 
-	private Logger LOG = LoggerFactory
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory
 			.getLogger(ParticleSwarmOptimizationControlAlgorithm.class);
 
+	/**
+	 * Instantiates a new particle swarm optimization control algorithm.
+	 * 
+	 * @param pricingService
+	 *            the pricing service
+	 * @param controlEntitiesProvider
+	 *            the control entities provider
+	 */
 	@Inject
 	public ParticleSwarmOptimizationControlAlgorithm(
-			PricingService pricingService,
-			ControlEntitiesProvider controlEntitiesProvider) {
+			final PricingService pricingService,
+			final ControlEntitiesProvider controlEntitiesProvider) {
 		random = new Random();
 
 		this.pricingService = pricingService;
@@ -72,7 +98,7 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		int numberIterations = NUMBER_OF_ITERATIONS;
 		int iteration = 0;
 		DateTime minX = DateTime.now(DateTimeZone.UTC).withTimeAtStartOfDay();
-		DateTime maxX = minX.withTime(23, 45, 00, 0);
+		DateTime maxX = minX.withTime(23, 45, 0, 0);
 
 		Particle[] swarm = new Particle[numberParticles];
 		Map<PossibleRun, DateTime> bestGlobalPosition = new HashMap<>();
@@ -130,9 +156,9 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 			}
 		} // End initialization loop
 
-		double w = 0.729; // inertia weight
-		double c1 = 1.49445; // cognitive weight
-		double c2 = 1.49445; // social weight
+		double w = DEFAULT_INERTIA_WEIGHT; // inertia weight
+		double c1 = DEFAULT_COGNITIVE_WEIGHT; // cognitive weight
+		double c2 = DEFAULT_SOCIAL_WEIGHT; // social weight
 		double r1, r2; // randomizations
 
 		// do real work
@@ -231,8 +257,22 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		return optimizedRuns;
 	}
 
-	private DateTime checkPosition(PossibleRun currentPossibleRun,
-			DateTime thisPosition, DateTime minX, DateTime maxX) {
+	/**
+	 * Check position.
+	 * 
+	 * @param currentPossibleRun
+	 *            the current possible run
+	 * @param thisPosition
+	 *            the this position
+	 * @param minX
+	 *            the min x
+	 * @param maxX
+	 *            the max x
+	 * @return the date time
+	 */
+	private DateTime checkPosition(final PossibleRun currentPossibleRun,
+			final DateTime thisPosition, final DateTime minX,
+			final DateTime maxX) {
 
 		DateTime returnPosition = thisPosition;
 		if (returnPosition.plusMinutes(
@@ -267,7 +307,16 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		return returnPosition;
 	}
 
-	private boolean doPositionsOverlap(Map<PossibleRun, DateTime> newPosition) {
+	/**
+	 * Checks if two runs overlap, which is prohibited.
+	 * 
+	 * @param newPosition
+	 *            the new position in the solution space that should be checked
+	 * @return true, if two or more runs at the new position overlap, false
+	 *         otherwise
+	 */
+	private boolean doPositionsOverlap(
+			final Map<PossibleRun, DateTime> newPosition) {
 		for (PossibleRun run : newPosition.keySet()) {
 			DateTime start = newPosition.get(run);
 			DateTime end = start.plusMinutes(Constants.SLOT_INTERVAL
@@ -297,12 +346,24 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		return false;
 	}
 
-	private double objectiveFunction(Map<PossibleRun, DateTime> randomPosition,
-			Schedule scheduleOfOtherDevices) {
+	/**
+	 * The objective function that assigns costs to the current position.
+	 * 
+	 * @param position
+	 *            the position in the solution space
+	 * @param scheduleOfOtherDevices
+	 *            The schedule of the other devices. Needs to be taken into
+	 *            consideration when calculating the costs. The price rises
+	 *            exponentially if more energy is used.
+	 * @return The fitness value, which is represented by the calculated costs.
+	 *         If NaN, the current position in the solution space is invalid.
+	 */
+	private double objectiveFunction(final Map<PossibleRun, DateTime> position,
+			final Schedule scheduleOfOtherDevices) {
 		double fitness = 0;
 
-		for (PossibleRun currentRun : randomPosition.keySet()) {
-			DateTime currentTime = randomPosition.get(currentRun);
+		for (PossibleRun currentRun : position.keySet()) {
+			DateTime currentTime = position.get(currentRun);
 			for (Slot slot : currentRun.getNeededSlots()) {
 				CostFunction costFunction = pricingService
 						.getCostFunction(currentTime);

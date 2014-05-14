@@ -11,16 +11,16 @@ import okeanos.math.regression.TrendLine;
 public interface PeriodicTrendLine extends TrendLine {
 
 	/**
-	 * Gets the lower boundary of the x axis.
-	 * 
-	 * @return the x boundary min
-	 */
-	double getXBoundaryMin();
-
-	/**
 	 * Gets the upper boundary of the y axis.
 	 * 
 	 * @return the x boundary max
 	 */
 	double getXBoundaryMax();
+
+	/**
+	 * Gets the lower boundary of the x axis.
+	 * 
+	 * @return the x boundary min
+	 */
+	double getXBoundaryMin();
 }

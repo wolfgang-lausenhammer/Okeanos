@@ -9,6 +9,15 @@ package okeanos.math.regression;
 public interface TrendLine {
 
 	/**
+	 * Returns a predicted y for a given x value.
+	 * 
+	 * @param x
+	 *            the x
+	 * @return the double
+	 */
+	double predict(double x);
+
+	/**
 	 * Sets the known values for predictions. Used to calculate the parameters.
 	 * 
 	 * @param y
@@ -17,13 +26,4 @@ public interface TrendLine {
 	 *            the x
 	 */
 	void setValues(double[] y, double[] x);
-
-	/**
-	 * Returns a predicted y for a given x value.
-	 * 
-	 * @param x
-	 *            the x
-	 * @return the double
-	 */
-	double predict(double x);
 }

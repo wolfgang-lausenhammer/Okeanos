@@ -20,10 +20,10 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 	/** The periodic trend line. */
 	private PeriodicTrendLine periodicTrendLine;
 
+	private DateTime referenceStartOfDay;
+
 	/** The trend line. */
 	private TrendLine trendLine;
-
-	private DateTime referenceStartOfDay;
 
 	/**
 	 * Instantiates a new periodic24h trendline.
@@ -34,6 +34,41 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 	public Periodic24hTrendline(final TrendLine trendLine) {
 		this.trendLine = trendLine;
 		this.periodicTrendLine = new PeriodicAllDataTrendLine(trendLine);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMax()
+	 */
+	@Override
+	public double getXBoundaryMax() {
+		return periodicTrendLine.getXBoundaryMax();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMin()
+	 */
+	@Override
+	public double getXBoundaryMin() {
+		return periodicTrendLine.getXBoundaryMin();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.math.regression.TrendLine#predict(double)
+	 */
+	@Override
+	public double predict(final double x) {
+		DateTime normalizedX = new DateTime((long) x, DateTimeZone.UTC);
+		normalizedX = normalizedX.withDate(referenceStartOfDay.getYear(),
+				referenceStartOfDay.getMonthOfYear(),
+				referenceStartOfDay.getDayOfMonth());
+
+		return periodicTrendLine.predict(x);
 	}
 
 	/*
@@ -61,41 +96,6 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 		yNew[numberOfItemsToCopy] = trendLine.predict(nextDay.getMillis());
 
 		periodicTrendLine.setValues(yNew, xNew);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.math.regression.TrendLine#predict(double)
-	 */
-	@Override
-	public double predict(final double x) {
-		DateTime normalizedX = new DateTime((long) x, DateTimeZone.UTC);
-		normalizedX = normalizedX.withDate(referenceStartOfDay.getYear(),
-				referenceStartOfDay.getMonthOfYear(),
-				referenceStartOfDay.getDayOfMonth());
-		
-		return periodicTrendLine.predict(x);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMin()
-	 */
-	@Override
-	public double getXBoundaryMin() {
-		return periodicTrendLine.getXBoundaryMin();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.math.regression.periodic.PeriodicTrendLine#getXBoundaryMax()
-	 */
-	@Override
-	public double getXBoundaryMax() {
-		return periodicTrendLine.getXBoundaryMax();
 	}
 
 }

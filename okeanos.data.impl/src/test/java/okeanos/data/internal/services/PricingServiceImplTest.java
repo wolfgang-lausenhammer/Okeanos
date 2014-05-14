@@ -28,15 +28,15 @@ public class PricingServiceImplTest {
 
 	/** The Constant FIFTEEN_O_CLOCK. */
 	private static final DateTime FIFTEEN_O_CLOCK = DateTime
-			.parse("2014-03-20T15:00:00-05:00");
+			.parse("2014-03-20T15:00:00Z");
 
 	/** The Constant TEN_O_CLOCK. */
 	private static final DateTime TEN_O_CLOCK = DateTime
-			.parse("2014-03-20T10:00:00-05:00");
+			.parse("2014-03-20T10:00:00Z");
 
 	/** The Constant TWENTY_O_CLOCK. */
 	private static final DateTime TWENTY_O_CLOCK = DateTime
-			.parse("2014-03-20T20:00:00-05:00");
+			.parse("2014-03-20T20:00:00Z");
 
 	/** The pricing resource. */
 	private Resource pricingResource;
@@ -81,8 +81,8 @@ public class PricingServiceImplTest {
 	 */
 	@Test
 	public void testGetCostFunctionsDateTimeFromTo() {
-		DateTime from = DateTime.parse("2014-03-20T17:00:00-05:00");
-		DateTime to = DateTime.parse("2014-03-20T19:00:00-05:00");
+		DateTime from = DateTime.parse("2014-03-20T17:00:00Z");
+		DateTime to = DateTime.parse("2014-03-20T19:00:00Z");
 
 		Collection<CostFunction> costFunctions = pricingService
 				.getCostFunctions(from, to);
@@ -99,8 +99,8 @@ public class PricingServiceImplTest {
 	@Test
 	public void testGetCostFunctionsDateTimeTo() {
 		DateTimeUtils.setCurrentMillisFixed(DateTime.parse(
-				"2014-01-01T00:00:00-05:00").getMillis());
-		DateTime to = DateTime.parse("2014-03-20T19:00:00-05:00");
+				"2014-01-01T00:00:00Z").getMillis());
+		DateTime to = DateTime.parse("2014-03-20T19:00:00Z");
 
 		Collection<CostFunction> costFunctions = pricingService
 				.getCostFunctions(to);
@@ -118,7 +118,7 @@ public class PricingServiceImplTest {
 	 */
 	@Test
 	public void testGetCostFunctionSomewhereBetween() {
-		DateTime at = DateTime.parse("2014-03-20T19:00:00-05:00");
+		DateTime at = DateTime.parse("2014-03-20T19:00:00Z");
 
 		CostFunction costFunction = pricingService.getCostFunction(at);
 
@@ -144,7 +144,7 @@ public class PricingServiceImplTest {
 	 */
 	@Test
 	public void testGetCostFunctionTooEarly() {
-		DateTime at = DateTime.parse("2014-01-01T00:00:00-05:00");
+		DateTime at = DateTime.parse("2014-01-01T00:00:00Z");
 
 		CostFunction costFunction = pricingService.getCostFunction(at);
 
@@ -156,7 +156,7 @@ public class PricingServiceImplTest {
 	 */
 	@Test
 	public void testGetCostFunctionTooLate() {
-		DateTime at = DateTime.parse("2015-01-01T00:00:00-05:00");
+		DateTime at = DateTime.parse("2015-01-01T00:00:00Z");
 
 		CostFunction costFunction = pricingService.getCostFunction(at);
 

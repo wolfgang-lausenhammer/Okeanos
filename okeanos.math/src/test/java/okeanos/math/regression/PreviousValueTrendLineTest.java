@@ -15,16 +15,18 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * The Class PreviousValueTrendLineTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @RunWith(Parameterized.class)
 public class PreviousValueTrendLineTest {
 
 	/** The Constant X. */
-	private static final double X[] = new double[] { 0, 2, 5, 9, 14, 20, 27,
+	private static final double[] X = new double[] { 0, 2, 5, 9, 14, 20, 27,
 			35, 44, 54, 66 };
 
 	/** The Constant Y. */
-	private static final double Y[] = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8,
+	private static final double[] Y = new double[] { 0, 1, 2, 3, 4, 5, 6, 7, 8,
 			9, 10 };
 
 	/**
@@ -55,7 +57,8 @@ public class PreviousValueTrendLineTest {
 	 * @param yExpected
 	 *            the y expected
 	 */
-	public PreviousValueTrendLineTest(double xForecast, double yExpected) {
+	public PreviousValueTrendLineTest(final double xForecast,
+			final double yExpected) {
 		this.xForecast = xForecast;
 		this.yExpected = yExpected;
 	}
@@ -70,6 +73,14 @@ public class PreviousValueTrendLineTest {
 	}
 
 	/**
+	 * Test differing array dimensions.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testDifferingArrayDimensions() {
+		trendLine.setValues(new double[] { 1, 2 }, new double[] { 0 });
+	}
+
+	/**
 	 * Test predict.
 	 */
 	@Test
@@ -77,13 +88,5 @@ public class PreviousValueTrendLineTest {
 		double predictedValue = trendLine.predict(xForecast);
 
 		assertThat(predictedValue, is(closeTo(yExpected, 0.0001)));
-	}
-
-	/**
-	 * Test differing array dimensions.
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testDifferingArrayDimensions() {
-		trendLine.setValues(new double[] { 1, 2 }, new double[] { 0 });
 	}
 }

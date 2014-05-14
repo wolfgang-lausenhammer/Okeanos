@@ -18,22 +18,27 @@ public abstract class OLSTrendLine implements TrendLine {
 									// values
 
 	/**
-	 * X vector.
-	 * 
-	 * @param x
-	 *            the x
-	 * @return the double[]
-	 */
-	protected abstract double[] xVector(double x); // create vector of values
-	// from x
-
-	/**
 	 * Log y.
 	 * 
 	 * @return true, if successful
 	 */
 	protected abstract boolean logY(); // set true to predict log of y (note: y
 	// must be positive)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.math.regression.TrendLine#predict(double)
+	 */
+	@Override
+	public double predict(final double x) {
+		double yhat = coef.preMultiply(xVector(x))[0]; // apply coefs to xVector
+		if (logY()) {
+			yhat = (Math.exp(yhat)); // if we predicted ln y, we still need to
+		}
+		// get y
+		return yhat;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -72,18 +77,13 @@ public abstract class OLSTrendLine implements TrendLine {
 				.estimateRegressionParameters()); // get our coefs
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * X vector.
 	 * 
-	 * @see okeanos.math.regression.TrendLine#predict(double)
+	 * @param x
+	 *            the x
+	 * @return the double[]
 	 */
-	@Override
-	public double predict(final double x) {
-		double yhat = coef.preMultiply(xVector(x))[0]; // apply coefs to xVector
-		if (logY()) {
-			yhat = (Math.exp(yhat)); // if we predicted ln y, we still need to
-		}
-		// get y
-		return yhat;
-	}
+	protected abstract double[] xVector(double x); // create vector of values
+	// from x
 }

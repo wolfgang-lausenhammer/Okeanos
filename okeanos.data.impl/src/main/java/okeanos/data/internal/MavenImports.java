@@ -7,7 +7,6 @@ import javax.security.auth.Destroyable;
 import okeanos.spring.misc.postprocessors.LoggingBeanFactoryPostProcessor;
 
 import org.eclipse.gemini.blueprint.service.exporter.support.OsgiServiceFactoryBean;
-import org.quartz.ObjectAlreadyExistsException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor;
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
 import org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.TaskExecutorFactoryBean;
-import org.springframework.transaction.TransactionException;
 
 import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.SimpleAgentNode;
@@ -75,8 +73,6 @@ public class MavenImports {
 	private Memory memory;
 	/** The method proxy. */
 	private MethodProxy methodProxy;
-	/** The object already exists exception. */
-	private ObjectAlreadyExistsException objectAlreadyExistsException;
 	/** The open data exception. */
 	private OpenDataException openDataException;
 	/** The osgi service factory bean. */
@@ -95,8 +91,6 @@ public class MavenImports {
 	private ThisAgentDescription thisAgentDescription;
 	/** The thread pool task scheduler. */
 	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
-	/** The transaction exception. */
-	private TransactionException transactionException;
 	/** The transport. */
 	private JMSMessageTransport transport;
 	/** The x. */

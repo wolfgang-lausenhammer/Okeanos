@@ -2,7 +2,7 @@ package okeanos.math.regression.periodic;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.number.IsCloseTo.closeTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,15 +18,17 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * The Class PeriodicAllDataTrendLineTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 @RunWith(Parameterized.class)
 public class PeriodicAllDataTrendLineTest {
 
 	/** The Constant X. */
-	private static final double X[] = new double[] { 0, 5, 10 };
+	private static final double[] X = new double[] { 0, 5, 10 };
 
 	/** The Constant Y. */
-	private static final double Y[] = new double[] { 0, 1, 2 };
+	private static final double[] Y = new double[] { 0, 1, 2 };
 
 	/**
 	 * Data.
@@ -58,7 +60,8 @@ public class PeriodicAllDataTrendLineTest {
 	 * @param yExpected
 	 *            the y expected
 	 */
-	public PeriodicAllDataTrendLineTest(double xForecast, double yExpected) {
+	public PeriodicAllDataTrendLineTest(final double xForecast,
+			final double yExpected) {
 		this.xForecast = xForecast;
 		this.yExpected = yExpected;
 	}

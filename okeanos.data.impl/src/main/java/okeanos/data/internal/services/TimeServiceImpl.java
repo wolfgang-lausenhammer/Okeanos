@@ -148,7 +148,7 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 				DateTime.now(), Thread.currentThread(), millis, nanos,
 				realMillis, realNanos, pace.get());
 
-		Thread.sleep(realMillis, realNanos);
+		Thread.sleep(realMillis);
 
 		LOG.trace("{} - Thread {} - Waked up", DateTime.now(),
 				Thread.currentThread());

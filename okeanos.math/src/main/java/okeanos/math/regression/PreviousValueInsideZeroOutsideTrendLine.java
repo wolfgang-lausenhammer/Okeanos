@@ -24,23 +24,6 @@ public class PreviousValueInsideZeroOutsideTrendLine implements TrendLine {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.math.regression.TrendLine#setValues(double[], double[])
-	 */
-	@Override
-	public void setValues(final double[] y, final double[] x) {
-		if (x.length != y.length) {
-			throw new IllegalArgumentException(String.format(
-					"The numbers of y and x values must be equal (%d != %d)",
-					y.length, x.length));
-		}
-
-		this.x = ArrayUtils.clone(x);
-		this.y = ArrayUtils.clone(y);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see okeanos.math.regression.TrendLine#predict(double)
 	 */
 	@Override
@@ -59,5 +42,22 @@ public class PreviousValueInsideZeroOutsideTrendLine implements TrendLine {
 
 		// value bigger than last value
 		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.math.regression.TrendLine#setValues(double[], double[])
+	 */
+	@Override
+	public void setValues(final double[] y, final double[] x) {
+		if (x.length != y.length) {
+			throw new IllegalArgumentException(String.format(
+					"The numbers of y and x values must be equal (%d != %d)",
+					y.length, x.length));
+		}
+
+		this.x = ArrayUtils.clone(x);
+		this.y = ArrayUtils.clone(y);
 	}
 }

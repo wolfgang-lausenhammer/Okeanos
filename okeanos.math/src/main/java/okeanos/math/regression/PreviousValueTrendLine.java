@@ -21,6 +21,22 @@ public class PreviousValueTrendLine implements TrendLine {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see okeanos.math.regression.TrendLine#predict(double)
+	 */
+	@Override
+	public double predict(final double x) {
+		for (int i = 1; i < this.x.length; i++) {
+			if (this.x[i] > x) {
+				return y[i - 1];
+			}
+		}
+
+		return y[y.length - 1];
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see okeanos.math.regression.TrendLine#setValues(double[], double[])
 	 */
 	@Override
@@ -33,21 +49,5 @@ public class PreviousValueTrendLine implements TrendLine {
 
 		this.x = ArrayUtils.clone(x);
 		this.y = ArrayUtils.clone(y);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.math.regression.TrendLine#predict(double)
-	 */
-	@Override
-	public double predict(final double x) {
-		for (int i = 1; i < this.x.length; i++) {
-			if (this.x[i] > x) {
-				return y[i - 1];
-			}
-		}
-
-		return y[y.length - 1];
 	}
 }

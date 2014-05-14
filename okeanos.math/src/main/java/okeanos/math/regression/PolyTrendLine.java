@@ -24,6 +24,16 @@ public class PolyTrendLine extends OLSTrendLine {
 		this.degree = degree;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.math.regression.OLSTrendLine#logY()
+	 */
+	@Override
+	protected boolean logY() {
+		return false;
+	}
+
 	/**
 	 * The x vector.
 	 * 
@@ -40,15 +50,5 @@ public class PolyTrendLine extends OLSTrendLine {
 			xi *= x;
 		}
 		return poly;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.math.regression.OLSTrendLine#logY()
-	 */
-	@Override
-	protected boolean logY() {
-		return false;
 	}
 }

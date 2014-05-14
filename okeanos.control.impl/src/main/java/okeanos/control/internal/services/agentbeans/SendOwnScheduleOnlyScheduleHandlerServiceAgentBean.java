@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
-import javax.measure.quantity.Power;
 
 import okeanos.control.algorithms.ControlAlgorithm;
 import okeanos.control.entities.Configuration;
@@ -27,18 +27,15 @@ import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
 import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
-import okeanos.data.services.PricingService;
 import okeanos.data.services.TimeService;
 import okeanos.data.services.UUIDGenerator;
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.data.services.entities.MessageScope;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
-import org.jscience.physics.amount.Amount;
 import org.sercho.masp.space.event.SpaceEvent;
 import org.sercho.masp.space.event.SpaceObserver;
 import org.sercho.masp.space.event.WriteCallEvent;
@@ -47,8 +44,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.Iterables;
 
 import de.dailab.jiactng.agentcore.action.AbstractMethodExposingBean;
 import de.dailab.jiactng.agentcore.action.Action;
@@ -165,6 +160,24 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			return (List<OptimizedRun>) result.getResults()[0];
 		}
 
+		/**
+		 * Gets the action.
+		 * 
+		 * @param actionString
+		 *            the action string
+		 * @return the action
+		 */
+		private IActionDescription getAction(final String actionString) {
+			IActionDescription template = new Action(actionString);
+			IActionDescription action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.memory
+					.read(template);
+			if (action == null) {
+				action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.thisAgent
+						.searchAction(template);
+			}
+			return action;
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -260,24 +273,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 			return (Schedule) result.getResults()[0];
 		}
-
-		/**
-		 * Gets the action.
-		 * 
-		 * @param actionString
-		 *            the action string
-		 * @return the action
-		 */
-		private IActionDescription getAction(final String actionString) {
-			IActionDescription template = new Action(actionString);
-			IActionDescription action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.memory
-					.read(template);
-			if (action == null) {
-				action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.thisAgent
-						.searchAction(template);
-			}
-			return action;
-		}
 	}
 
 	/**
@@ -289,52 +284,8 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	 */
 	private class ScheduleMessageBroadcaster implements Runnable {
 
-		/**
-		 * Represents a task that waits for an equilibrium to occur. Usually
-		 * scheduled with a timeout, when the run method runs, sets the state of
-		 * the ScheduleHandlerServiceAgentBean to
-		 * {@link State#EQUILIBRIUM_REACHED} and calls a callback.
-		 * 
-		 * @author Wolfgang Lausenhammer
-		 */
-		private class EquilibriumWaiter implements Runnable {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
-			@Override
-			public void run() {
-				if (!State.WAITING_FOR_SCHEDULES.equals(state)) {
-					return;
-				}
-
-				LOG.trace(
-						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-						thisAgent.getAgentName(), state,
-						State.EQUILIBRIUM_REACHED);
-				state = State.EQUILIBRIUM_REACHED;
-
-				Schedule schedule = scheduleUtil.plus(
-						scheduleUtil.sum(scheduleOfEntities.values().toArray(
-								new Schedule[0])),
-						scheduleUtil.toSchedule(latestOptimizedRuns));
-
-				equilibriumFoundCallback.equilibrium(schedule,
-						latestOptimizedRuns);
-			}
-		}
-
 		/** The current uuid of the messages sent. */
 		private String currentUUID;
-
-		/** The equilibrium waiter. */
-		private EquilibriumWaiter equilibriumWaiter;
-
-		/** The scheduled equilibrium waiter. */
-		@SuppressWarnings("rawtypes")
-		private ScheduledFuture scheduledEquilibriumWaiter;
 
 		/**
 		 * Instantiates a new schedule message broadcaster.
@@ -344,7 +295,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		 */
 		public ScheduleMessageBroadcaster(final String currentUUID) {
 			this.currentUUID = currentUUID;
-			this.equilibriumWaiter = new EquilibriumWaiter();
 		}
 
 		/*
@@ -357,11 +307,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			if (isEquilibriumReached()) {
 				return;
 			}
+
 			LOG.trace("{} - ScheduleMessageBroadcaster execute() called",
 					thisAgent.getAgentName());
-			if (scheduledEquilibriumWaiter != null) {
-				scheduledEquilibriumWaiter.cancel(true);
-			}
 
 			if (latestOptimizedRuns == null) {
 				latestOptimizedRuns = new LinkedList<>();
@@ -436,9 +384,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					State.WAITING_FOR_SCHEDULES);
 			state = State.WAITING_FOR_SCHEDULES;
 
-			scheduledEquilibriumWaiter = timeService.schedule(
-					equilibriumWaiter,
-					Period.millis(WAIT_FOR_EQUILIBRIUM_TIMEOUT), taskScheduler);
+			lastUpdate = DateTime.now(DateTimeZone.UTC);
 		}
 	}
 
@@ -449,6 +395,54 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	 * @author Wolfgang Lausenhammer
 	 */
 	private class ScheduleMessageHandler implements SpaceObserver<IFact> {
+
+		/**
+		 * Represents a task that waits for an equilibrium to occur. Usually
+		 * scheduled with a timeout, when the run method runs, sets the state of
+		 * the ScheduleHandlerServiceAgentBean to
+		 * {@link State#EQUILIBRIUM_REACHED} and calls a callback.
+		 * 
+		 * @author Wolfgang Lausenhammer
+		 */
+		private class EquilibriumWaiter implements Runnable {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.lang.Runnable#run()
+			 */
+			@Override
+			public void run() {
+				if (!State.WAITING_FOR_SCHEDULES.equals(state)) {
+					return;
+				}
+
+				if (equilibriumFoundCalled.get()) {
+					return;
+				}
+
+				if (lastUpdate == null
+						|| lastUpdate.plusMillis(WAIT_FOR_EQUILIBRIUM_TIMEOUT)
+								.isBefore(DateTime.now(DateTimeZone.UTC))) {
+					return;
+				}
+
+				LOG.trace(
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+						thisAgent.getAgentName(), state,
+						State.EQUILIBRIUM_REACHED);
+				state = State.EQUILIBRIUM_REACHED;
+
+				Schedule schedule = scheduleUtil.plus(
+						scheduleUtil.sum(scheduleOfEntities.values().toArray(
+								new Schedule[0])),
+						scheduleUtil.toSchedule(latestOptimizedRuns));
+
+				equilibriumFoundCalled.set(true);
+				equilibriumFoundCallback.equilibrium(schedule,
+						latestOptimizedRuns);
+			}
+		}
 
 		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 5191791309923785942L;
@@ -486,6 +480,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					this, schedule });
 
 			reset();
+
+			taskScheduler.scheduleWithFixedDelay(new EquilibriumWaiter(),
+					WAIT_FOR_EQUILIBRIUM_TIMEOUT);
 		}
 
 		/*
@@ -514,6 +511,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 						.equals(message.getHeader(COMMUNICATION_SENDER))) {
 					return;
 				}
+				lastUpdate = null;
 
 				LOG.trace("{} - Broadcast Message received.",
 						thisAgent.getAgentName());
@@ -540,6 +538,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 				LOG.trace("{} - scheduling a task to broadcast new schedule.",
 						thisAgent.getAgentName());
 
+				lastUpdate = null;
 				scheduledBroadcast = taskScheduler
 						.schedule(
 								new ScheduleMessageBroadcaster(currentId),
@@ -567,6 +566,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			if (scheduledBroadcast != null) {
 				scheduledBroadcast.cancel(true);
 			}
+
+			lastUpdate = null;
+			equilibriumFoundCalled.set(false);
 			scheduledBroadcast = timeService
 					.schedule(
 							new ScheduleMessageBroadcaster(currentId),
@@ -659,6 +661,12 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	/** The equilibrium found callback. */
 	private EquilibriumFoundCallback equilibriumFoundCallback;
 
+	/** The equilibrium found called. */
+	private AtomicBoolean equilibriumFoundCalled = new AtomicBoolean(false);
+
+	/** The last update. */
+	private DateTime lastUpdate;
+
 	/** The latest optimized runs. */
 	private List<OptimizedRun> latestOptimizedRuns;
 
@@ -667,6 +675,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 	/** The possible runs callback. */
 	private PossibleRunsCallback possibleRunsCallback;
+
+	/** The schedule message handler. */
+	private ScheduleMessageHandler scheduleMessageHandler;
 
 	/** The schedule of entities. */
 	private Map<String, Schedule> scheduleOfEntities;
@@ -689,11 +700,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	/** The uuid generator. */
 	private UUIDGenerator uuidGenerator;
 
-	/** The schedule message handler. */
-	private ScheduleMessageHandler scheduleMessageHandler;
-
-	private PricingService pricingService;
-
 	/**
 	 * Instantiates a new send own schedule only schedule handler service agent
 	 * bean.
@@ -711,7 +717,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	public SendOwnScheduleOnlyScheduleHandlerServiceAgentBean(
 			final ControlEntitiesProvider controlEntitiesProvider,
 			final TimeService timeService, final TaskScheduler taskScheduler,
-			final PricingService pricingService,
 			final UUIDGenerator uuidGenerator) {
 		super();
 
@@ -720,7 +725,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		this.taskScheduler = taskScheduler;
 		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
 		this.uuidGenerator = uuidGenerator;
-		this.pricingService = pricingService;
 		scheduleOfEntities = new ConcurrentHashMap<>();
 		state = State.STOPPED;
 	}
@@ -793,7 +797,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	@Expose(name = ACTION_RESET)
 	@Override
 	public void reset(final boolean cancelRunningOperation) {
-		LOG.debug("reset called!");
+		LOG.debug("{} - reset called!", thisAgent.getAgentName());
 		scheduleOfEntities.clear();
 		latestOptimizedRuns.clear();
 

@@ -139,9 +139,9 @@ public class ScheduleUtilTest {
 	 */
 	@Parameters
 	public static Collection<Object[]> data() {
-		DateTime time1 = DateTime.parse("2014-03-20T00:00:00-04:00");
-		DateTime time2 = DateTime.parse("2014-03-20T01:00:00-04:00");
-		DateTime time3 = DateTime.parse("2014-03-20T02:00:00-04:00");
+		DateTime time1 = DateTime.parse("2014-03-20T00:00:00Z");
+		DateTime time2 = DateTime.parse("2014-03-20T01:00:00Z");
+		DateTime time3 = DateTime.parse("2014-03-20T02:00:00Z");
 		Slot slot1 = new SlotImpl("my-slot-id-1");
 		slot1.setLoad(ZERO_WATT);
 		Slot slot2 = new SlotImpl("my-slot-id-2");
@@ -196,6 +196,11 @@ public class ScheduleUtilTest {
 		mapResultToSchedule1.put(time1, slot1);
 		mapResultToSchedule1.put(time1.plusMinutes(FIFTEEN_MINUTES), slot2);
 		mapResultToSchedule1.put(time1.plusMinutes(2 * FIFTEEN_MINUTES), slot3);
+		for (DateTime time = time1.plusMinutes(FIFTEEN_MINUTES * THREE_TIMES); time
+				.isBefore(time1.withTime(23, 45, 1, 0)); time = time
+				.plusMinutes(FIFTEEN_MINUTES)) {
+			mapResultToSchedule1.put(time, slot1);
+		}
 		resultToSchedule1.setSchedule(mapResultToSchedule1);
 
 		Schedule resultSumSchedule11 = new ScheduleImpl(
@@ -272,6 +277,11 @@ public class ScheduleUtilTest {
 		mapResultToSchedule2.put(time1, slot3);
 		mapResultToSchedule2.put(time1.plusMinutes(FIFTEEN_MINUTES), slot2);
 		mapResultToSchedule2.put(time1.plusMinutes(2 * FIFTEEN_MINUTES), slot1);
+		for (DateTime time = time1.plusMinutes(FIFTEEN_MINUTES * THREE_TIMES); time
+				.isBefore(time1.withTime(23, 45, 1, 0)); time = time
+				.plusMinutes(FIFTEEN_MINUTES)) {
+			mapResultToSchedule2.put(time, slot1);
+		}
 		resultToSchedule2.setSchedule(mapResultToSchedule2);
 
 		Schedule resultSumSchedule21 = new ScheduleImpl(
