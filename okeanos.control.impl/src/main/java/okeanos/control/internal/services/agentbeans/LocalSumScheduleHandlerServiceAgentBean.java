@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import okeanos.control.algorithms.ControlAlgorithm;
 import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
-import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.ScheduleImpl;
@@ -79,7 +79,7 @@ public class LocalSumScheduleHandlerServiceAgentBean extends
 		private IActionDescription actionFindBestConfiguration;
 
 		/** The action get possible runs. */
-		private IActionDescription actionGetPossibleRuns;
+		private IActionDescription actionGetPossibleRunsConfiguration;
 
 		/** The action optimized runs callback. */
 		private IActionDescription actionOptimizedRunsCallback;
@@ -93,7 +93,7 @@ public class LocalSumScheduleHandlerServiceAgentBean extends
 		public ProxyCallbacks() {
 			actionEquilibrium = getAction(ACTION_EQUILIBRIUM);
 			actionOptimizedRunsCallback = getAction(ACTION_OPTIMIZED_RUNS_CALLBACK);
-			actionGetPossibleRuns = getAction(ACTION_GET_POSSIBLE_RUNS);
+			actionGetPossibleRunsConfiguration = getAction(ACTION_GET_POSSIBLE_RUNS_CONFIGURATION);
 			actionSchedulesReceivedCallback = getAction(ACTION_SCHEDULE_RECEIVED_CALLBACK);
 			actionFindBestConfiguration = getAction(ACTION_FIND_BEST_CONFIGURATION);
 		}
@@ -155,30 +155,23 @@ public class LocalSumScheduleHandlerServiceAgentBean extends
 			return (List<OptimizedRun>) result.getResults()[0];
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback
-		 * #getPossibleRuns()
-		 */
 		@Override
-		public List<PossibleRun> getPossibleRuns() {
-			if (actionGetPossibleRuns == null) {
-				actionGetPossibleRuns = getAction(ACTION_GET_POSSIBLE_RUNS);
+		public PossibleRunsConfiguration getPossibleRunsConfiguration() {
+			if (actionGetPossibleRunsConfiguration == null) {
+				actionGetPossibleRunsConfiguration = getAction(ACTION_GET_POSSIBLE_RUNS_CONFIGURATION);
 			}
-			if (actionGetPossibleRuns == null) {
+			if (actionGetPossibleRunsConfiguration == null) {
 				LOG.info("{} - No action called {} available",
 						LocalSumScheduleHandlerServiceAgentBean.this.thisAgent,
-						ACTION_GET_POSSIBLE_RUNS);
+						ACTION_GET_POSSIBLE_RUNS_CONFIGURATION);
 				return null;
 			}
 
 			ActionResult result = LocalSumScheduleHandlerServiceAgentBean.this
-					.invokeAndWaitForResult(actionGetPossibleRuns,
+					.invokeAndWaitForResult(actionGetPossibleRunsConfiguration,
 							new Serializable[] {});
 
-			return (List<PossibleRun>) result.getResults()[0];
+			return (PossibleRunsConfiguration) result.getResults()[0];
 		}
 
 		/*
@@ -390,12 +383,13 @@ public class LocalSumScheduleHandlerServiceAgentBean extends
 					thisAgent.getAgentName(), state,
 					State.CALLING_POSSIBLE_RUNS_CALLBACK);
 			state = State.CALLING_POSSIBLE_RUNS_CALLBACK;
-			List<PossibleRun> possibleRunsToday = possibleRunsCallback
-					.getPossibleRuns();
+			PossibleRunsConfiguration possibleRunsConfigurationToday = possibleRunsCallback
+					.getPossibleRunsConfiguration();
 
 			Configuration configuration = controlEntitiesProvider
 					.getNewConfiguration();
-			configuration.setPossibleRun(possibleRunsToday);
+			configuration
+					.setPossibleRunsConfiguration(possibleRunsConfigurationToday);
 			configuration
 					.setScheduleOfOtherDevices(latestReceivedScheduleMinusLatestOptimizedSchedule);
 

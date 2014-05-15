@@ -108,7 +108,8 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		Period minV = maxV.negated();
 
 		// Init best global position to the start of the optimization
-		for (PossibleRun possibleRun : currentConfiguration.getPossibleRuns()) {
+		for (PossibleRun possibleRun : currentConfiguration
+				.getPossibleRunsConfiguration().getPossibleRuns()) {
 			bestGlobalPosition.put(possibleRun, minX);
 		}
 
@@ -116,7 +117,7 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 		for (int i = 0; i < swarm.length; ++i) {
 			Map<PossibleRun, DateTime> randomPosition = new HashMap<>();
 			for (PossibleRun possibleRun : currentConfiguration
-					.getPossibleRuns()) {
+					.getPossibleRunsConfiguration().getPossibleRuns()) {
 				DateTime lo = minX;
 				DateTime hi = maxX;
 
@@ -134,7 +135,7 @@ public class ParticleSwarmOptimizationControlAlgorithm implements
 					currentConfiguration.getScheduleOfOtherDevices());
 			Map<PossibleRun, Period> randomVelocity = new HashMap<>();
 			for (PossibleRun possibleRun : currentConfiguration
-					.getPossibleRuns()) {
+					.getPossibleRunsConfiguration().getPossibleRuns()) {
 				Period lo = new Period(minX, maxX).negated();
 				Period hi = new Period(minX, maxX);
 				randomVelocity

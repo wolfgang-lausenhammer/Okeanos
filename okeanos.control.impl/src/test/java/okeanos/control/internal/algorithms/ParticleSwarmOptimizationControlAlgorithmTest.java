@@ -18,11 +18,15 @@ import okeanos.control.entities.Configuration;
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
+import okeanos.control.entities.RunConstraint;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.ConfigurationImpl;
 import okeanos.control.entities.impl.OptimizedRunImpl;
 import okeanos.control.entities.impl.PossibleRunImpl;
+import okeanos.control.entities.impl.PossibleRunsConfigurationImpl;
+import okeanos.control.entities.impl.RunConstraintImpl;
 import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
@@ -44,24 +48,54 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+/**
+ * The Class ParticleSwarmOptimizationControlAlgorithmTest.
+ * 
+ * @author Wolfgang Lausenhammer
+ */
 public class ParticleSwarmOptimizationControlAlgorithmTest {
+
+	/** The Constant ONE_OCLOCK. */
 	private static final DateTime ONE_OCLOCK = DateTime
 			.parse("2014-04-15T01:00:00Z");
+
+	/** The Constant ELEVEN_OCLOCK. */
 	private static final DateTime ELEVEN_OCLOCK = DateTime
 			.parse("2014-04-15T23:00:00Z");
+
+	/** The Constant NOON. */
 	private static final DateTime NOON = DateTime.parse("2014-04-15T12:00Z");
+
+	/** The Constant MORNING. */
 	private static final DateTime MORNING = DateTime.parse("2014-04-15T03:00Z");
+
+	/** The Constant MIDNIGHT. */
 	private static final DateTime MIDNIGHT = DateTime
 			.parse("2014-04-15T00:00:00Z");
 
+	/** The Constant POSSIBLE_RUNS_CONFIGURATION_ID. */
+	private static final String POSSIBLE_RUNS_CONFIGURATION_ID = "my-possible-runs-configuration-id";
+
+	/** The Constant RUN_CONSTRAINT_ID. */
+	private static final String RUN_CONSTRAINT_ID = "my-run-constraint-id";
+
+	/** The pricing service. */
 	@Mock
 	private PricingService pricingService;
 
+	/** The control entities provider. */
 	@Mock
 	private ControlEntitiesProvider controlEntitiesProvider;
 
+	/** The pso. */
 	private ParticleSwarmOptimizationControlAlgorithm pso;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -113,6 +147,9 @@ public class ParticleSwarmOptimizationControlAlgorithmTest {
 				pricingService, controlEntitiesProvider);
 	}
 
+	/**
+	 * Test find best configuration before noon.
+	 */
 	@Test
 	public void testFindBestConfigurationBeforeNoon() {
 		DateTimeUtils.setCurrentMillisFixed(DateTime.parse(
@@ -122,7 +159,7 @@ public class ParticleSwarmOptimizationControlAlgorithmTest {
 		PossibleRun possibleRun = new PossibleRunImpl("my-possible-run-id");
 		possibleRun.setEarliestStartTime(ONE_OCLOCK);
 		possibleRun.setLatestEndTime(ELEVEN_OCLOCK);
-		possibleRun.setLoadType(LoadType.CONSUMER);
+		possibleRun.setLoadType(LoadType.LOAD);
 		Slot slot1 = new SlotImpl("slot-1");
 		slot1.setLoad(Amount.valueOf(1, Power.UNIT));
 		Slot slot2 = new SlotImpl("slot-2");
@@ -132,7 +169,16 @@ public class ParticleSwarmOptimizationControlAlgorithmTest {
 		List<Slot> neededSlots = Arrays.asList(slot1, slot2, slot3);
 		possibleRun.setNeededSlots(neededSlots);
 		List<PossibleRun> possibleRuns = Arrays.asList(possibleRun);
-		currentConfiguration.setPossibleRun(possibleRuns);
+
+		RunConstraint runConstraint = new RunConstraintImpl(RUN_CONSTRAINT_ID);
+
+		PossibleRunsConfiguration possibleRunsConfiguration = new PossibleRunsConfigurationImpl(
+				POSSIBLE_RUNS_CONFIGURATION_ID);
+		possibleRunsConfiguration.setPossibleRuns(possibleRuns);
+		possibleRunsConfiguration.setRunConstraint(runConstraint);
+
+		currentConfiguration
+				.setPossibleRunsConfiguration(possibleRunsConfiguration);
 		Schedule scheduleOfOtherDevices = new ScheduleImpl(
 				"schedule-of-other-devices");
 		DateTime currentDateTime = ONE_OCLOCK.withTimeAtStartOfDay();

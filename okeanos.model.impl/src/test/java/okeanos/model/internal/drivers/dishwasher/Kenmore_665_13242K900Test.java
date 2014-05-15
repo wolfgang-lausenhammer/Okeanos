@@ -18,6 +18,7 @@ import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.PossibleRunImpl;
+import okeanos.control.entities.impl.PossibleRunsConfigurationImpl;
 import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
@@ -111,6 +112,19 @@ public class Kenmore_665_13242K900Test {
 								+ possibleRunId.getAndIncrement());
 					}
 				});
+		final AtomicInteger possibleRunConfigurationId = new AtomicInteger();
+		Mockito.when(controlEntitiesProvider.getNewPossibleRunsConfiguration())
+				.thenAnswer(new Answer<PossibleRunsConfigurationImpl>() {
+
+					@Override
+					public PossibleRunsConfigurationImpl answer(
+							final InvocationOnMock invocation) throws Throwable {
+						return new PossibleRunsConfigurationImpl(
+								"my-possible-run-configuration-id-"
+										+ possibleRunConfigurationId
+												.getAndIncrement());
+					}
+				});
 
 		this.device = new Kenmore_665_13242K900(loadProfileResource, DEVICE_ID,
 				controlEntitiesProvider);
@@ -156,7 +170,8 @@ public class Kenmore_665_13242K900Test {
 	 */
 	@Test
 	public void testGetPossibleRuns() {
-		List<PossibleRun> possibleRuns = device.getPossibleRuns();
+		List<PossibleRun> possibleRuns = device.getPossibleRunsConfiguration()
+				.getPossibleRuns();
 
 		assertThat(possibleRuns, is(notNullValue()));
 		assertThat(possibleRuns, hasSize(1));

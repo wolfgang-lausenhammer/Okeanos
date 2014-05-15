@@ -47,7 +47,8 @@ public class NoOpControlAlgorithm implements ControlAlgorithm {
 	@Override
 	public List<OptimizedRun> findBestConfiguration(
 			final Configuration currentConfiguration) {
-		List<PossibleRun> possibleRuns = currentConfiguration.getPossibleRuns();
+		List<PossibleRun> possibleRuns = currentConfiguration
+				.getPossibleRunsConfiguration().getPossibleRuns();
 		List<OptimizedRun> runsOptimized = new LinkedList<>();
 
 		for (PossibleRun currentPossibleRun : possibleRuns) {

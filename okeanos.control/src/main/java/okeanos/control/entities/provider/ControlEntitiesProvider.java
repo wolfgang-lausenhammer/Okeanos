@@ -3,6 +3,8 @@ package okeanos.control.entities.provider;
 import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
+import okeanos.control.entities.RunConstraint;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 
@@ -33,6 +35,20 @@ public interface ControlEntitiesProvider {
 	 * @return the new possible run
 	 */
 	PossibleRun getNewPossibleRun();
+
+	/**
+	 * Gets the new possible runs configuration.
+	 * 
+	 * @return the new possible runs configuration
+	 */
+	PossibleRunsConfiguration getNewPossibleRunsConfiguration();
+
+	/**
+	 * Gets the new run constraint.
+	 * 
+	 * @return the new run constraint
+	 */
+	RunConstraint getNewRunConstraint();
 
 	/**
 	 * Gets the schedule.

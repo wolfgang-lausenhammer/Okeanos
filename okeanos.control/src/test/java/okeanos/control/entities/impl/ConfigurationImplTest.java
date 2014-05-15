@@ -6,9 +6,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
-import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
 import okeanos.control.entities.Schedule;
 
 import org.junit.Before;
@@ -32,29 +31,25 @@ public class ConfigurationImplTest {
 	 */
 	@Parameters
 	public static Collection<Object[]> data() {
-		PossibleRun run1 = new PossibleRunImpl("my-possible-run-id-1");
-		PossibleRun run2 = new PossibleRunImpl("my-possible-run-id-1");
-		PossibleRun run3 = new PossibleRunImpl("my-possible-run-id-1");
+		PossibleRunsConfiguration run1 = new PossibleRunsConfigurationImpl(
+				"my-possible-run-configuration-id-1");
+		PossibleRunsConfiguration run2 = new PossibleRunsConfigurationImpl(
+				"my-possible-run-configuration-id-2");
+		PossibleRunsConfiguration run3 = new PossibleRunsConfigurationImpl(
+				"my-possible-run-configuration-id-3");
 
 		Schedule schedule1 = new ScheduleImpl("my-schedule-id-1");
 		Schedule schedule2 = new ScheduleImpl("my-schedule-id-2");
 		Schedule schedule3 = new ScheduleImpl("my-schedule-id-3");
 
-		return Arrays
-				.asList(new Object[][] {
-						{ "my-configuration-id-1", Arrays.asList(run1),
-								schedule1 },
-						{ "my-configuration-id-2", Arrays.asList(run1, run2),
-								schedule2 },
-						{ "my-configuration-id-3",
-								Arrays.asList(run1, run2, run3), schedule3 },
-						{ "my-configuration-id-4", null, null },
-						{ "my-configuration-id-5",
-								Arrays.asList((PossibleRun) null), null },
-						{ "my-configuration-id-6",
-								Arrays.asList((PossibleRun) null), schedule1 },
-						{ "my-configuration-id-7", null, schedule3 },
-						{ null, null, schedule3 }, { null, null, null } });
+		return Arrays.asList(new Object[][] {
+				{ "my-configuration-id-1", run1, schedule1 },
+				{ "my-configuration-id-2", run2, schedule2 },
+				{ "my-configuration-id-3", run3, schedule3 },
+				{ "my-configuration-id-4", null, null },
+				{ "my-configuration-id-5", null, schedule1 },
+				{ "my-configuration-id-6", null, schedule3 },
+				{ null, null, schedule3 }, { null, null, null } });
 	}
 
 	/** The configuration. */
@@ -63,8 +58,8 @@ public class ConfigurationImplTest {
 	/** The id. */
 	private String id;
 
-	/** The possible runs. */
-	private List<PossibleRun> possibleRuns;
+	/** The possible runs configuration. */
+	private PossibleRunsConfiguration possibleRunsConfiguration;
 
 	/** The schedule of other devices. */
 	private Schedule scheduleOfOtherDevices;
@@ -74,16 +69,16 @@ public class ConfigurationImplTest {
 	 * 
 	 * @param id
 	 *            the id
-	 * @param possibleRuns
-	 *            the possible runs
+	 * @param possibleRunsConfiguration
+	 *            the possible runs configuration
 	 * @param scheduleOfOtherDevices
 	 *            the schedule of other devices
 	 */
 	public ConfigurationImplTest(final String id,
-			final List<PossibleRun> possibleRuns,
+			final PossibleRunsConfiguration possibleRunsConfiguration,
 			final Schedule scheduleOfOtherDevices) {
 		this.id = id;
-		this.possibleRuns = possibleRuns;
+		this.possibleRunsConfiguration = possibleRunsConfiguration;
 		this.scheduleOfOtherDevices = scheduleOfOtherDevices;
 	}
 
@@ -113,11 +108,13 @@ public class ConfigurationImplTest {
 	 */
 	@Test
 	public void testPossibleRuns() {
-		configuration.setPossibleRun(possibleRuns);
+		configuration.setPossibleRunsConfiguration(possibleRunsConfiguration);
 
-		List<PossibleRun> possibleRuns = configuration.getPossibleRuns();
+		PossibleRunsConfiguration possibleRunsConfiguration = configuration
+				.getPossibleRunsConfiguration();
 
-		assertThat(possibleRuns, is(equalTo(this.possibleRuns)));
+		assertThat(possibleRunsConfiguration,
+				is(equalTo(this.possibleRunsConfiguration)));
 	}
 
 	/**

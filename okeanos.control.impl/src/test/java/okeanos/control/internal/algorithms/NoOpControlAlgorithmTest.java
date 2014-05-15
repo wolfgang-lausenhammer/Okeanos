@@ -6,19 +6,22 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.measure.Measure;
 
 import okeanos.control.entities.Configuration;
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
+import okeanos.control.entities.RunConstraint;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.ConfigurationImpl;
 import okeanos.control.entities.impl.OptimizedRunImpl;
 import okeanos.control.entities.impl.PossibleRunImpl;
+import okeanos.control.entities.impl.PossibleRunsConfigurationImpl;
+import okeanos.control.entities.impl.RunConstraintImpl;
 import okeanos.control.entities.impl.SlotImpl;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 
@@ -31,6 +34,8 @@ import org.mockito.MockitoAnnotations;
 
 /**
  * The Class NoOpControlAlgorithmTest.
+ * 
+ * @author Wolfgang Lausenhammer
  */
 public class NoOpControlAlgorithmTest {
 
@@ -51,6 +56,12 @@ public class NoOpControlAlgorithmTest {
 
 	/** The Constant POSSIBLE_RUN_ID. */
 	private static final String POSSIBLE_RUN_ID = "my-possible-run-id";
+
+	/** The Constant POSSIBLE_RUNS_CONFIGURATION_ID. */
+	private static final String POSSIBLE_RUNS_CONFIGURATION_ID = "my-possible-runs-configuration-id";
+
+	/** The Constant RUN_CONSTRAINT_ID. */
+	private static final String RUN_CONSTRAINT_ID = "my-run-constraint-id";
 
 	/** The Constant SLOT_ID. */
 	private static final String SLOT_ID = "my-slot-id";
@@ -104,14 +115,22 @@ public class NoOpControlAlgorithmTest {
 		PossibleRun possibleRun = new PossibleRunImpl(POSSIBLE_RUN_ID);
 		possibleRun.setEarliestStartTime(TIME_MIDNIGHT);
 		possibleRun.setLatestEndTime(TIME_1_OCLOCK);
-		possibleRun.setLoadType(LoadType.CONSUMER);
+		possibleRun.setLoadType(LoadType.LOAD);
 		possibleRun.setNeededSlots(neededSlots);
 
-		List<PossibleRun> possibleRuns = new LinkedList<>();
-		possibleRuns.add(possibleRun);
+		List<PossibleRun> possibleRuns = Arrays.asList(possibleRun);
+
+		RunConstraint runConstraint = new RunConstraintImpl(RUN_CONSTRAINT_ID);
+
+		PossibleRunsConfiguration possibleRunsConfiguration = new PossibleRunsConfigurationImpl(
+				POSSIBLE_RUNS_CONFIGURATION_ID);
+		possibleRunsConfiguration.setPossibleRuns(possibleRuns);
+		possibleRunsConfiguration.setRunConstraint(runConstraint);
+
 		Configuration currentConfiguration = new ConfigurationImpl(
 				CONFIGURATION_ID);
-		currentConfiguration.setPossibleRun(possibleRuns);
+		currentConfiguration
+				.setPossibleRunsConfiguration(possibleRunsConfiguration);
 
 		// Do
 		List<OptimizedRun> configuration = noOpControlAlgorithm
@@ -121,7 +140,7 @@ public class NoOpControlAlgorithmTest {
 		assertThat(configuration.size(), is(equalTo(1)));
 		OptimizedRun run = configuration.get(0);
 		assertThat(run.getId(), is(equalTo(OPTIMIZED_RUN_ID)));
-		assertThat(run.getLoadType(), is(equalTo(LoadType.CONSUMER)));
+		assertThat(run.getLoadType(), is(equalTo(LoadType.LOAD)));
 		assertThat(run.getStartTime(), is(equalTo(TIME_MIDNIGHT)));
 		assertThat(run.getNeededSlots(), is(equalTo(neededSlots)));
 

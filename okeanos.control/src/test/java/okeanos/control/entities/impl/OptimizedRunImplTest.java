@@ -41,31 +41,26 @@ public class OptimizedRunImplTest {
 		DateTime startTime2 = DateTime.parse("2014-03-21T12:00:00-04:00");
 		DateTime startTime3 = DateTime.parse("2014-03-22T20:30:00-04:00");
 
-		return Arrays
-				.asList(new Object[][] {
-						{ "my-optimized-run-id-1", LoadType.CONSUMER,
-								Arrays.asList(slot1), startTime1 },
-						{ "my-optimized-run-id-2", LoadType.CONSUMER,
-								Arrays.asList(slot1, slot2), startTime2 },
-						{ "my-optimized-run-id-3", LoadType.CONSUMER,
-								Arrays.asList(slot1, slot2, slot3), startTime3 },
-						{ "my-optimized-run-id-4", LoadType.PRODUCER,
-								Arrays.asList(slot1), startTime1 },
-						{ "my-optimized-run-id-5", LoadType.PRODUCER,
-								Arrays.asList(slot1, slot2), startTime2 },
-						{ "my-optimized-run-id-6", LoadType.PRODUCER,
-								Arrays.asList(slot1, slot2, slot3), startTime3 },
-						{ "my-optimized-run-id-7", LoadType.CONSUMER, null,
-								startTime1 },
-						{ "my-optimized-run-id-8", LoadType.CONSUMER, null,
-								startTime2 },
-						{ "my-optimized-run-id-9", LoadType.CONSUMER, null,
-								startTime3 },
-						{ "my-optimized-run-id-10", null, null, startTime1 },
-						{ "my-optimized-run-id-11", LoadType.CONSUMER, null,
-								null },
-						{ "my-optimized-run-id-12", null, null, null },
-						{ null, null, null, null }, });
+		return Arrays.asList(new Object[][] {
+				{ "my-optimized-run-id-1", LoadType.LOAD, Arrays.asList(slot1),
+						startTime1 },
+				{ "my-optimized-run-id-2", LoadType.LOAD,
+						Arrays.asList(slot1, slot2), startTime2 },
+				{ "my-optimized-run-id-3", LoadType.LOAD,
+						Arrays.asList(slot1, slot2, slot3), startTime3 },
+				{ "my-optimized-run-id-4", LoadType.LOAD, Arrays.asList(slot1),
+						startTime1 },
+				{ "my-optimized-run-id-5", LoadType.LOAD,
+						Arrays.asList(slot1, slot2), startTime2 },
+				{ "my-optimized-run-id-6", LoadType.LOAD,
+						Arrays.asList(slot1, slot2, slot3), startTime3 },
+				{ "my-optimized-run-id-7", LoadType.LOAD, null, startTime1 },
+				{ "my-optimized-run-id-8", LoadType.LOAD, null, startTime2 },
+				{ "my-optimized-run-id-9", LoadType.LOAD, null, startTime3 },
+				{ "my-optimized-run-id-10", null, null, startTime1 },
+				{ "my-optimized-run-id-11", LoadType.LOAD, null, null },
+				{ "my-optimized-run-id-12", null, null, null },
+				{ null, null, null, null }, });
 	}
 
 	/** The id. */

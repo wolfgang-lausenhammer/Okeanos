@@ -3,6 +3,7 @@ package okeanos.control.services.agentbeans.callbacks;
 import java.util.List;
 
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
 import de.dailab.jiactng.agentcore.environment.IEffector;
 
 /**
@@ -14,15 +15,15 @@ import de.dailab.jiactng.agentcore.environment.IEffector;
  */
 public interface PossibleRunsCallback extends IEffector {
 
-	/** The Constant ACTION_GET_POSSIBLE_RUNS. */
-	String ACTION_GET_POSSIBLE_RUNS = "okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback#getPossibleRuns()";
+	/** The Constant ACTION_GET_POSSIBLE_RUNS_CONFIGURATION. */
+	String ACTION_GET_POSSIBLE_RUNS_CONFIGURATION = "okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback#getPossibleRunsConfiguration()";
 
 	/**
 	 * Called when the
 	 * {@link okeanos.control.services.agentbeans.ScheduleHandlerServiceAgentBean}
 	 * wants to get to know the possible runs for the current device.
 	 * 
-	 * @return the possible runs
+	 * @return the possible runs configuration
 	 */
-	List<PossibleRun> getPossibleRuns();
+	PossibleRunsConfiguration getPossibleRunsConfiguration();
 }

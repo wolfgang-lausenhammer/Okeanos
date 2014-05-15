@@ -12,12 +12,11 @@ import javax.measure.quantity.Power;
 
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 import okeanos.data.services.Constants;
-import okeanos.data.services.TimeService;
 import okeanos.math.regression.PreviousValueInsideZeroOutsideTrendLine;
-import okeanos.math.regression.PreviousValueTrendLine;
 import okeanos.math.regression.TrendLine;
 import okeanos.math.regression.periodic.Periodic24hTrendline;
 import okeanos.model.entities.Load;
@@ -126,7 +125,7 @@ public class Light_Bulb_100W implements Load {
 	 * @see okeanos.model.entities.Load#getPossibleRuns()
 	 */
 	@Override
-	public List<PossibleRun> getPossibleRuns() {
+	public PossibleRunsConfiguration getPossibleRunsConfiguration() {
 		DateTime startOfToday = DateTime.now(DateTimeZone.UTC)
 				.withTimeAtStartOfDay();
 		DateTime endOfToday = startOfToday.withTime(TWENTY_THREE, FOURTY_FIVE,
@@ -144,8 +143,15 @@ public class Light_Bulb_100W implements Load {
 		PossibleRun run = controlEntitiesProvider.getNewPossibleRun();
 		run.setEarliestStartTime(startOfToday);
 		run.setLatestEndTime(endOfToday);
-		run.setLoadType(LoadType.CONSUMER);
+		run.setLoadType(LoadType.LOAD);
 		run.setNeededSlots(neededSlots);
-		return Arrays.asList(run);
+
+		PossibleRunsConfiguration possibleRunsConfiguration = controlEntitiesProvider
+				.getNewPossibleRunsConfiguration();
+		possibleRunsConfiguration.setPossibleRuns(Arrays.asList(run));
+		possibleRunsConfiguration.setRunConstraint(controlEntitiesProvider
+				.getNewRunConstraint());
+
+		return possibleRunsConfiguration;
 	}
 }

@@ -41,29 +41,25 @@ public class PossibleRunImplTest {
 		Slot slot2 = new SlotImpl("my-slot-id-2");
 		Slot slot3 = new SlotImpl("my-slot-id-3");
 
-		return Arrays
-				.asList(new Object[][] {
-						{ "my-possible-run-id-1", time1, time3,
-								LoadType.CONSUMER, Arrays.asList(slot1) },
-						{ "my-possible-run-id-2", time2, time1,
-								LoadType.CONSUMER, Arrays.asList(slot1, slot2) },
-						{ "my-possible-run-id-3", time3, time2,
-								LoadType.CONSUMER,
-								Arrays.asList(slot1, slot2, slot3) },
-						{ "my-possible-run-id-4", time1, time3,
-								LoadType.PRODUCER, Arrays.asList(slot1) },
-						{ "my-possible-run-id-5", time2, time1,
-								LoadType.PRODUCER, Arrays.asList(slot1, slot2) },
-						{ "my-possible-run-id-6", time3, time2,
-								LoadType.PRODUCER,
-								Arrays.asList(slot1, slot2, slot3) },
-						{ "my-possible-run-id-7", time1, time1,
-								LoadType.PRODUCER, Arrays.asList((Slot) null) },
-						{ "my-possible-run-id-7", time1, time1,
-								LoadType.PRODUCER, null },
-						{ "my-possible-run-id-8", time1, time1, null, null },
-						{ "my-possible-run-id-9", time1, null, null, null },
-						{ "my-possible-run-id-10", null, null, null, null }, });
+		return Arrays.asList(new Object[][] {
+				{ "my-possible-run-id-1", time1, time3, LoadType.LOAD,
+						Arrays.asList(slot1) },
+				{ "my-possible-run-id-2", time2, time1, LoadType.LOAD,
+						Arrays.asList(slot1, slot2) },
+				{ "my-possible-run-id-3", time3, time2, LoadType.LOAD,
+						Arrays.asList(slot1, slot2, slot3) },
+				{ "my-possible-run-id-4", time1, time3, LoadType.LOAD,
+						Arrays.asList(slot1) },
+				{ "my-possible-run-id-5", time2, time1, LoadType.LOAD,
+						Arrays.asList(slot1, slot2) },
+				{ "my-possible-run-id-6", time3, time2, LoadType.LOAD,
+						Arrays.asList(slot1, slot2, slot3) },
+				{ "my-possible-run-id-7", time1, time1, LoadType.LOAD,
+						Arrays.asList((Slot) null) },
+				{ "my-possible-run-id-7", time1, time1, LoadType.LOAD, null },
+				{ "my-possible-run-id-8", time1, time1, null, null },
+				{ "my-possible-run-id-9", time1, null, null, null },
+				{ "my-possible-run-id-10", null, null, null, null }, });
 	}
 
 	/** The earliest start time. */

@@ -1,9 +1,7 @@
 package okeanos.control.entities.impl;
 
-import java.util.List;
-
 import okeanos.control.entities.Configuration;
-import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
 import okeanos.control.entities.Schedule;
 
 /**
@@ -21,8 +19,8 @@ public class ConfigurationImpl implements Configuration {
 	/** The id. */
 	private String id;
 
-	/** The possible runs. */
-	private List<PossibleRun> possibleRuns;
+	/** The possible runs configuration. */
+	private PossibleRunsConfiguration possibleRunsConfiguration;
 
 	/** The schedule of other devices. */
 	private Schedule scheduleOfOtherDevices;
@@ -50,11 +48,12 @@ public class ConfigurationImpl implements Configuration {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.control.entities.Configuration#getPossibleRuns()
+	 * @see
+	 * okeanos.control.entities.Configuration#getPossibleRunsConfiguration()
 	 */
 	@Override
-	public List<PossibleRun> getPossibleRuns() {
-		return possibleRuns;
+	public PossibleRunsConfiguration getPossibleRunsConfiguration() {
+		return possibleRunsConfiguration;
 	}
 
 	/*
@@ -71,11 +70,13 @@ public class ConfigurationImpl implements Configuration {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * okeanos.control.entities.Configuration#setPossibleRun(java.util.List)
+	 * okeanos.control.entities.Configuration#setPossibleRunsConfiguration(okeanos
+	 * .control.entities.PossibleRunsConfiguration)
 	 */
 	@Override
-	public void setPossibleRun(final List<PossibleRun> possibleRuns) {
-		this.possibleRuns = possibleRuns;
+	public void setPossibleRunsConfiguration(
+			final PossibleRunsConfiguration possibleRunsConfiguration) {
+		this.possibleRunsConfiguration = possibleRunsConfiguration;
 	}
 
 	/*
@@ -98,8 +99,8 @@ public class ConfigurationImpl implements Configuration {
 	@Override
 	public String toString() {
 		return String
-				.format("ConfigurationImpl [possibleRuns=%s, scheduleOfOtherDevices=%s]",
-						possibleRuns, scheduleOfOtherDevices);
+				.format("ConfigurationImpl [possibleRunsConfiguration=%s, scheduleOfOtherDevices=%s]",
+						possibleRunsConfiguration, scheduleOfOtherDevices);
 	}
 
 }

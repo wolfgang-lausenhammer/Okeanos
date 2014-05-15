@@ -13,6 +13,7 @@ import javax.measure.quantity.Power;
 
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
@@ -55,14 +56,16 @@ public class Kenmore_665_13242K900 implements RegulableLoad {
 	/** The id. */
 	private String id;
 
+	/** The load profile. */
+	private Map<DateTime, Double> loadProfile;
+
 	/** The possible runs. */
 	private List<PossibleRun> possibleRuns;
 
 	/** The todays schedule. */
 	private TrendLine todaysSchedule;
 
-	private Map<DateTime, Double> loadProfile;
-
+	/** The trend line. */
 	private PreviousValueTrendLine trendLine;
 
 	/**
@@ -149,7 +152,7 @@ public class Kenmore_665_13242K900 implements RegulableLoad {
 	 * @see okeanos.model.entities.Load#getPossibleRuns()
 	 */
 	@Override
-	public List<PossibleRun> getPossibleRuns() {
+	public PossibleRunsConfiguration getPossibleRunsConfiguration() {
 		if (possibleRuns == null) {
 			possibleRuns = createPossibleRunsFromLoadProfile(loadProfile,
 					trendLine);
@@ -165,7 +168,13 @@ public class Kenmore_665_13242K900 implements RegulableLoad {
 					trendLine);
 		}
 
-		return possibleRuns;
+		PossibleRunsConfiguration possibleRunsConfiguration = controlEntitiesProvider
+				.getNewPossibleRunsConfiguration();
+		possibleRunsConfiguration.setPossibleRuns(possibleRuns);
+		possibleRunsConfiguration.setRunConstraint(controlEntitiesProvider
+				.getNewRunConstraint());
+
+		return possibleRunsConfiguration;
 	}
 
 	/**
@@ -199,7 +208,7 @@ public class Kenmore_665_13242K900 implements RegulableLoad {
 		PossibleRun run = controlEntitiesProvider.getNewPossibleRun();
 		run.setEarliestStartTime(startOfToday);
 		run.setLatestEndTime(endOfToday);
-		run.setLoadType(LoadType.CONSUMER);
+		run.setLoadType(LoadType.REGULABLE_LOAD);
 		run.setNeededSlots(neededSlots);
 		return Arrays.asList(run);
 	}

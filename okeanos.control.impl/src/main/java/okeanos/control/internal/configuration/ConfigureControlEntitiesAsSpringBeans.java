@@ -4,11 +4,15 @@ import javax.inject.Inject;
 
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
+import okeanos.control.entities.RunConstraint;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.ConfigurationImpl;
 import okeanos.control.entities.impl.OptimizedRunImpl;
 import okeanos.control.entities.impl.PossibleRunImpl;
+import okeanos.control.entities.impl.PossibleRunsConfigurationImpl;
+import okeanos.control.entities.impl.RunConstraintImpl;
 import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
 import okeanos.data.services.UUIDGenerator;
@@ -59,6 +63,28 @@ public class ConfigureControlEntitiesAsSpringBeans {
 	@Scope("prototype")
 	public PossibleRun possibleRun() {
 		return new PossibleRunImpl(uuidGenerator.generateUUID());
+	}
+
+	/**
+	 * Possible runs configuration.
+	 * 
+	 * @return the possible runs configuration
+	 */
+	@Bean
+	@Scope("prototype")
+	public PossibleRunsConfiguration possibleRunsConfiguration() {
+		return new PossibleRunsConfigurationImpl(uuidGenerator.generateUUID());
+	}
+
+	/**
+	 * Run constraint.
+	 * 
+	 * @return the run constraint
+	 */
+	@Bean
+	@Scope("prototype")
+	public RunConstraint runConstraint() {
+		return new RunConstraintImpl(uuidGenerator.generateUUID());
 	}
 
 	/**

@@ -24,8 +24,9 @@ public class PowerTrendLine extends OLSTrendLine {
 	 */
 	@Override
 	protected double[] xVector(final double x) {
-		if (x == 0)
+		if (x == 0) {
 			return new double[] { 1, Math.log(1) };
+		}
 		return new double[] { 1, Math.log(x) };
 	}
 }

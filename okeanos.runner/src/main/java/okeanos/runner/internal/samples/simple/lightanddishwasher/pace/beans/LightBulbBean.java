@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import okeanos.control.algorithms.ControlAlgorithm;
 import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
-import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
 import okeanos.control.entities.Schedule;
 import okeanos.control.services.agentbeans.ScheduleHandlerServiceAgentBean;
 import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
@@ -239,11 +239,11 @@ public class LightBulbBean extends AbstractMethodExposingBean implements
 	 * @see okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback#
 	 * getPossibleRuns()
 	 */
-	@Expose(name = ACTION_GET_POSSIBLE_RUNS)
+	@Expose(name = ACTION_GET_POSSIBLE_RUNS_CONFIGURATION)
 	@Override
-	public List<PossibleRun> getPossibleRuns() {
+	public PossibleRunsConfiguration getPossibleRunsConfiguration() {
 		LOG.info("{} - getPossibleRuns!", thisAgent.getAgentName());
-		return lightBulb.getPossibleRuns();
+		return lightBulb.getPossibleRunsConfiguration();
 	}
 
 	/*

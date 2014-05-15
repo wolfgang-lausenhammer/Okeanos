@@ -1,7 +1,5 @@
 package okeanos.control.entities;
 
-import java.util.List;
-
 import de.dailab.jiactng.agentcore.knowledge.IFact;
 
 /**
@@ -21,11 +19,11 @@ public interface Configuration extends IFact {
 	String getId();
 
 	/**
-	 * Gets the possible runs.
+	 * Gets the possible runs configuration.
 	 * 
-	 * @return the possible runs
+	 * @return the possible runs configuration
 	 */
-	List<PossibleRun> getPossibleRuns();
+	PossibleRunsConfiguration getPossibleRunsConfiguration();
 
 	/**
 	 * Gets the schedule of all other devices.
@@ -35,12 +33,13 @@ public interface Configuration extends IFact {
 	Schedule getScheduleOfOtherDevices();
 
 	/**
-	 * Sets the possible run.
+	 * Sets the possible runs configuration.
 	 * 
-	 * @param possibleRuns
-	 *            the new possible run
+	 * @param possibleRunsConfiguration
+	 *            the new possible runs configuration
 	 */
-	void setPossibleRun(List<PossibleRun> possibleRuns);
+	void setPossibleRunsConfiguration(
+			PossibleRunsConfiguration possibleRunsConfiguration);
 
 	/**
 	 * Sets the schedule of all other devices.

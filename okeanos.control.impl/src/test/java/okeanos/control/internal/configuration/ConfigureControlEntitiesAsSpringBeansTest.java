@@ -11,6 +11,8 @@ import java.util.Collection;
 import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
+import okeanos.control.entities.RunConstraint;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.data.services.UUIDGenerator;
@@ -43,8 +45,15 @@ public class ConfigureControlEntitiesAsSpringBeansTest {
 				{ null } });
 	}
 
+	/** The configure control entities as spring beans. */
+	private ConfigureControlEntitiesAsSpringBeans configureControlEntitiesAsSpringBeans;
+
 	/** The uuid. */
 	private String uuid;
+
+	/** The uuid generator. */
+	@Mock
+	private UUIDGenerator uuidGenerator;
 
 	/**
 	 * Instantiates a new configure control entities as spring beans test.
@@ -55,13 +64,6 @@ public class ConfigureControlEntitiesAsSpringBeansTest {
 	public ConfigureControlEntitiesAsSpringBeansTest(final String uuid) {
 		this.uuid = uuid;
 	}
-
-	/** The uuid generator. */
-	@Mock
-	private UUIDGenerator uuidGenerator;
-
-	/** The configure control entities as spring beans. */
-	private ConfigureControlEntitiesAsSpringBeans configureControlEntitiesAsSpringBeans;
 
 	/**
 	 * Sets the up.
@@ -113,6 +115,30 @@ public class ConfigureControlEntitiesAsSpringBeansTest {
 
 		assertThat(possibleRun, is(notNullValue()));
 		assertThat(possibleRun.getId(), is(equalTo(uuid)));
+	}
+
+	/**
+	 * Test possible runs configuration.
+	 */
+	@Test
+	public void testPossibleRunsConfiguration() {
+		PossibleRunsConfiguration possibleRunsConfiguration = configureControlEntitiesAsSpringBeans
+				.possibleRunsConfiguration();
+
+		assertThat(possibleRunsConfiguration, is(notNullValue()));
+		assertThat(possibleRunsConfiguration.getId(), is(equalTo(uuid)));
+	}
+
+	/**
+	 * Test run constraint.
+	 */
+	@Test
+	public void testRunConstraint() {
+		RunConstraint runConstraint = configureControlEntitiesAsSpringBeans
+				.runConstraint();
+
+		assertThat(runConstraint, is(notNullValue()));
+		assertThat(runConstraint.getId(), is(equalTo(uuid)));
 	}
 
 	/**

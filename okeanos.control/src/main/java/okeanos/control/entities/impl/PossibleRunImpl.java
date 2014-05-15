@@ -1,12 +1,19 @@
 package okeanos.control.entities.impl;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.measure.quantity.Power;
 
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Slot;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.jscience.physics.amount.Amount;
+
+import com.google.common.collect.Range;
 
 /**
  * Represents a proposed run, i.e., a run that would be possible for the
@@ -33,11 +40,20 @@ public class PossibleRunImpl implements PossibleRun {
 	/** The latest end time. */
 	private DateTime latestEndTime;
 
+	/** The length of run. */
+	private Period lengthOfRun;
+
 	/** The load type. */
 	private LoadType loadType;
 
 	/** The needed slots. */
 	private List<Slot> neededSlots;
+
+	/** The possible loads. */
+	private Set<Amount<Power>> possibleLoads;
+
+	/** The range of possible loads. */
+	private Range<Double> rangeOfPossibleLoads;
 
 	/**
 	 * Instantiates a new proposed run.
@@ -82,6 +98,16 @@ public class PossibleRunImpl implements PossibleRun {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see okeanos.control.entities.PossibleRun#getLengthOfRun()
+	 */
+	@Override
+	public Period getLengthOfRun() {
+		return lengthOfRun;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see okeanos.control.entities.RunProposed#getLoadType()
 	 */
 	@Override
@@ -97,6 +123,26 @@ public class PossibleRunImpl implements PossibleRun {
 	@Override
 	public List<Slot> getNeededSlots() {
 		return neededSlots;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.control.entities.PossibleRun#getPossibleLoads()
+	 */
+	@Override
+	public Set<Amount<Power>> getPossibleLoads() {
+		return possibleLoads;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.control.entities.PossibleRun#getRangeOfPossibleLoads()
+	 */
+	@Override
+	public Range<Double> getRangeOfPossibleLoads() {
+		return rangeOfPossibleLoads;
 	}
 
 	/*
@@ -127,6 +173,17 @@ public class PossibleRunImpl implements PossibleRun {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * okeanos.control.entities.PossibleRun#setLengthOfRun(org.joda.time.Period)
+	 */
+	@Override
+	public void setLengthOfRun(final Period lengthOfRun) {
+		this.lengthOfRun = lengthOfRun;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * okeanos.control.entities.RunProposed#setLoadType(okeanos.control.entities
 	 * .LoadType)
 	 */
@@ -143,6 +200,28 @@ public class PossibleRunImpl implements PossibleRun {
 	@Override
 	public void setNeededSlots(final List<Slot> neededSlots) {
 		this.neededSlots = neededSlots;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.control.entities.PossibleRun#setPossibleLoads(java.util.Set)
+	 */
+	@Override
+	public void setPossibleLoads(final Set<Amount<Power>> possibleLoads) {
+		this.possibleLoads = possibleLoads;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.control.entities.PossibleRun#setRangeOfPossibleLoads(com.google
+	 * .common.collect.Range)
+	 */
+	@Override
+	public void setRangeOfPossibleLoads(final Range<Double> rangeOfPossibleLoads) {
+		this.rangeOfPossibleLoads = rangeOfPossibleLoads;
 	}
 
 	/*

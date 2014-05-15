@@ -10,11 +10,15 @@ import javax.inject.Provider;
 import okeanos.control.entities.Configuration;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
+import okeanos.control.entities.PossibleRunsConfiguration;
+import okeanos.control.entities.RunConstraint;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.impl.ConfigurationImpl;
 import okeanos.control.entities.impl.OptimizedRunImpl;
 import okeanos.control.entities.impl.PossibleRunImpl;
+import okeanos.control.entities.impl.PossibleRunsConfigurationImpl;
+import okeanos.control.entities.impl.RunConstraintImpl;
 import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
 
@@ -60,10 +64,16 @@ public class ControlEntitiesProviderImplTest {
 	@Mock
 	private Provider<PossibleRun> possibleRunProvider;
 
+	/** The possible runs configuration provider. */
+	@Mock
+	private Provider<PossibleRunsConfiguration> possibleRunsConfigurationProvider;
+
+	/** The run constraint provider. */
+	@Mock
+	private Provider<RunConstraint> runConstraintProvider;
 	/** The schedule provider. */
 	@Mock
 	private Provider<Schedule> scheduleProvider;
-
 	/** The slot provider. */
 	@Mock
 	private Provider<Slot> slotProvider;
@@ -83,10 +93,15 @@ public class ControlEntitiesProviderImplTest {
 				new PossibleRunImpl(POSSIBLE_RUN_ID));
 		when(scheduleProvider.get()).thenReturn(new ScheduleImpl(SCHEDULE_ID));
 		when(slotProvider.get()).thenReturn(new SlotImpl(SLOT_ID));
+		when(possibleRunsConfigurationProvider.get()).thenReturn(
+				new PossibleRunsConfigurationImpl(SLOT_ID));
+		when(runConstraintProvider.get()).thenReturn(
+				new RunConstraintImpl(SLOT_ID));
 
 		controlEntitiesProviderImpl = new ControlEntitiesProviderImpl(
 				configurationProvider, optimizedRunProvider,
-				possibleRunProvider, slotProvider, scheduleProvider);
+				possibleRunProvider, slotProvider, scheduleProvider,
+				possibleRunsConfigurationProvider, runConstraintProvider);
 	}
 
 	/**
@@ -118,6 +133,28 @@ public class ControlEntitiesProviderImplTest {
 		PossibleRun result = controlEntitiesProviderImpl.getNewPossibleRun();
 
 		assertThat(result.getId(), is(equalTo(POSSIBLE_RUN_ID)));
+	}
+
+	/**
+	 * Test get new possible runs configuration.
+	 */
+	@Test
+	public void testGetNewPossibleRunsConfiguration() {
+		PossibleRunsConfiguration result = controlEntitiesProviderImpl
+				.getNewPossibleRunsConfiguration();
+
+		assertThat(result.getId(), is(equalTo(SLOT_ID)));
+	}
+
+	/**
+	 * Test get new run constraint.
+	 */
+	@Test
+	public void testGetNewRunConstraint() {
+		RunConstraint result = controlEntitiesProviderImpl
+				.getNewRunConstraint();
+
+		assertThat(result.getId(), is(equalTo(SLOT_ID)));
 	}
 
 	/**
