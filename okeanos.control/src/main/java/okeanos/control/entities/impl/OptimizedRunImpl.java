@@ -56,16 +56,6 @@ public class OptimizedRunImpl implements OptimizedRun {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.control.entities.RunOptimized#getLoadType()
-	 */
-	@Override
-	public LoadType getLoadType() {
-		return loadType;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see okeanos.control.entities.RunOptimized#getNeededSlots()
 	 */
 	@Override
@@ -81,18 +71,6 @@ public class OptimizedRunImpl implements OptimizedRun {
 	@Override
 	public DateTime getStartTime() {
 		return startTime;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * okeanos.control.entities.RunOptimized#setLoadType(okeanos.control.entities
-	 * .LoadType)
-	 */
-	@Override
-	public void setLoadType(final LoadType loadType) {
-		this.loadType = loadType;
 	}
 
 	/*

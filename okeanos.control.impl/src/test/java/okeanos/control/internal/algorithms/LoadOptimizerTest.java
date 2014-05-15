@@ -33,11 +33,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * The Class NoOpControlAlgorithmTest.
+ * The Class LoadOptimizerTest.
  * 
  * @author Wolfgang Lausenhammer
  */
-public class NoOpControlAlgorithmTest {
+public class LoadOptimizerTest {
 
 	/** The Constant CONFIGURATION_ID. */
 	private static final String CONFIGURATION_ID = "my-configuration-id";
@@ -79,7 +79,7 @@ public class NoOpControlAlgorithmTest {
 	private ControlEntitiesProvider controlEntitiesProvider;
 
 	/** The no op control algorithm. */
-	private NoOpControlAlgorithm noOpControlAlgorithm;
+	private LoadOptimizer noOpControlAlgorithm;
 
 	/**
 	 * Sets the up.
@@ -88,7 +88,7 @@ public class NoOpControlAlgorithmTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		noOpControlAlgorithm = new NoOpControlAlgorithm(controlEntitiesProvider);
+		noOpControlAlgorithm = new LoadOptimizer(controlEntitiesProvider);
 
 		when(controlEntitiesProvider.getNewOptimizedRun()).thenReturn(
 				new OptimizedRunImpl(OPTIMIZED_RUN_ID));
@@ -115,7 +115,6 @@ public class NoOpControlAlgorithmTest {
 		PossibleRun possibleRun = new PossibleRunImpl(POSSIBLE_RUN_ID);
 		possibleRun.setEarliestStartTime(TIME_MIDNIGHT);
 		possibleRun.setLatestEndTime(TIME_1_OCLOCK);
-		possibleRun.setLoadType(LoadType.LOAD);
 		possibleRun.setNeededSlots(neededSlots);
 
 		List<PossibleRun> possibleRuns = Arrays.asList(possibleRun);
@@ -140,7 +139,6 @@ public class NoOpControlAlgorithmTest {
 		assertThat(configuration.size(), is(equalTo(1)));
 		OptimizedRun run = configuration.get(0);
 		assertThat(run.getId(), is(equalTo(OPTIMIZED_RUN_ID)));
-		assertThat(run.getLoadType(), is(equalTo(LoadType.LOAD)));
 		assertThat(run.getStartTime(), is(equalTo(TIME_MIDNIGHT)));
 		assertThat(run.getNeededSlots(), is(equalTo(neededSlots)));
 

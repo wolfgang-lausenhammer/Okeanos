@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.measure.quantity.Power;
 
-import okeanos.control.entities.LoadType;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Slot;
 
@@ -42,9 +41,6 @@ public class PossibleRunImpl implements PossibleRun {
 
 	/** The length of run. */
 	private Period lengthOfRun;
-
-	/** The load type. */
-	private LoadType loadType;
 
 	/** The needed slots. */
 	private List<Slot> neededSlots;
@@ -103,16 +99,6 @@ public class PossibleRunImpl implements PossibleRun {
 	@Override
 	public Period getLengthOfRun() {
 		return lengthOfRun;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.control.entities.RunProposed#getLoadType()
-	 */
-	@Override
-	public LoadType getLoadType() {
-		return loadType;
 	}
 
 	/*
@@ -183,18 +169,6 @@ public class PossibleRunImpl implements PossibleRun {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * okeanos.control.entities.RunProposed#setLoadType(okeanos.control.entities
-	 * .LoadType)
-	 */
-	@Override
-	public void setLoadType(final LoadType loadType) {
-		this.loadType = loadType;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see okeanos.control.entities.RunProposed#setNeededSlots(java.util.List)
 	 */
 	@Override
@@ -232,8 +206,8 @@ public class PossibleRunImpl implements PossibleRun {
 	@Override
 	public String toString() {
 		return String
-				.format("PossibleRunImpl [earliestStartTime=%s, latestEndTime=%s, loadType=%s, neededSlots=%s]",
-						earliestStartTime, latestEndTime, loadType, neededSlots);
+				.format("PossibleRunImpl [earliestStartTime=%s, latestEndTime=%s, length=%s]",
+						earliestStartTime, latestEndTime, lengthOfRun);
 	}
 
 }

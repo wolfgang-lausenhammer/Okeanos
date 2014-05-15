@@ -28,15 +28,9 @@ import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 @Component
 public class TwoAgents {
 
-	/** The entity management service. */
-	private EntityManagementService entityManagementService;
-
 	/** The logger. */
 	@Logging
 	private Logger log;
-
-	/** The platform management service. */
-	private PlatformManagementService platformManagementService;
 
 	/**
 	 * Instantiates a new two agents.
@@ -58,9 +52,6 @@ public class TwoAgents {
 			final Provider<PingBean> pingBeanProvider,
 			final Provider<PongBean> pongBeanProvider)
 			throws LifecycleException {
-		this.platformManagementService = platformManagementService;
-		this.entityManagementService = entityManagementService;
-
 		IAgentNode node = startAgentNode(platformManagementService);
 		Entity entity1 = startEntity(entityManagementService, node,
 				"ping-agent");

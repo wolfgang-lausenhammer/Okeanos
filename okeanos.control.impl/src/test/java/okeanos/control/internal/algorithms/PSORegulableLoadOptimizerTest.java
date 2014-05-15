@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.measure.quantity.Power;
 
+import okeanos.control.algorithms.ControlAlgorithm;
 import okeanos.control.entities.Configuration;
-import okeanos.control.entities.LoadType;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.PossibleRunsConfiguration;
@@ -53,7 +53,7 @@ import org.mockito.stubbing.Answer;
  * 
  * @author Wolfgang Lausenhammer
  */
-public class ParticleSwarmOptimizationControlAlgorithmTest {
+public class PSORegulableLoadOptimizerTest {
 
 	/** The Constant ONE_OCLOCK. */
 	private static final DateTime ONE_OCLOCK = DateTime
@@ -87,8 +87,8 @@ public class ParticleSwarmOptimizationControlAlgorithmTest {
 	@Mock
 	private ControlEntitiesProvider controlEntitiesProvider;
 
-	/** The pso. */
-	private ParticleSwarmOptimizationControlAlgorithm pso;
+	/** The control algorithm. */
+	private ControlAlgorithm pso;
 
 	/**
 	 * Sets the up.
@@ -143,8 +143,8 @@ public class ParticleSwarmOptimizationControlAlgorithmTest {
 					}
 				});
 
-		this.pso = new ParticleSwarmOptimizationControlAlgorithm(
-				pricingService, controlEntitiesProvider);
+		this.pso = new PSORegulableLoadOptimizer(pricingService,
+				controlEntitiesProvider);
 	}
 
 	/**
@@ -159,7 +159,6 @@ public class ParticleSwarmOptimizationControlAlgorithmTest {
 		PossibleRun possibleRun = new PossibleRunImpl("my-possible-run-id");
 		possibleRun.setEarliestStartTime(ONE_OCLOCK);
 		possibleRun.setLatestEndTime(ELEVEN_OCLOCK);
-		possibleRun.setLoadType(LoadType.LOAD);
 		Slot slot1 = new SlotImpl("slot-1");
 		slot1.setLoad(Amount.valueOf(1, Power.UNIT));
 		Slot slot2 = new SlotImpl("slot-2");

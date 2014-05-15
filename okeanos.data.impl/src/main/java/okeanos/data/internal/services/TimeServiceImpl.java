@@ -62,6 +62,7 @@ public class TimeServiceImpl implements TimeService, MillisProvider {
 	 */
 	@Inject
 	public TimeServiceImpl(final TaskScheduler defaultTaskScheduler) {
+		DateTimeZone.setDefault(DateTimeZone.UTC);
 		setCurrentDateTime(DateTime.now());
 		DateTimeUtils.setCurrentMillisProvider(this);
 		this.defaultTaskScheduler = defaultTaskScheduler;

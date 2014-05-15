@@ -23,13 +23,6 @@ public interface OptimizedRun extends IFact {
 	String getId();
 
 	/**
-	 * Gets the load type.
-	 * 
-	 * @return the load type
-	 */
-	LoadType getLoadType();
-
-	/**
 	 * Gets the needed slots.
 	 * 
 	 * @return the needed slots
@@ -42,14 +35,6 @@ public interface OptimizedRun extends IFact {
 	 * @return the start time
 	 */
 	DateTime getStartTime();
-
-	/**
-	 * Sets the load type.
-	 * 
-	 * @param loadType
-	 *            the new load type
-	 */
-	void setLoadType(LoadType loadType);
 
 	/**
 	 * Sets the needed slots.

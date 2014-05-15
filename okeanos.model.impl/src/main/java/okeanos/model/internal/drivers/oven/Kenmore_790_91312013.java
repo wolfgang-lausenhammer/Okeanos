@@ -143,7 +143,8 @@ public class Kenmore_790_91312013 implements Load {
 		PossibleRun run = controlEntitiesProvider.getNewPossibleRun();
 		run.setEarliestStartTime(startOfToday);
 		run.setLatestEndTime(endOfToday);
-		run.setLoadType(LoadType.LOAD);
+		run.setLengthOfRun(Period.minutes(neededSlots.size()
+				* Constants.SLOT_INTERVAL));
 		run.setNeededSlots(neededSlots);
 
 		PossibleRunsConfiguration possibleRunsConfiguration = controlEntitiesProvider
@@ -151,6 +152,7 @@ public class Kenmore_790_91312013 implements Load {
 		possibleRunsConfiguration.setPossibleRuns(Arrays.asList(run));
 		possibleRunsConfiguration.setRunConstraint(controlEntitiesProvider
 				.getNewRunConstraint());
+		possibleRunsConfiguration.setLoadType(LoadType.LOAD);
 
 		return possibleRunsConfiguration;
 	}

@@ -55,13 +55,6 @@ public interface PossibleRun extends IFact {
 	Period getLengthOfRun();
 
 	/**
-	 * Gets the load type.
-	 * 
-	 * @return the load type
-	 */
-	LoadType getLoadType();
-
-	/**
 	 * Specifies a sequence of values a device needs to adhere to. That is, a
 	 * dishwasher could need more energy while heating up and less while
 	 * actually washing the dishes. There is no choice for the optimization
@@ -136,14 +129,6 @@ public interface PossibleRun extends IFact {
 	 *            the new length of run
 	 */
 	void setLengthOfRun(Period lengthOfRun);
-
-	/**
-	 * Sets the load type.
-	 * 
-	 * @param loadType
-	 *            the new load type
-	 */
-	void setLoadType(LoadType loadType);
 
 	/**
 	 * Sets the needed slots.

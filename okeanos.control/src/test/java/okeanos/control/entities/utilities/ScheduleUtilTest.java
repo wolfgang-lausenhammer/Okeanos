@@ -222,7 +222,6 @@ public class ScheduleUtilTest {
 
 		OptimizedRun optimizedRun1 = new OptimizedRunImpl(
 				"my-optimized-run-id-1");
-		optimizedRun1.setLoadType(LoadType.LOAD);
 		optimizedRun1.setStartTime(time1);
 		optimizedRun1.setNeededSlots(Arrays.asList(slot1, slot2, slot3));
 		List<OptimizedRun> optimizedRuns1 = Arrays.asList(optimizedRun1);
@@ -314,7 +313,6 @@ public class ScheduleUtilTest {
 
 		OptimizedRun optimizedRun2 = new OptimizedRunImpl(
 				"my-optimized-run-id-1");
-		optimizedRun2.setLoadType(LoadType.LOAD);
 		optimizedRun2.setStartTime(time1);
 		optimizedRun2.setNeededSlots(Arrays.asList(slot3, slot2, slot1));
 		List<OptimizedRun> optimizedRuns2 = Arrays.asList(optimizedRun2);

@@ -129,7 +129,7 @@ public class Maytag_MSD2641KEW implements Load {
 		DateTime startOfToday = DateTime.now(DateTimeZone.UTC)
 				.withTimeAtStartOfDay();
 		DateTime endOfToday = startOfToday.withTime(TWENTY_THREE, FOURTY_FIVE,
-				00, 0);
+				0, 0);
 		List<Slot> neededSlots = new LinkedList<>();
 
 		for (DateTime instant = startOfToday; instant.isBefore(endOfToday); instant = instant
@@ -143,7 +143,8 @@ public class Maytag_MSD2641KEW implements Load {
 		PossibleRun run = controlEntitiesProvider.getNewPossibleRun();
 		run.setEarliestStartTime(startOfToday);
 		run.setLatestEndTime(endOfToday);
-		run.setLoadType(LoadType.LOAD);
+		run.setLengthOfRun(Period.minutes(neededSlots.size()
+				* Constants.SLOT_INTERVAL));
 		run.setNeededSlots(neededSlots);
 
 		PossibleRunsConfiguration possibleRunsConfiguration = controlEntitiesProvider
@@ -151,6 +152,7 @@ public class Maytag_MSD2641KEW implements Load {
 		possibleRunsConfiguration.setPossibleRuns(Arrays.asList(run));
 		possibleRunsConfiguration.setRunConstraint(controlEntitiesProvider
 				.getNewRunConstraint());
+		possibleRunsConfiguration.setLoadType(LoadType.LOAD);
 
 		return possibleRunsConfiguration;
 	}

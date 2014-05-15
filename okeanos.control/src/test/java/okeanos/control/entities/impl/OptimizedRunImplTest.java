@@ -132,18 +132,6 @@ public class OptimizedRunImplTest {
 	}
 
 	/**
-	 * Test load type.
-	 */
-	@Test
-	public void testLoadType() {
-		optimizedRun.setLoadType(loadType);
-
-		LoadType loadType = optimizedRun.getLoadType();
-
-		assertThat(loadType, is(equalTo(this.loadType)));
-	}
-
-	/**
 	 * Test needed slots.
 	 */
 	@Test

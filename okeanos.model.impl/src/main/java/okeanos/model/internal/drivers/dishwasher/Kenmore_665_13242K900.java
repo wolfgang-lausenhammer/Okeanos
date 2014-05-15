@@ -173,6 +173,7 @@ public class Kenmore_665_13242K900 implements RegulableLoad {
 		possibleRunsConfiguration.setPossibleRuns(possibleRuns);
 		possibleRunsConfiguration.setRunConstraint(controlEntitiesProvider
 				.getNewRunConstraint());
+		possibleRunsConfiguration.setLoadType(LoadType.REGULABLE_LOAD);
 
 		return possibleRunsConfiguration;
 	}
@@ -208,7 +209,8 @@ public class Kenmore_665_13242K900 implements RegulableLoad {
 		PossibleRun run = controlEntitiesProvider.getNewPossibleRun();
 		run.setEarliestStartTime(startOfToday);
 		run.setLatestEndTime(endOfToday);
-		run.setLoadType(LoadType.REGULABLE_LOAD);
+		run.setLengthOfRun(Period.minutes(neededSlots.size()
+				* Constants.SLOT_INTERVAL));
 		run.setNeededSlots(neededSlots);
 		return Arrays.asList(run);
 	}

@@ -2,6 +2,7 @@ package okeanos.control.entities.impl;
 
 import java.util.List;
 
+import okeanos.control.entities.LoadType;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.PossibleRunsConfiguration;
 import okeanos.control.entities.RunConstraint;
@@ -19,6 +20,9 @@ public class PossibleRunsConfigurationImpl implements PossibleRunsConfiguration 
 
 	/** The id. */
 	private String id;
+
+	/** The load type. */
+	private LoadType loadType;
 
 	/** The possible runs. */
 	private List<PossibleRun> possibleRuns;
@@ -46,6 +50,14 @@ public class PossibleRunsConfigurationImpl implements PossibleRunsConfiguration 
 		return id;
 	}
 
+	/* (non-Javadoc)
+	 * @see okeanos.control.entities.PossibleRunsConfiguration#getLoadType()
+	 */
+	@Override
+	public LoadType getLoadType() {
+		return loadType;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -64,6 +76,14 @@ public class PossibleRunsConfigurationImpl implements PossibleRunsConfiguration 
 	@Override
 	public RunConstraint getRunConstraint() {
 		return runConstraint;
+	}
+
+	/* (non-Javadoc)
+	 * @see okeanos.control.entities.PossibleRunsConfiguration#setLoadType(okeanos.control.entities.LoadType)
+	 */
+	@Override
+	public void setLoadType(final LoadType loadType) {
+		this.loadType = loadType;
 	}
 
 	/*

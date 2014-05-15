@@ -29,12 +29,6 @@ public class HelloWorld {
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(HelloWorld.class);
 
-	/** The entity management service. */
-	private EntityManagementService entityManagementService;
-
-	/** The platform management service. */
-	private PlatformManagementService platformManagementService;
-
 	/**
 	 * Constructor. Creates an agent node and starts an entity on that node.
 	 * Finally, adding the hello world functionality to the entity, which in
@@ -55,9 +49,6 @@ public class HelloWorld {
 			final EntityManagementService entityManagementService,
 			final Provider<HelloWorldBean> beanProvider)
 			throws LifecycleException {
-		this.platformManagementService = platformManagementService;
-		this.entityManagementService = entityManagementService;
-
 		IAgentNode node = startAgentNode(platformManagementService);
 		Entity entity = startEntity(entityManagementService, node,
 				"hello-world");

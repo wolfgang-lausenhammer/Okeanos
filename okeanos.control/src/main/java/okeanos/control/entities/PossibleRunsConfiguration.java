@@ -28,6 +28,21 @@ public interface PossibleRunsConfiguration extends IFact {
 	List<PossibleRun> getPossibleRuns();
 
 	/**
+	 * Sets the load type.
+	 * 
+	 * @param loadType
+	 *            the new load type
+	 */
+	void setLoadType(LoadType loadType);
+
+	/**
+	 * Gets the load type.
+	 * 
+	 * @return the load type
+	 */
+	LoadType getLoadType();
+
+	/**
 	 * Returns general constraints of the run, such as the amount of power the
 	 * configuration is starting with, a certain amount of power that the device
 	 * may not fall below or a certain amount of power that the device may not

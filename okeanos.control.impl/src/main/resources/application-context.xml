@@ -18,7 +18,7 @@
 	<task:scheduler id="myScheduler" pool-size="10" />
 
 	<!-- OSGi published services -->
-	<osgi:service id="noOpControlAlgorithmOsgi" ref="noOpControlAlgorithm"
+	<osgi:service id="noOpControlAlgorithmOsgi" ref="LoadOptimizer"
 		interface="okeanos.control.algorithms.ControlAlgorithm">
 		<osgi:service-properties>
 			<entry key="name" value="NoOpControlAlgorithm" />

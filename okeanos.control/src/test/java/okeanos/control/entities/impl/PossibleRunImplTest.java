@@ -71,9 +71,6 @@ public class PossibleRunImplTest {
 	/** The latest end time. */
 	private DateTime latestEndTime;
 
-	/** The load type. */
-	private LoadType loadType;
-
 	/** The needed slots. */
 	private List<Slot> neededSlots;
 
@@ -100,7 +97,6 @@ public class PossibleRunImplTest {
 		this.id = id;
 		this.earliestStartTime = earliestStartTime;
 		this.latestEndTime = latestEndTime;
-		this.loadType = loadType;
 		this.neededSlots = neededSlots;
 	}
 
@@ -147,18 +143,6 @@ public class PossibleRunImplTest {
 		DateTime latestEndTime = possibleRun.getLatestEndTime();
 
 		assertThat(latestEndTime, is(equalTo(this.latestEndTime)));
-	}
-
-	/**
-	 * Test load type.
-	 */
-	@Test
-	public void testLoadType() {
-		possibleRun.setLoadType(loadType);
-
-		LoadType loadType = possibleRun.getLoadType();
-
-		assertThat(loadType, is(equalTo(this.loadType)));
 	}
 
 	/**

@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
  * 
  * @author Wolfgang Lausenhammer
  */
-@Component("noOpControlAlgorithm")
-public class NoOpControlAlgorithm implements ControlAlgorithm {
+@Component("LoadOptimizer")
+public class LoadOptimizer implements ControlAlgorithm {
 
 	/** The control entities provider. */
 	private ControlEntitiesProvider controlEntitiesProvider;
@@ -32,7 +32,7 @@ public class NoOpControlAlgorithm implements ControlAlgorithm {
 	 *            the control entities provider
 	 */
 	@Inject
-	public NoOpControlAlgorithm(
+	public LoadOptimizer(
 			final ControlEntitiesProvider controlEntitiesProvider) {
 		this.controlEntitiesProvider = controlEntitiesProvider;
 	}
@@ -54,7 +54,6 @@ public class NoOpControlAlgorithm implements ControlAlgorithm {
 		for (PossibleRun currentPossibleRun : possibleRuns) {
 			OptimizedRun currentOptimizedRun = controlEntitiesProvider
 					.getNewOptimizedRun();
-			currentOptimizedRun.setLoadType(currentPossibleRun.getLoadType());
 			currentOptimizedRun.setStartTime(currentPossibleRun
 					.getEarliestStartTime());
 			currentOptimizedRun.setNeededSlots(currentPossibleRun

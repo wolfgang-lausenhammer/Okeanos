@@ -1,8 +1,5 @@
 package okeanos.control.services.agentbeans.callbacks;
 
-import java.util.List;
-
-import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.PossibleRunsConfiguration;
 import de.dailab.jiactng.agentcore.environment.IEffector;
 
