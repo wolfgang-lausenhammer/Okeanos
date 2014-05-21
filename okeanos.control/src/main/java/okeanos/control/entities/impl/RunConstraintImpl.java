@@ -20,16 +20,16 @@ public class RunConstraintImpl implements RunConstraint {
 	private static final long serialVersionUID = 9166858616557806286L;
 
 	/** The charges. */
-	private Map<DateTime, Amount<Power>> charges;
+	private Map<DateTime, Amount<Power>> chargesAtPointsInTime;
 
 	/** The id. */
 	private String id;
 
-	/** The maximum charge. */
-	private Amount<Power> maximumCharge;
+	/** The maximum capacity. */
+	private Amount<Power> maximumCapacity;
 
-	/** The minimum charge. */
-	private Amount<Power> minimumCharge;
+	/** The minimum capacity. */
+	private Amount<Power> minimumCapacity;
 
 	/** The start charge. */
 	private Amount<Power> startCharge;
@@ -47,11 +47,11 @@ public class RunConstraintImpl implements RunConstraint {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.control.entities.RunConstraint#getCharges()
+	 * @see okeanos.control.entities.RunConstraint#getChargesAtPointsInTime()
 	 */
 	@Override
-	public Map<DateTime, Amount<Power>> getCharges() {
-		return charges;
+	public Map<DateTime, Amount<Power>> getChargesAtPointsInTime() {
+		return chargesAtPointsInTime;
 	}
 
 	/*
@@ -67,21 +67,21 @@ public class RunConstraintImpl implements RunConstraint {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.control.entities.RunConstraint#getMaximumCharge()
+	 * @see okeanos.control.entities.RunConstraint#getMaximumCapacity()
 	 */
 	@Override
-	public Amount<Power> getMaximumCharge() {
-		return maximumCharge;
+	public Amount<Power> getMaximumCapacity() {
+		return maximumCapacity;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.control.entities.RunConstraint#getMinimumCharge()
+	 * @see okeanos.control.entities.RunConstraint#getMinimumCapacity()
 	 */
 	@Override
-	public Amount<Power> getMinimumCharge() {
-		return minimumCharge;
+	public Amount<Power> getMinimumCapacity() {
+		return minimumCapacity;
 	}
 
 	/*
@@ -97,35 +97,38 @@ public class RunConstraintImpl implements RunConstraint {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see okeanos.control.entities.RunConstraint#setCharges(java.util.Map)
+	 * @see
+	 * okeanos.control.entities.RunConstraint#setChargesAtPointsInTime(java.
+	 * util.Map)
 	 */
 	@Override
-	public void setCharges(final Map<DateTime, Amount<Power>> charges) {
-		this.charges = charges;
+	public void setChargesAtPointsInTime(
+			final Map<DateTime, Amount<Power>> chargesAtPointsInTime) {
+		this.chargesAtPointsInTime = chargesAtPointsInTime;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * okeanos.control.entities.RunConstraint#setMaximumCharge(org.jscience.
-	 * physics.amount.Amount)
+	 * okeanos.control.entities.RunConstraint#setMaximumCapacity(org.jscience
+	 * .physics.amount.Amount)
 	 */
 	@Override
-	public void setMaximumCharge(final Amount<Power> maximumCharge) {
-		this.maximumCharge = maximumCharge;
+	public void setMaximumCapacity(final Amount<Power> maximumCapacity) {
+		this.maximumCapacity = maximumCapacity;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * okeanos.control.entities.RunConstraint#setMinimumCharge(org.jscience.
-	 * physics.amount.Amount)
+	 * okeanos.control.entities.RunConstraint#setMinimumCapacity(org.jscience
+	 * .physics.amount.Amount)
 	 */
 	@Override
-	public void setMinimumCharge(final Amount<Power> minimumCharge) {
-		this.minimumCharge = minimumCharge;
+	public void setMinimumCapacity(final Amount<Power> minimumCapacity) {
+		this.minimumCapacity = minimumCapacity;
 	}
 
 	/*

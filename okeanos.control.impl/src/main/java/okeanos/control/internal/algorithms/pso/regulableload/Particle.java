@@ -1,4 +1,4 @@
-package okeanos.control.internal.algorithms.pso;
+package okeanos.control.internal.algorithms.pso.regulableload;
 
 import java.util.HashMap;
 import java.util.Map;

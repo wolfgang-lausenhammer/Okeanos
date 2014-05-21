@@ -17,6 +17,7 @@ import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
 import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
+import okeanos.data.services.PricingService;
 import okeanos.model.entities.RegulableLoad;
 import okeanos.runner.internal.samples.simple.lightanddishwasher.pace.LightBulbsAndDishwasher;
 
@@ -161,10 +162,12 @@ public class DishwasherBean extends AbstractMethodExposingBean implements
 	public DishwasherBean(
 			@Qualifier("dishwasher") final RegulableLoad dishwasher,
 			@Qualifier("controlAlgorithmService") final ControlAlgorithm controlAlgorithm,
-			final ControlEntitiesProvider controlEntitiesProvider) {
+			final ControlEntitiesProvider controlEntitiesProvider,
+			final PricingService pricingService) {
 		this.dishwasher = dishwasher;
 		this.controlAlgorithm = controlAlgorithm;
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
+		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider,
+				pricingService);
 	}
 
 	/*

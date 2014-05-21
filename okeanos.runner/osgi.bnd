@@ -9,4 +9,5 @@
 #Spring-Context: classpath:sample-configurations/load-reporting-light-bulbs.xml
 #Spring-Context: classpath:sample-configurations/light-and-dishwasher-pace.xml
 #Spring-Context: classpath:sample-configurations/light-and-dishwasher-setdate.xml
-Spring-Context: classpath:sample-configurations/complex/household.xml
+#Spring-Context: classpath:sample-configurations/complex/household.xml
+Spring-Context: classpath:sample-configurations/complex/pev.xml

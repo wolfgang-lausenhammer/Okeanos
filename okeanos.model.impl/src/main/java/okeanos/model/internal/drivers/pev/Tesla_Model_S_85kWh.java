@@ -3,14 +3,15 @@ package okeanos.model.internal.drivers.pev;
 import static javax.measure.unit.SI.WATT;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.inject.Inject;
 import javax.measure.quantity.Power;
 
+import okeanos.control.entities.LoadFlexiblity;
 import okeanos.control.entities.LoadType;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.PossibleRunsConfiguration;
@@ -42,23 +43,31 @@ import org.springframework.stereotype.Component;
 public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 
 	/** The Constant MAXIMUM_CAPACITY. */
-	private static final Amount<Power> MAXIMUM_CAPACITY = Amount.valueOf(85000,
+	private static final Amount<Power> MAXIMUM_CAPACITY = Amount.valueOf(85001,
 			Power.UNIT);
 
 	/** The Constant MINIMUM_CAPACITY. */
-	private static final Amount<Power> MINIMUM_CAPACITY = Amount.valueOf(0,
+	private static final Amount<Power> MINIMUM_CAPACITY = Amount.valueOf(-1,
 			Power.UNIT);
 
 	/** The Constant NUM_RUNS. */
-	private static final int NUM_RUNS = 2;
+	private static final int NUM_RUNS = 48;
 
 	/** The Constant START_CAPACITY. */
-	private static final Amount<Power> START_CAPACITY = Amount.valueOf(10000,
+	private static final Amount<Power> START_CAPACITY = Amount.valueOf(0,
+			Power.UNIT);
+
+	/** The Constant TEN_KWH_CHARGE. */
+	private static final Amount<Power> TEN_KWH_CHARGE = Amount.valueOf(10000,
+			Power.UNIT);
+
+	/** The Constant FIVE_KWH_CHARGE. */
+	private static final Amount<Power> FIVE_KWH_CHARGE = Amount.valueOf(5000,
 			Power.UNIT);
 
 	/** The Constant TWENTY_KWH_CHARGE. */
-	private static final Amount<Power> TWENTY_KWH_CHARGE = Amount.valueOf(
-			20000, Power.UNIT);
+	private static final Amount<Power> TWO_KWH_CHARGE = Amount.valueOf(2000,
+			Power.UNIT);
 
 	/** The Constant ZERO_CHARGE. */
 	private static final Amount<Power> ZERO_CHARGE = Amount.valueOf(0,
@@ -148,10 +157,14 @@ public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 	 */
 	@Override
 	public PossibleRunsConfiguration getPossibleRunsConfiguration() {
-		Set<Amount<Power>> possibleLoads = new HashSet<>();
+		Set<Amount<Power>> possibleLoads = new ConcurrentSkipListSet<>();
 		possibleLoads.add(ZERO_CHARGE);
-		possibleLoads.add(TWENTY_KWH_CHARGE);
-		possibleLoads.add(TWENTY_KWH_CHARGE.opposite());
+		possibleLoads.add(TWO_KWH_CHARGE);
+		possibleLoads.add(TWO_KWH_CHARGE.opposite());
+		possibleLoads.add(FIVE_KWH_CHARGE);
+		possibleLoads.add(FIVE_KWH_CHARGE.opposite());
+		possibleLoads.add(TEN_KWH_CHARGE);
+		possibleLoads.add(TEN_KWH_CHARGE.opposite());
 
 		DateTime currentTime = DateTime.now(DateTimeZone.UTC)
 				.withTimeAtStartOfDay();
@@ -167,6 +180,7 @@ public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 					Constants.SLOT_INTERVAL));
 			run.setLengthOfRun(lengthOfRuns);
 			run.setPossibleLoads(possibleLoads);
+			run.setLoadFlexibilityOfRun(LoadFlexiblity.LIMITED_CHOICE);
 			runs.add(run);
 			currentTime = currentTime.plus(lengthOfRuns);
 		}
@@ -174,8 +188,8 @@ public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 		RunConstraint runConstraint = controlEntitiesProvider
 				.getNewRunConstraint();
 		runConstraint.setStartCharge(START_CAPACITY);
-		runConstraint.setMinimumCharge(MINIMUM_CAPACITY);
-		runConstraint.setMaximumCharge(MAXIMUM_CAPACITY);
+		runConstraint.setMinimumCapacity(MINIMUM_CAPACITY);
+		runConstraint.setMaximumCapacity(MAXIMUM_CAPACITY);
 
 		PossibleRunsConfiguration possibleRunsConfiguration = controlEntitiesProvider
 				.getNewPossibleRunsConfiguration();

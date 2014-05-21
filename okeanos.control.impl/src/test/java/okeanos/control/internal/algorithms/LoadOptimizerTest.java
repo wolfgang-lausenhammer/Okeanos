@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import okeanos.control.entities.Configuration;
-import okeanos.control.entities.LoadType;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.PossibleRunsConfiguration;

@@ -15,7 +15,7 @@ import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
-import okeanos.control.internal.algorithms.pso.Particle;
+import okeanos.control.internal.algorithms.pso.regulableload.Particle;
 import okeanos.data.services.Constants;
 import okeanos.data.services.PricingService;
 import okeanos.data.services.entities.CostFunction;
@@ -30,6 +30,43 @@ import org.springframework.stereotype.Component;
 @Component
 class PSORegulableLoadOptimizer implements ControlAlgorithm {
 
+	/** The Constant DEFAULT_COGNITIVE_WEIGHT. */
+	private static final double DEFAULT_COGNITIVE_WEIGHT = 1.49445;
+
+	/** The default costs if no costs are assigned at a certain price range. */
+	private static final double DEFAULT_COSTS = Double.NaN;
+
+	/** The Constant DEFAULT_INERTIA_WEIGHT. */
+	private static final double DEFAULT_INERTIA_WEIGHT = 0.729;
+
+	/** The Constant DEFAULT_SOCIAL_WEIGHT. */
+	private static final double DEFAULT_SOCIAL_WEIGHT = 1.49445;
+
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory
+			.getLogger(PSORegulableLoadOptimizer.class);
+
+	/** The number of iterations to run the PSO. */
+	private static final int NUMBER_OF_ITERATIONS = 100;
+
+	/** The number of particles for the PSO. */
+	private static final int NUMBER_OF_PARTICLES = 10;
+
+	/** The control entities provider. */
+	private ControlEntitiesProvider controlEntitiesProvider;
+
+	/** The pricing service. */
+	private PricingService pricingService;
+
+	/** The random. */
+	private Random random;
+
+	/**
+	 * Instantiates a new PSO regulable load optimizer.
+	 *
+	 * @param pricingService the pricing service
+	 * @param controlEntitiesProvider the control entities provider
+	 */
 	@Inject
 	public PSORegulableLoadOptimizer(final PricingService pricingService,
 			final ControlEntitiesProvider controlEntitiesProvider) {
@@ -39,34 +76,9 @@ class PSORegulableLoadOptimizer implements ControlAlgorithm {
 		this.controlEntitiesProvider = controlEntitiesProvider;
 	}
 
-	/** The Constant LOG. */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(PSORegulableLoadOptimizer.class);
-
-	/** The default costs if no costs are assigned at a certain price range. */
-	private static final double DEFAULT_COSTS = Double.NaN;
-
-	/** The random. */
-	private Random random;
-
-	/** The pricing service. */
-	private PricingService pricingService;
-
-	/** The control entities provider. */
-	private ControlEntitiesProvider controlEntitiesProvider;
-
-	private static final double DEFAULT_SOCIAL_WEIGHT = 1.49445;
-
-	private static final double DEFAULT_COGNITIVE_WEIGHT = 1.49445;
-
-	private static final double DEFAULT_INERTIA_WEIGHT = 0.729;
-
-	/** The number of particles for the PSO. */
-	private static final int NUMBER_OF_PARTICLES = 10;
-
-	/** The number of iterations to run the PSO. */
-	private static final int NUMBER_OF_ITERATIONS = 100;
-
+	/* (non-Javadoc)
+	 * @see okeanos.control.algorithms.ControlAlgorithm#findBestConfiguration(okeanos.control.entities.Configuration)
+	 */
 	@Override
 	public List<OptimizedRun> findBestConfiguration(
 			Configuration currentConfiguration) {

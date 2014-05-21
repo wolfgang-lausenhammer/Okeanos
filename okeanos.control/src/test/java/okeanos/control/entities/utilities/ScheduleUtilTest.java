@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.measure.quantity.Power;
 
-import okeanos.control.entities.LoadType;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;

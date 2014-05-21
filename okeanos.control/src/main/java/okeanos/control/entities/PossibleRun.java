@@ -54,6 +54,10 @@ public interface PossibleRun extends IFact {
 	 */
 	Period getLengthOfRun();
 
+	LoadFlexiblity getLoadFlexibilityOfRun();
+
+	void setLoadFlexibilityOfRun(LoadFlexiblity loadFlexibility);
+
 	/**
 	 * Specifies a sequence of values a device needs to adhere to. That is, a
 	 * dishwasher could need more energy while heating up and less while
@@ -104,7 +108,7 @@ public interface PossibleRun extends IFact {
 	 * @see #getNeededSlots()
 	 * @see #getPossibleLoads()
 	 */
-	Range<Double> getRangeOfPossibleLoads();
+	Range<Amount<Power>> getRangeOfPossibleLoads();
 
 	/**
 	 * Sets the earliest start time.
@@ -152,6 +156,6 @@ public interface PossibleRun extends IFact {
 	 * @param rangeOfPossibleLoads
 	 *            the new range of possible loads
 	 */
-	void setRangeOfPossibleLoads(Range<Double> rangeOfPossibleLoads);
+	void setRangeOfPossibleLoads(Range<Amount<Power>> rangeOfPossibleLoads);
 
 }

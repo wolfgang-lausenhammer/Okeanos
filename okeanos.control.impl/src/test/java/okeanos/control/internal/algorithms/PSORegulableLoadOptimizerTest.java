@@ -56,36 +56,65 @@ import org.mockito.stubbing.Answer;
 public class PSORegulableLoadOptimizerTest {
 
 	/** The Constant ONE_OCLOCK. */
-	private static final DateTime ONE_OCLOCK = DateTime
+	private static final DateTime CLOCK_ONE = DateTime
 			.parse("2014-04-15T01:00:00Z");
 
-	/** The Constant ELEVEN_OCLOCK. */
-	private static final DateTime ELEVEN_OCLOCK = DateTime
-			.parse("2014-04-15T23:00:00Z");
+	/** The Constant MORNING. */
+	private static final DateTime CLOCK_THREE = DateTime
+			.parse("2014-04-15T03:00Z");
 
 	/** The Constant NOON. */
-	private static final DateTime NOON = DateTime.parse("2014-04-15T12:00Z");
+	private static final DateTime CLOCK_TWELVE = DateTime
+			.parse("2014-04-15T12:00Z");
 
-	/** The Constant MORNING. */
-	private static final DateTime MORNING = DateTime.parse("2014-04-15T03:00Z");
+	/** The Constant ELEVEN_OCLOCK. */
+	private static final DateTime CLOCK_TWENTY_THREE = DateTime
+			.parse("2014-04-15T23:00:00Z");
 
 	/** The Constant MIDNIGHT. */
-	private static final DateTime MIDNIGHT = DateTime
+	private static final DateTime CLOCK_ZERO = DateTime
 			.parse("2014-04-15T00:00:00Z");
 
-	/** The Constant POSSIBLE_RUNS_CONFIGURATION_ID. */
-	private static final String POSSIBLE_RUNS_CONFIGURATION_ID = "my-possible-runs-configuration-id";
+	/** The Constant FOURTY_FIVE. */
+	private static final int FOURTY_FIVE = 45;
 
-	/** The Constant RUN_CONSTRAINT_ID. */
-	private static final String RUN_CONSTRAINT_ID = "my-run-constraint-id";
+	/** The Constant PRICE_AVERAGE. */
+	private static final Price PRICE_AVERAGE = new PriceImpl(new double[] { 1,
+			2, 4, 8 }, new double[] { 11.2, 24.64, 54.21, 119.26 });
 
-	/** The pricing service. */
-	@Mock
-	private PricingService pricingService;
+	/** The Constant PRICE_CHEAP. */
+	private static final Price PRICE_CHEAP = new PriceImpl(new double[] { 1, 2,
+			4, 8 }, new double[] { 1.12, 2.464, 5.421, 11.926 });
+
+	/** The Constant PRICE_EXPENSIVE. */
+	private static final Price PRICE_EXPENSIVE = new PriceImpl(new double[] {
+			1, 2, 4, 8 }, new double[] { 110.2, 240.64, 540.21, 1190.26 });
+
+	/** The Constant TWENTY_THREE. */
+	private static final int TWENTY_THREE = 23;
+
+	/** The Constant WATTS_ONE. */
+	private static final Amount<Power> WATTS_ONE = Amount
+			.valueOf(1, Power.UNIT);
+
+	/** The Constant WATTS_TWO. */
+	private static final Amount<Power> WATTS_TWO = Amount
+			.valueOf(2, Power.UNIT);
+
+	/** The Constant WATTS_ZERO. */
+	private static final Amount<Power> WATTS_ZERO = Amount.valueOf(0,
+			Power.UNIT);
+
+	/** The Constant ZERO. */
+	private static final int ZERO = 0;
 
 	/** The control entities provider. */
 	@Mock
 	private ControlEntitiesProvider controlEntitiesProvider;
+
+	/** The pricing service. */
+	@Mock
+	private PricingService pricingService;
 
 	/** The control algorithm. */
 	private ControlAlgorithm pso;
@@ -108,26 +137,18 @@ public class PSORegulableLoadOptimizerTest {
 							throws Throwable {
 						DateTime at = (DateTime) invocation.getArguments()[0];
 
-						if (at.isBefore(MORNING)) {
-							Price price = new PriceImpl(new double[] { 1, 2, 4,
-									8 }, new double[] { 1.12, 2.464, 5.421,
-									11.926 });
+						if (at.isBefore(CLOCK_THREE)) {
 							CostFunction beforeNoonCostFunction = new CostFunctionImpl(
-									MIDNIGHT, MORNING, price);
+									CLOCK_ZERO, CLOCK_THREE, PRICE_CHEAP);
 							return beforeNoonCostFunction;
-						} else if (at.isBefore(NOON)) {
-							Price price = new PriceImpl(new double[] { 1, 2, 4,
-									8 }, new double[] { 11.2, 24.64, 54.21,
-									119.26 });
+						} else if (at.isBefore(CLOCK_TWELVE)) {
 							CostFunction beforeNoonCostFunction = new CostFunctionImpl(
-									MORNING, NOON, price);
+									CLOCK_THREE, CLOCK_TWELVE, PRICE_AVERAGE);
 							return beforeNoonCostFunction;
 						} else {
-							Price price = new PriceImpl(new double[] { 1, 2, 4,
-									8 }, new double[] { 110.2, 240.64, 540.21,
-									1190.26 });
 							CostFunction afterNoonCostFunction = new CostFunctionImpl(
-									NOON, MIDNIGHT.plusDays(1), price);
+									CLOCK_TWELVE, CLOCK_ZERO.plusDays(1),
+									PRICE_EXPENSIVE);
 							return afterNoonCostFunction;
 						}
 					}
@@ -152,27 +173,27 @@ public class PSORegulableLoadOptimizerTest {
 	 */
 	@Test
 	public void testFindBestConfigurationBeforeNoon() {
-		DateTimeUtils.setCurrentMillisFixed(DateTime.parse(
-				"2014-04-15T10:00:00Z").getMillis());
+		DateTimeUtils.setCurrentMillisFixed(CLOCK_ZERO.getMillis());
 
 		Configuration currentConfiguration = new ConfigurationImpl("my-conf-id");
 		PossibleRun possibleRun = new PossibleRunImpl("my-possible-run-id");
-		possibleRun.setEarliestStartTime(ONE_OCLOCK);
-		possibleRun.setLatestEndTime(ELEVEN_OCLOCK);
+		possibleRun.setEarliestStartTime(CLOCK_ONE);
+		possibleRun.setLatestEndTime(CLOCK_TWENTY_THREE);
 		Slot slot1 = new SlotImpl("slot-1");
-		slot1.setLoad(Amount.valueOf(1, Power.UNIT));
+		slot1.setLoad(WATTS_ONE);
 		Slot slot2 = new SlotImpl("slot-2");
-		slot2.setLoad(Amount.valueOf(2, Power.UNIT));
+		slot2.setLoad(WATTS_TWO);
 		Slot slot3 = new SlotImpl("slot-3");
-		slot3.setLoad(Amount.valueOf(1, Power.UNIT));
+		slot3.setLoad(WATTS_ONE);
 		List<Slot> neededSlots = Arrays.asList(slot1, slot2, slot3);
 		possibleRun.setNeededSlots(neededSlots);
 		List<PossibleRun> possibleRuns = Arrays.asList(possibleRun);
 
-		RunConstraint runConstraint = new RunConstraintImpl(RUN_CONSTRAINT_ID);
+		RunConstraint runConstraint = new RunConstraintImpl(
+				"my-run-constraint-id");
 
 		PossibleRunsConfiguration possibleRunsConfiguration = new PossibleRunsConfigurationImpl(
-				POSSIBLE_RUNS_CONFIGURATION_ID);
+				"my-possible-runs-configuration-id");
 		possibleRunsConfiguration.setPossibleRuns(possibleRuns);
 		possibleRunsConfiguration.setRunConstraint(runConstraint);
 
@@ -180,12 +201,13 @@ public class PSORegulableLoadOptimizerTest {
 				.setPossibleRunsConfiguration(possibleRunsConfiguration);
 		Schedule scheduleOfOtherDevices = new ScheduleImpl(
 				"schedule-of-other-devices");
-		DateTime currentDateTime = ONE_OCLOCK.withTimeAtStartOfDay();
-		DateTime end = currentDateTime.withTime(23, 45, 0, 0);
+		DateTime currentDateTime = CLOCK_ZERO;
+		DateTime end = currentDateTime.withTime(TWENTY_THREE, FOURTY_FIVE,
+				ZERO, ZERO);
 		Map<DateTime, Slot> scheduleOfOtherDevicesSchedule = new ConcurrentSkipListMap<>();
 		while (currentDateTime.isBefore(end) || currentDateTime.isEqual(end)) {
 			Slot slot = new SlotImpl("slot...");
-			slot.setLoad(Amount.valueOf(0, Power.UNIT));
+			slot.setLoad(WATTS_ZERO);
 			scheduleOfOtherDevicesSchedule.put(currentDateTime, slot);
 			currentDateTime = currentDateTime
 					.plusMinutes(Constants.SLOT_INTERVAL);
@@ -198,6 +220,6 @@ public class PSORegulableLoadOptimizerTest {
 
 		assertThat(result, is(notNullValue()));
 		assertThat(result, hasSize(1));
-		assertTrue(result.get(0).getStartTime().isBefore(MORNING));
+		assertTrue(result.get(0).getStartTime().isBefore(CLOCK_THREE));
 	}
 }

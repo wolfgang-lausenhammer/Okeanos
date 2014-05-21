@@ -27,6 +27,7 @@ import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
 import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
+import okeanos.data.services.PricingService;
 import okeanos.data.services.TimeService;
 import okeanos.data.services.UUIDGenerator;
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
@@ -307,87 +308,96 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			if (isEquilibriumReached()) {
 				return;
 			}
-
-			LOG.trace("{} - ScheduleMessageBroadcaster execute() called",
-					thisAgent.getAgentName());
-
-			if (latestOptimizedRuns == null) {
-				latestOptimizedRuns = new LinkedList<>();
-			}
-
-			LOG.trace(
-					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-					thisAgent.getAgentName(), state,
-					State.CALLING_POSSIBLE_RUNS_CALLBACK);
-			state = State.CALLING_POSSIBLE_RUNS_CALLBACK;
-			PossibleRunsConfiguration possibleRunsConfigurationToday = possibleRunsCallback
-					.getPossibleRunsConfiguration();
-
-			Configuration configuration = controlEntitiesProvider
-					.getNewConfiguration();
-			configuration
-					.setPossibleRunsConfiguration(possibleRunsConfigurationToday);
-			configuration.setScheduleOfOtherDevices(scheduleUtil
-					.sum(scheduleOfEntities.values().toArray(new Schedule[0])));
-
-			// optimize schedule
-			LOG.trace(
-					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-					thisAgent.getAgentName(), state, State.OPTIMIZING_SCHEDULE);
-			state = State.OPTIMIZING_SCHEDULE;
-			List<OptimizedRun> optimizedRuns = controlAlgorithm
-					.findBestConfiguration(configuration);
-
-			// allow agent bean to correct optimized runs
-			LOG.trace(
-					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-					thisAgent.getAgentName(), state,
-					State.CALLING_OPTIMIZED_RUNS_CALLBACK);
-			state = State.CALLING_OPTIMIZED_RUNS_CALLBACK;
-			optimizedRuns = optimizedRunsCallback
-					.optimizedRunsCallback(optimizedRuns);
-
-			Schedule schedule = scheduleUtil.toSchedule(optimizedRuns);
-			if (scheduleUtil.compare(
-					scheduleUtil.toSchedule(latestOptimizedRuns), schedule) == 0) {
-				// own schedule not changed despite new schedule from others
-				// do not announce new schedule!
-				LOG.debug("{} - Schedule remained unchanged.",
+			synchronized (lastUpdateMonitor) {
+				LOG.trace("{} - ScheduleMessageBroadcaster execute() called",
 						thisAgent.getAgentName());
-				LOG.trace("{}\n{}", thisAgent.getAgentName(), scheduleUtil
-						.plus(configuration.getScheduleOfOtherDevices(),
-								schedule));
-			} else {
+
+				lastUpdate = null;
+
+				if (latestOptimizedRuns == null) {
+					latestOptimizedRuns = new LinkedList<>();
+				}
+
 				LOG.trace(
 						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-						thisAgent.getAgentName(), state, State.SENDING_SCHEDULE);
-				state = State.SENDING_SCHEDULE;
-				LOG.trace("{} - old: {}", thisAgent.getAgentName(),
-						scheduleUtil.toSchedule(latestOptimizedRuns));
-				LOG.trace("{} - new: {}", thisAgent.getAgentName(), schedule);
+						thisAgent.getAgentName(), state,
+						State.CALLING_POSSIBLE_RUNS_CALLBACK);
+				state = State.CALLING_POSSIBLE_RUNS_CALLBACK;
+				PossibleRunsConfiguration possibleRunsConfigurationToday = possibleRunsCallback
+						.getPossibleRunsConfiguration();
 
-				LOG.debug("{} - Announcing my new optimized schedule",
-						thisAgent.getAgentName());
-				LOG.trace("{}\n{}", thisAgent.getAgentName(), StringUtils.join(
-						schedule.getSchedule().entrySet(), '\n'));
-				HashMap<String, String> headers = new HashMap<>();
-				headers.put(HEADER_IDENTIFY_SCHEDULE_SENDER, currentUUID);
+				Configuration configuration = controlEntitiesProvider
+						.getNewConfiguration();
+				configuration
+						.setPossibleRunsConfiguration(possibleRunsConfigurationToday);
+				configuration.setScheduleOfOtherDevices(scheduleUtil
+						.sum(scheduleOfEntities.values().toArray(
+								new Schedule[0])));
+				// optimize schedule
+				LOG.trace(
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+						thisAgent.getAgentName(), state,
+						State.OPTIMIZING_SCHEDULE);
+				state = State.OPTIMIZING_SCHEDULE;
+				List<OptimizedRun> optimizedRuns = controlAlgorithm
+						.findBestConfiguration(configuration);
 
-				invoke(actionBroadcastOptions, new Serializable[] {
-						MessageScope.GROUP, schedule, headers });
-				LOG.trace("{} - Announced schedule", thisAgent.getAgentName());
+				// allow agent bean to correct optimized runs
+				LOG.trace(
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+						thisAgent.getAgentName(), state,
+						State.CALLING_OPTIMIZED_RUNS_CALLBACK);
+				state = State.CALLING_OPTIMIZED_RUNS_CALLBACK;
+				optimizedRuns = optimizedRunsCallback
+						.optimizedRunsCallback(optimizedRuns);
+
+				Schedule schedule = scheduleUtil.toSchedule(optimizedRuns);
+				if (scheduleUtil.compareByCosts(
+						scheduleUtil.toSchedule(latestOptimizedRuns), schedule) == 0) {
+					// own schedule not changed despite new schedule from others
+					// do not announce new schedule!
+					LOG.debug("{} - Schedule remained unchanged.",
+							thisAgent.getAgentName());
+					LOG.trace("{}\n{}", thisAgent.getAgentName(), scheduleUtil
+							.plus(configuration.getScheduleOfOtherDevices(),
+									schedule));
+				} else {
+					LOG.trace(
+							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+							thisAgent.getAgentName(), state,
+							State.SENDING_SCHEDULE);
+					state = State.SENDING_SCHEDULE;
+					LOG.trace("{} - old: {}", thisAgent.getAgentName(),
+							scheduleUtil.toSchedule(latestOptimizedRuns));
+					LOG.trace("{} - new: {}", thisAgent.getAgentName(),
+							schedule);
+
+					LOG.debug("{} - Announcing my new optimized schedule",
+							thisAgent.getAgentName());
+					LOG.trace("{}\n{}", thisAgent.getAgentName(), StringUtils
+							.join(schedule.getSchedule().entrySet(), '\n'));
+					HashMap<String, String> headers = new HashMap<>();
+					headers.put(HEADER_IDENTIFY_SCHEDULE_SENDER, currentUUID);
+
+					invoke(actionBroadcastOptions, new Serializable[] {
+							MessageScope.GROUP, schedule, headers });
+					LOG.trace("{} - Announced schedule",
+							thisAgent.getAgentName());
+				}
+				latestOptimizedRuns = optimizedRuns;
+
+				LOG.trace(
+						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+						thisAgent.getAgentName(), state,
+						State.WAITING_FOR_SCHEDULES);
+				state = State.WAITING_FOR_SCHEDULES;
+
+				lastUpdate = DateTime.now(DateTimeZone.UTC);
 			}
-			latestOptimizedRuns = optimizedRuns;
-
-			LOG.trace(
-					"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-					thisAgent.getAgentName(), state,
-					State.WAITING_FOR_SCHEDULES);
-			state = State.WAITING_FOR_SCHEDULES;
-
-			lastUpdate = DateTime.now(DateTimeZone.UTC);
 		}
 	}
+
+	private Object lastUpdateMonitor = new Object();
 
 	/**
 	 * Handles all received messages. Thus, writes the announced schedules of
@@ -414,34 +424,38 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			 */
 			@Override
 			public void run() {
-				if (!State.WAITING_FOR_SCHEDULES.equals(state)) {
-					return;
+				synchronized (lastUpdateMonitor) {
+					if (!State.WAITING_FOR_SCHEDULES.equals(state)) {
+						return;
+					}
+
+					if (equilibriumFoundCalled.get()) {
+						return;
+					}
+
+					DateTime now = DateTime.now(DateTimeZone.UTC);
+					if (lastUpdate == null
+							|| lastUpdate.plusMillis(
+									WAIT_FOR_EQUILIBRIUM_TIMEOUT).isAfter(now)) {
+						return;
+					}
+					LOG.debug("lastUpdate {}, now {}", lastUpdate, now);
+
+					LOG.trace(
+							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+							thisAgent.getAgentName(), state,
+							State.EQUILIBRIUM_REACHED);
+					state = State.EQUILIBRIUM_REACHED;
+
+					Schedule schedule = scheduleUtil.plus(scheduleUtil
+							.sum(scheduleOfEntities.values().toArray(
+									new Schedule[0])), scheduleUtil
+							.toSchedule(latestOptimizedRuns));
+
+					equilibriumFoundCalled.set(true);
+					equilibriumFoundCallback.equilibrium(schedule,
+							latestOptimizedRuns);
 				}
-
-				if (equilibriumFoundCalled.get()) {
-					return;
-				}
-
-				if (lastUpdate == null
-						|| lastUpdate.plusMillis(WAIT_FOR_EQUILIBRIUM_TIMEOUT)
-								.isBefore(DateTime.now(DateTimeZone.UTC))) {
-					return;
-				}
-
-				LOG.trace(
-						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-						thisAgent.getAgentName(), state,
-						State.EQUILIBRIUM_REACHED);
-				state = State.EQUILIBRIUM_REACHED;
-
-				Schedule schedule = scheduleUtil.plus(
-						scheduleUtil.sum(scheduleOfEntities.values().toArray(
-								new Schedule[0])),
-						scheduleUtil.toSchedule(latestOptimizedRuns));
-
-				equilibriumFoundCalled.set(true);
-				equilibriumFoundCallback.equilibrium(schedule,
-						latestOptimizedRuns);
 			}
 		}
 
@@ -501,58 +515,73 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			}
 			LOG.trace("{} - [event={}]", thisAgent.getAgentName(), event);
 			if (event instanceof WriteCallEvent<?>) {
-				WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
+				synchronized (lastUpdateMonitor) {
+					WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
 
-				// consume message
-				IJiacMessage message = memory.remove(wce.getObject());
+					// consume message
+					IJiacMessage message = memory.remove(wce.getObject());
 
-				// check if message was sent by current agent, if so, ignore it
-				if (thisAgent.getAgentDescription().getMessageBoxAddress()
-						.toString()
-						.equals(message.getHeader(COMMUNICATION_SENDER))) {
-					return;
+					// check if message was sent by current agent, if so, ignore
+					// it
+					if (thisAgent.getAgentDescription().getMessageBoxAddress()
+							.toString()
+							.equals(message.getHeader(COMMUNICATION_SENDER))) {
+						return;
+					}
+					lastUpdate = null;
+
+					LOG.trace("{} - Broadcast Message received.",
+							thisAgent.getAgentName());
+					LOG.trace(
+							"{} - Cancelling current announce schedule and schedule new one.",
+							thisAgent.getAgentName());
+
+					Schedule latestSchedule = (Schedule) message.getPayload();
+					while (!scheduledBroadcast.isDone()) {
+						if (State.SENDING_SCHEDULE.equals(state)
+								|| State.WAITING_FOR_SCHEDULES.equals(state)) {
+							scheduledBroadcast.cancel(false);
+						} else {
+							scheduledBroadcast.cancel(true);
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+							}
+						}
+					}
+
+					LOG.trace(
+							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+							thisAgent.getAgentName(), state,
+							State.CALLING_SCHEDULE_CALLBACK);
+					state = State.CALLING_SCHEDULE_CALLBACK;
+					latestSchedule = schedulesReceivedCallback
+							.schedulesReceivedCallback(latestSchedule,
+									latestOptimizedRuns);
+
+					scheduleOfEntities.put(
+							message.getHeader(HEADER_IDENTIFY_SCHEDULE_SENDER),
+							latestSchedule);
+
+					LOG.trace(
+							"{} - scheduling a task to broadcast new schedule.",
+							thisAgent.getAgentName());
+
+					lastUpdate = null;
+					scheduledBroadcast = taskScheduler
+							.schedule(
+									new ScheduleMessageBroadcaster(currentId),
+									new DateTime(System.currentTimeMillis())
+											.plusMillis(
+													random.nextInt(MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE))
+											.toDate());
+
+					LOG.trace(
+							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
+							thisAgent.getAgentName(), state,
+							State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND);
+					state = State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND;
 				}
-				lastUpdate = null;
-
-				LOG.trace("{} - Broadcast Message received.",
-						thisAgent.getAgentName());
-				LOG.trace(
-						"{} - Cancelling current announce schedule and schedule new one.",
-						thisAgent.getAgentName());
-
-				Schedule latestSchedule = (Schedule) message.getPayload();
-				scheduledBroadcast.cancel(false);
-
-				LOG.trace(
-						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-						thisAgent.getAgentName(), state,
-						State.CALLING_SCHEDULE_CALLBACK);
-				state = State.CALLING_SCHEDULE_CALLBACK;
-				latestSchedule = schedulesReceivedCallback
-						.schedulesReceivedCallback(latestSchedule,
-								latestOptimizedRuns);
-
-				scheduleOfEntities.put(
-						message.getHeader(HEADER_IDENTIFY_SCHEDULE_SENDER),
-						latestSchedule);
-
-				LOG.trace("{} - scheduling a task to broadcast new schedule.",
-						thisAgent.getAgentName());
-
-				lastUpdate = null;
-				scheduledBroadcast = taskScheduler
-						.schedule(
-								new ScheduleMessageBroadcaster(currentId),
-								new DateTime(System.currentTimeMillis())
-										.plusMillis(
-												random.nextInt(MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE))
-										.toDate());
-
-				LOG.trace(
-						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
-						thisAgent.getAgentName(), state,
-						State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND);
-				state = State.WAITING_FOR_RANDOM_TIME_BEFORE_SEND;
 			}
 		}
 
@@ -560,22 +589,26 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		 * Reset.
 		 */
 		public void reset() {
-			// Next schedule randomly distributed within the next 500ms so that
-			// not all device announce their schedule at the same time. If
-			// another device announced its schedule before this, the task gets
-			// cancelled and a new task will be scheduled see #notify.
-			if (scheduledBroadcast != null) {
-				scheduledBroadcast.cancel(true);
-			}
+			synchronized (lastUpdateMonitor) {
+				// Next schedule randomly distributed within the next 500ms so
+				// that
+				// not all device announce their schedule at the same time. If
+				// another device announced its schedule before this, the task
+				// gets
+				// cancelled and a new task will be scheduled see #notify.
+				if (scheduledBroadcast != null) {
+					scheduledBroadcast.cancel(true);
+				}
 
-			lastUpdate = null;
-			equilibriumFoundCalled.set(false);
-			scheduledBroadcast = timeService
-					.schedule(
-							new ScheduleMessageBroadcaster(currentId),
-							Period.millis(random
-									.nextInt(MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE)),
-							taskScheduler);
+				lastUpdate = null;
+				equilibriumFoundCalled.set(false);
+				scheduledBroadcast = timeService
+						.schedule(
+								new ScheduleMessageBroadcaster(currentId),
+								Period.millis(random
+										.nextInt(MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE)),
+								taskScheduler);
+			}
 		}
 	}
 
@@ -718,13 +751,14 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	public SendOwnScheduleOnlyScheduleHandlerServiceAgentBean(
 			final ControlEntitiesProvider controlEntitiesProvider,
 			final TimeService timeService, final TaskScheduler taskScheduler,
-			final UUIDGenerator uuidGenerator) {
+			final UUIDGenerator uuidGenerator,
+			final PricingService pricingService) {
 		super();
 
 		this.controlEntitiesProvider = controlEntitiesProvider;
 		this.timeService = timeService;
 		this.taskScheduler = taskScheduler;
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
+		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider, pricingService);
 		this.uuidGenerator = uuidGenerator;
 		scheduleOfEntities = new ConcurrentHashMap<>();
 		state = State.STOPPED;

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.measure.quantity.Power;
 
+import okeanos.control.entities.LoadFlexiblity;
 import okeanos.control.entities.PossibleRun;
 import okeanos.control.entities.Slot;
 
@@ -42,6 +43,9 @@ public class PossibleRunImpl implements PossibleRun {
 	/** The length of run. */
 	private Period lengthOfRun;
 
+	/** The load flexibility. */
+	private LoadFlexiblity loadFlexibility;
+
 	/** The needed slots. */
 	private List<Slot> neededSlots;
 
@@ -49,7 +53,7 @@ public class PossibleRunImpl implements PossibleRun {
 	private Set<Amount<Power>> possibleLoads;
 
 	/** The range of possible loads. */
-	private Range<Double> rangeOfPossibleLoads;
+	private Range<Amount<Power>> rangeOfPossibleLoads;
 
 	/**
 	 * Instantiates a new proposed run.
@@ -104,6 +108,16 @@ public class PossibleRunImpl implements PossibleRun {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see okeanos.control.entities.PossibleRun#getLoadFlexibilityOfRun()
+	 */
+	@Override
+	public LoadFlexiblity getLoadFlexibilityOfRun() {
+		return loadFlexibility;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see okeanos.control.entities.RunProposed#getNeededSlots()
 	 */
 	@Override
@@ -127,7 +141,7 @@ public class PossibleRunImpl implements PossibleRun {
 	 * @see okeanos.control.entities.PossibleRun#getRangeOfPossibleLoads()
 	 */
 	@Override
-	public Range<Double> getRangeOfPossibleLoads() {
+	public Range<Amount<Power>> getRangeOfPossibleLoads() {
 		return rangeOfPossibleLoads;
 	}
 
@@ -169,6 +183,18 @@ public class PossibleRunImpl implements PossibleRun {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see
+	 * okeanos.control.entities.PossibleRun#setLoadFlexibilityOfRun(okeanos.
+	 * control.entities.LoadFlexiblity)
+	 */
+	@Override
+	public void setLoadFlexibilityOfRun(final LoadFlexiblity loadFlexibility) {
+		this.loadFlexibility = loadFlexibility;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see okeanos.control.entities.RunProposed#setNeededSlots(java.util.List)
 	 */
 	@Override
@@ -194,7 +220,7 @@ public class PossibleRunImpl implements PossibleRun {
 	 * .common.collect.Range)
 	 */
 	@Override
-	public void setRangeOfPossibleLoads(final Range<Double> rangeOfPossibleLoads) {
+	public void setRangeOfPossibleLoads(final Range<Amount<Power>> rangeOfPossibleLoads) {
 		this.rangeOfPossibleLoads = rangeOfPossibleLoads;
 	}
 

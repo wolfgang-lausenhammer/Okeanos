@@ -21,7 +21,11 @@ public class PriceImpl implements Price {
 
 	@Override
 	public double getCostAtConsumption(Amount<Power> consumption) {
-		return trendline.predict(consumption.doubleValue(Power.UNIT));
+		double costs = trendline.predict(consumption.abs().doubleValue(Power.UNIT));
+		if (consumption.isLessThan(Amount.valueOf(0, Power.UNIT))) {
+			costs = -costs * 0.5;
+		}
+		return costs;
 	}
 
 	@Override

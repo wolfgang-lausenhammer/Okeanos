@@ -18,19 +18,19 @@ public interface RunConstraint extends IFact {
 	 */
 	String getId();
 
-	Map<DateTime, Amount<Power>> getCharges();
+	Map<DateTime, Amount<Power>> getChargesAtPointsInTime();
 
-	Amount<Power> getMaximumCharge();
+	Amount<Power> getMaximumCapacity();
 
-	Amount<Power> getMinimumCharge();
+	Amount<Power> getMinimumCapacity();
 
 	Amount<Power> getStartCharge();
 
-	void setCharges(Map<DateTime, Amount<Power>> charges);
+	void setChargesAtPointsInTime(Map<DateTime, Amount<Power>> charges);
 
-	void setMaximumCharge(Amount<Power> maximumCharge);
+	void setMaximumCapacity(Amount<Power> maximumCapacity);
 
-	void setMinimumCharge(Amount<Power> minimumCharge);
+	void setMinimumCapacity(Amount<Power> minimumCapacity);
 
 	void setStartCharge(Amount<Power> startCharge);
 }

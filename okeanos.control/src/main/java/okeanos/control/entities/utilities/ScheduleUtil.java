@@ -17,6 +17,9 @@ import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 import okeanos.data.services.Constants;
+import okeanos.data.services.PricingService;
+import okeanos.data.services.entities.CostFunction;
+import okeanos.data.services.entities.Price;
 
 import org.joda.time.DateTime;
 import org.jscience.physics.amount.Amount;
@@ -30,15 +33,53 @@ public class ScheduleUtil implements Comparator<Schedule> {
 
 	/** The control entities provider. */
 	private ControlEntitiesProvider controlEntitiesProvider;
+	private PricingService pricingService;
 
 	/**
 	 * Instantiates a new schedule util.
 	 * 
 	 * @param controlEntitiesProvider
 	 *            the control entities provider
+	 * @param pricingService 
 	 */
-	public ScheduleUtil(final ControlEntitiesProvider controlEntitiesProvider) {
+	public ScheduleUtil(final ControlEntitiesProvider controlEntitiesProvider, PricingService pricingService) {
 		this.controlEntitiesProvider = controlEntitiesProvider;
+		this.pricingService = pricingService;
+	}
+	
+	public int compareByCosts(final Schedule schedule1, final Schedule schedule2) {
+		if (schedule1 == null || schedule2 == null) {
+			return -1;
+		}
+
+		if (schedule1.getSchedule() == null || schedule2.getSchedule() == null) {
+			return -1;
+		}
+		
+		double costsSchedule1 = 0;
+		double costsSchedule2 = 0;
+		
+		for (Entry<DateTime, Slot> entry : schedule1.getSchedule().entrySet()) {
+			CostFunction costFunction = pricingService.getCostFunction(entry.getKey());
+			
+			if (costFunction == null) {
+				costsSchedule1 += 0;
+			} else {
+				costsSchedule1 += costFunction.getPrice().getCostAtConsumption(entry.getValue().getLoad());
+			}
+		}
+		
+		for (Entry<DateTime, Slot> entry : schedule2.getSchedule().entrySet()) {
+			CostFunction costFunction = pricingService.getCostFunction(entry.getKey());
+			
+			if (costFunction == null) {
+				costsSchedule2 += 0;
+			} else {
+				costsSchedule2 += costFunction.getPrice().getCostAtConsumption(entry.getValue().getLoad());
+			}
+		}
+		
+		return Double.compare(costsSchedule1, costsSchedule2);
 	}
 
 	/*
@@ -223,9 +264,9 @@ public class ScheduleUtil implements Comparator<Schedule> {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void writeScheduleToStream(Schedule schedule, OutputStream os)
-			throws IOException {
-		writeScheduleToStream(schedule, null, os);
+	public void writeScheduleToStream(final Schedule schedule,
+			final OutputStream os) throws IOException {
+		writeScheduleToStream(schedule, null, null, os);
 	}
 
 	/**
@@ -238,10 +279,12 @@ public class ScheduleUtil implements Comparator<Schedule> {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void writeScheduleToStream(Map<DateTime, Schedule> schedulesPerDay,
-			OutputStream os) throws IOException {
+	public void writeScheduleToStream(
+			final Map<DateTime, Schedule> schedulesPerDay, final OutputStream os)
+			throws IOException {
 		writeScheduleToStream(schedulesPerDay,
-				new HashMap<DateTime, Map<String, Schedule>>(), os);
+				new ConcurrentSkipListMap<DateTime, Map<String, Schedule>>(),
+				new ConcurrentSkipListMap<DateTime, Map<DateTime, Price>>(), os);
 	}
 
 	/**
@@ -257,13 +300,18 @@ public class ScheduleUtil implements Comparator<Schedule> {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void writeScheduleToStream(Map<DateTime, Schedule> schedulesPerDay,
-			Map<DateTime, Map<String, Schedule>> deviceSchedulesPerDay,
-			OutputStream os) throws IOException {
+	public void writeScheduleToStream(
+			final Map<DateTime, Schedule> schedulesPerDay,
+			final Map<DateTime, Map<String, Schedule>> deviceSchedulesPerDay,
+			final Map<DateTime, Map<DateTime, Price>> pricesPerDay,
+			final OutputStream os) throws IOException {
 		List<String> deviceNames = new LinkedList<>();
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Date\tTotal Consumption");
+		if (pricesPerDay != null && !pricesPerDay.isEmpty()) {
+			sb.append("\tTotal Price\tPrice per kWh");
+		}
 		if (deviceSchedulesPerDay != null && !deviceSchedulesPerDay.isEmpty()) {
 			Map<String, Schedule> deviceSchedule = deviceSchedulesPerDay
 					.values().iterator().next();
@@ -280,12 +328,30 @@ public class ScheduleUtil implements Comparator<Schedule> {
 			Schedule scheduleOfDay = schedulesPerDay.get(day);
 			Map<String, Schedule> deviceSchedulesOfDay = deviceSchedulesPerDay
 					.get(day);
+			Map<DateTime, Price> priceScheduleOfDay = pricesPerDay.get(day);
 
 			for (DateTime time : scheduleOfDay.getSchedule().keySet()) {
-				sb.append(String.format("%s",
-						time.toString("yyyy-MM-dd HH:mm")));
+				sb.append(String.format("%s", time.toString("yyyy-MM-dd HH:mm")));
 				sb.append(String.format("\t%.1f", scheduleOfDay.getSchedule()
 						.get(time).getLoad().doubleValue(Power.UNIT)));
+
+				if (priceScheduleOfDay != null) {
+					sb.append(String.format(
+							"\t%.1f",
+							priceScheduleOfDay.get(time).getCostAtConsumption(
+									scheduleOfDay.getSchedule().get(time)
+											.getLoad())));
+
+					if (priceScheduleOfDay.get(time) != null) {
+						sb.append(String.format(
+								"\t%.5f",
+								priceScheduleOfDay.get(time)
+										.getCostAtConsumption(
+												Amount.valueOf(1, Power.UNIT))));
+					} else {
+						sb.append("\t0");
+					}
+				}
 
 				if (deviceSchedulesOfDay != null) {
 					for (String currentDevice : deviceNames) {
@@ -316,8 +382,9 @@ public class ScheduleUtil implements Comparator<Schedule> {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void writeScheduleToStream(Schedule schedule,
-			Map<String, Schedule> deviceSchedules, OutputStream os)
+	public void writeScheduleToStream(final Schedule schedule,
+			final Map<String, Schedule> deviceSchedules,
+			final Map<DateTime, Price> prices, final OutputStream os)
 			throws IOException {
 		DateTime day = schedule.getSchedule().keySet().iterator().next();
 
@@ -331,7 +398,13 @@ public class ScheduleUtil implements Comparator<Schedule> {
 			deviceSchedulesPerDay.put(day, deviceSchedules);
 		}
 
-		writeScheduleToStream(schedulesPerDay, deviceSchedulesPerDay, os);
+		Map<DateTime, Map<DateTime, Price>> pricesPerDay = new HashMap<>();
+		if (prices != null) {
+			pricesPerDay.put(day, prices);
+		}
+
+		writeScheduleToStream(schedulesPerDay, deviceSchedulesPerDay,
+				pricesPerDay, os);
 	}
 
 	/**

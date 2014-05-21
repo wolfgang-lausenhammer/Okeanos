@@ -86,4 +86,18 @@
 			<entry key="category" value="clotheswasher" />
 		</osgi:service-properties>
 	</osgi:service>
+
+	<osgi:service ref="Tesla_Model_S_85kWh">
+		<osgi:interfaces>
+			<value>okeanos.model.entities.Load</value>
+			<value>okeanos.model.entities.RegulableLoad</value>
+			<value>okeanos.model.entities.RegenerativeLoad</value>
+		</osgi:interfaces>
+		<osgi:service-properties>
+			<entry key="brand" value="tesla" />
+			<entry key="name" value="Tesla_Model_S_85kWh" />
+			<entry key="description" value="Tesla Model S 85kWh" />
+			<entry key="category" value="phev" />
+		</osgi:service-properties>
+	</osgi:service>
 </beans>

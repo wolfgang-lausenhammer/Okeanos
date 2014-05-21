@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.eclipse.org/gemini/blueprint/schema/blueprint"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi-2.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.eclipse.org/gemini/blueprint/schema/blueprint http://www.eclipse.org/gemini/blueprint/schema/blueprint/gemini-blueprint.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="okeanos.runner.internal.samples.complex.pev" />
+
+	<osgi:reference id="platformManagementService"
+		interface="okeanos.management.services.PlatformManagementService"
+		availability="mandatory" />
+
+	<osgi:reference id="entityManagementService"
+		interface="okeanos.management.services.EntityManagementService"
+		availability="mandatory" />
+
+	<osgi:reference id="groupManagementService"
+		interface="okeanos.management.services.GroupManagementService"
+		availability="mandatory" />
+
+	<osgi:reference id="timeService" interface="okeanos.data.services.TimeService"
+		availability="mandatory" />
+
+	<osgi:reference id="controlServicesProvider"
+		interface="okeanos.control.services.agentbeans.provider.ControlServicesProvider"
+		availability="mandatory" />
+
+	<osgi:reference id="controlAlgorithmService"
+		interface="okeanos.control.algorithms.ControlAlgorithm" filter="(name=ParticleSwarmOptimizationControlAlgorithm)"
+		availability="mandatory" />
+
+	<osgi:reference id="controlEntitiesProvider"
+		interface="okeanos.control.entities.provider.ControlEntitiesProvider"
+		availability="mandatory" />
+
+	<osgi:reference id="pricingService"
+		interface="okeanos.data.services.PricingService" availability="mandatory" />
+
+	<osgi:reference id="lightBulb100W" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=Light_Bulb_100W)(brand=general))" availability="mandatory" />
+
+	<osgi:reference id="refrigerator" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=Maytag_MSD2641KEW)(brand=maytag))" availability="mandatory" />
+
+	<osgi:reference id="oven" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=Kenmore_790_91312013)(brand=kenmore))"
+		availability="mandatory" />
+
+	<osgi:reference id="dishwasher"
+		interface="okeanos.model.entities.RegulableLoad" filter="(&amp;(name=Kenmore_665_13242K900)(brand=kenmore))"
+		availability="mandatory" />
+
+	<osgi:reference id="clothesdryer"
+		interface="okeanos.model.entities.RegulableLoad" filter="(&amp;(name=LG_DLE2516W)(brand=lg))"
+		availability="mandatory" />
+
+	<osgi:reference id="clotheswasher"
+		interface="okeanos.model.entities.RegulableLoad" filter="(&amp;(name=LG_WM2016CW)(brand=lg))"
+		availability="mandatory" />
+
+	<osgi:reference id="phev"
+		interface="okeanos.model.entities.RegenerativeLoad" filter="(&amp;(name=Tesla_Model_S_85kWh)(brand=tesla))"
+		availability="mandatory" />
+</beans>
