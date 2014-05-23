@@ -84,7 +84,7 @@
 		<okeanos-core-version>3.0.0-SNAPSHOT</okeanos-core-version>
 		<okeanos-core-impl-version>3.0.0-SNAPSHOT</okeanos-core-impl-version>
 		<okeanos-data-version>3.0.0-SNAPSHOT</okeanos-data-version>
-		<okeanos-data-impl-version>3.0.0-SNAPTHOT</okeanos-data-impl-version>
+		<okeanos-data-impl-version>3.0.0-SNAPSHOT</okeanos-data-impl-version>
 		<okeanos-logging-version>1.0.0</okeanos-logging-version>
 		<okeanos-model-version>3.0.0-SNAPSHOT</okeanos-model-version>
 		<okeanos-model-impl-version>3.0.0-SNAPSHOT</okeanos-model-impl-version>

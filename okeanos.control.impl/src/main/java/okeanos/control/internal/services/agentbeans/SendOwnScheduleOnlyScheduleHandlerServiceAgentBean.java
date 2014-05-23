@@ -66,6 +66,12 @@ import de.dailab.jiactng.agentcore.ontology.IActionDescription;
 public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		AbstractMethodExposingBean implements ScheduleHandlerServiceAgentBean {
 
+	private DateTime startScheduling;
+
+	public boolean cancelRequested;
+
+	private static final Period MAX_TIME_FOR_NEW_SCHEDULES = Period.seconds(20);
+
 	/**
 	 * Provides a transparent proxy for calling the callback methods.
 	 * 
@@ -159,24 +165,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 							new Serializable[] { currentConfiguration });
 
 			return (List<OptimizedRun>) result.getResults()[0];
-		}
-
-		/**
-		 * Gets the action.
-		 * 
-		 * @param actionString
-		 *            the action string
-		 * @return the action
-		 */
-		private IActionDescription getAction(final String actionString) {
-			IActionDescription template = new Action(actionString);
-			IActionDescription action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.memory
-					.read(template);
-			if (action == null) {
-				action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.thisAgent
-						.searchAction(template);
-			}
-			return action;
 		}
 
 		/*
@@ -274,6 +262,24 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 			return (Schedule) result.getResults()[0];
 		}
+
+		/**
+		 * Gets the action.
+		 * 
+		 * @param actionString
+		 *            the action string
+		 * @return the action
+		 */
+		private IActionDescription getAction(final String actionString) {
+			IActionDescription template = new Action(actionString);
+			IActionDescription action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.memory
+					.read(template);
+			if (action == null) {
+				action = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.thisAgent
+						.searchAction(template);
+			}
+			return action;
+		}
 	}
 
 	/**
@@ -361,6 +367,20 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					LOG.trace("{}\n{}", thisAgent.getAgentName(), scheduleUtil
 							.plus(configuration.getScheduleOfOtherDevices(),
 									schedule));
+
+					if (scheduleUtil.compare(
+							scheduleUtil.toSchedule(latestOptimizedRuns),
+							schedule) != 0) {
+						LOG.debug("Schedule different but costs are the same");
+					}
+				} else if (startScheduling.plusSeconds(
+						MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE)
+						.isBeforeNow()) {
+					// do no more announcements, even if it would be cheaper --
+					// prevent an endless loop
+					LOG.info(
+							"{} - stopping announcements now, {} have passed since {}",
+							thisAgent.getAgentName(), startScheduling);
 				} else {
 					LOG.trace(
 							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
@@ -379,12 +399,18 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					HashMap<String, String> headers = new HashMap<>();
 					headers.put(HEADER_IDENTIFY_SCHEDULE_SENDER, currentUUID);
 
-					invoke(actionBroadcastOptions, new Serializable[] {
-							MessageScope.GROUP, schedule, headers });
-					LOG.trace("{} - Announced schedule",
-							thisAgent.getAgentName());
+					if (!cancelRequested) {
+						invoke(actionBroadcastOptions, new Serializable[] {
+								MessageScope.GROUP, schedule, headers });
+						LOG.trace("{} - Announced schedule",
+								thisAgent.getAgentName());
+						latestOptimizedRuns = optimizedRuns;
+					} else {
+						LOG.debug(
+								"{} - not broadcasting, cancel was requested",
+								thisAgent.getAgentName());
+					}
 				}
-				latestOptimizedRuns = optimizedRuns;
 
 				LOG.trace(
 						"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
@@ -396,8 +422,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			}
 		}
 	}
-
-	private Object lastUpdateMonitor = new Object();
 
 	/**
 	 * Handles all received messages. Thus, writes the announced schedules of
@@ -439,7 +463,8 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 									WAIT_FOR_EQUILIBRIUM_TIMEOUT).isAfter(now)) {
 						return;
 					}
-					LOG.debug("lastUpdate {}, now {}", lastUpdate, now);
+					LOG.trace("{} - lastUpdate {}, now {}",
+							thisAgent.getAgentName(), lastUpdate, now);
 
 					LOG.trace(
 							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
@@ -496,8 +521,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 			reset();
 
-			taskScheduler.scheduleWithFixedDelay(new EquilibriumWaiter(),
-					WAIT_FOR_EQUILIBRIUM_TIMEOUT);
+			taskScheduler.scheduleWithFixedDelay(new EquilibriumWaiter(), 1000);
 		}
 
 		/*
@@ -538,17 +562,14 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 					Schedule latestSchedule = (Schedule) message.getPayload();
 					while (!scheduledBroadcast.isDone()) {
-						if (State.SENDING_SCHEDULE.equals(state)
-								|| State.WAITING_FOR_SCHEDULES.equals(state)) {
-							scheduledBroadcast.cancel(false);
-						} else {
-							scheduledBroadcast.cancel(true);
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {
-							}
+						cancelRequested = true;
+						scheduledBroadcast.cancel(false);
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
 						}
 					}
+					cancelRequested = false;
 
 					LOG.trace(
 							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
@@ -600,6 +621,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					scheduledBroadcast.cancel(true);
 				}
 
+				cancelRequested = false;
 				lastUpdate = null;
 				equilibriumFoundCalled.set(false);
 				scheduledBroadcast = timeService
@@ -701,6 +723,9 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	/** The last update. */
 	private DateTime lastUpdate;
 
+	/** The last update monitor. */
+	private Object lastUpdateMonitor = new Object();
+
 	/** The latest optimized runs. */
 	private List<OptimizedRun> latestOptimizedRuns;
 
@@ -746,6 +771,8 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	 *            the task scheduler
 	 * @param uuidGenerator
 	 *            the uuid generator
+	 * @param pricingService
+	 *            the pricing service
 	 */
 	@Inject
 	public SendOwnScheduleOnlyScheduleHandlerServiceAgentBean(
@@ -758,7 +785,8 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		this.controlEntitiesProvider = controlEntitiesProvider;
 		this.timeService = timeService;
 		this.taskScheduler = taskScheduler;
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider, pricingService);
+		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider,
+				pricingService);
 		this.uuidGenerator = uuidGenerator;
 		scheduleOfEntities = new ConcurrentHashMap<>();
 		state = State.STOPPED;
@@ -807,6 +835,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		LOG.trace(
 				"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
 				state, State.WAITING_FOR_SCHEDULES);
+		startScheduling = DateTime.now(DateTimeZone.UTC);
 		state = State.WAITING_FOR_SCHEDULES;
 	}
 
@@ -832,7 +861,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	@Expose(name = ACTION_RESET)
 	@Override
 	public void reset(final boolean cancelRunningOperation) {
-		LOG.debug("{} - reset called!", thisAgent.getAgentName());
+		LOG.info("{} - reset called!", thisAgent.getAgentName());
 		scheduleOfEntities.clear();
 		latestOptimizedRuns.clear();
 
@@ -845,5 +874,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 		currentId = uuidGenerator.generateUUID();
 
 		scheduleMessageHandler.reset();
+		startScheduling = DateTime.now(DateTimeZone.UTC);
 	}
 }

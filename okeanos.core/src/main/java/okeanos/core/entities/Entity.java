@@ -62,4 +62,6 @@ public interface Entity {
 	 *            the group to leave
 	 */
 	void leaveGroup(Group group);
+	
+	void reset();
 }

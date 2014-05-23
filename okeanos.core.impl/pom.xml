@@ -36,6 +36,12 @@
 		</dependency>
 		<dependency>
 			<groupId>okeanos</groupId>
+			<artifactId>okeanos.control</artifactId>
+			<version>${okeanos-control-version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>okeanos</groupId>
 			<artifactId>okeanos.spring.misc</artifactId>
 			<version>${okeanos-spring-misc-version}</version>
 			<scope>provided</scope>

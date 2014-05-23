@@ -34,15 +34,32 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+/**
+ * The Class Tesla_Model_S_85kWhTest.
+ * 
+ * @author Wolfgang Lausenhammer
+ */
 public class Tesla_Model_S_85kWhTest {
 
+	/** The Constant DEVICE_ID. */
 	private static final String DEVICE_ID = "my-tesla";
 
+	/** The Constant NUM_SLOTS. */
+	private static final int NUM_SLOTS = Tesla_Model_S_85kWh.NUM_RUNS;
+
+	/** The control entities provider. */
 	@Mock
 	private ControlEntitiesProvider controlEntitiesProvider;
 
+	/** The device. */
 	private Tesla_Model_S_85kWh device;
 
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -98,6 +115,9 @@ public class Tesla_Model_S_85kWhTest {
 				controlEntitiesProvider);
 	}
 
+	/**
+	 * Test get id.
+	 */
 	@Test
 	public void testGetId() {
 		String id = device.getId();
@@ -105,6 +125,9 @@ public class Tesla_Model_S_85kWhTest {
 		assertThat(id, equalTo(DEVICE_ID));
 	}
 
+	/**
+	 * Test get possible runs configuration.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetPossibleRunsConfiguration() {
@@ -117,38 +140,46 @@ public class Tesla_Model_S_85kWhTest {
 		assertThat(possibleRunsConfiguration.getLoadType(),
 				equalTo(LoadType.REGENERATIVE_LOAD));
 		assertThat(possibleRunsConfiguration.getPossibleRuns(),
-				IsCollectionWithSize.hasSize(2));
+				IsCollectionWithSize.hasSize(NUM_SLOTS));
 
 		PossibleRun run1 = possibleRunsConfiguration.getPossibleRuns().get(0);
 		assertThat(run1.getEarliestStartTime(),
 				equalTo(DateTime.parse("2014-05-05T00:00Z")));
 		assertThat(run1.getLatestEndTime(),
-				equalTo(DateTime.parse("2014-05-05T11:45Z")));
+				equalTo(DateTime.parse("2014-05-05T00:00Z")));
 		assertThat(run1.getLengthOfRun(),
-				equalTo(Period.minutes(Constants.SLOT_INTERVAL * 48)));
+				equalTo(Period.minutes(Constants.SLOT_INTERVAL)));
 		assertThat(run1.getNeededSlots(), nullValue());
 		assertThat(run1.getRangeOfPossibleLoads(), nullValue());
 		assertThat(
 				run1.getPossibleLoads(),
 				IsIterableContainingInAnyOrder.containsInAnyOrder(
 						Amount.valueOf(0, Power.UNIT),
-						Amount.valueOf(20000, Power.UNIT),
-						Amount.valueOf(-20000, Power.UNIT)));
+						Amount.valueOf(10000, Power.UNIT),
+						Amount.valueOf(-10000, Power.UNIT),
+						Amount.valueOf(5000, Power.UNIT),
+						Amount.valueOf(-5000, Power.UNIT),
+						Amount.valueOf(2000, Power.UNIT),
+						Amount.valueOf(-2000, Power.UNIT)));
 
 		PossibleRun run2 = possibleRunsConfiguration.getPossibleRuns().get(1);
 		assertThat(run2.getEarliestStartTime(),
-				equalTo(DateTime.parse("2014-05-05T12:00Z")));
+				equalTo(DateTime.parse("2014-05-05T00:15Z")));
 		assertThat(run2.getLatestEndTime(),
-				equalTo(DateTime.parse("2014-05-05T23:45Z")));
+				equalTo(DateTime.parse("2014-05-05T00:15Z")));
 		assertThat(run2.getLengthOfRun(),
-				equalTo(Period.minutes(Constants.SLOT_INTERVAL * 48)));
+				equalTo(Period.minutes(Constants.SLOT_INTERVAL)));
 		assertThat(run2.getNeededSlots(), nullValue());
 		assertThat(run2.getRangeOfPossibleLoads(), nullValue());
 		assertThat(
 				run2.getPossibleLoads(),
 				IsIterableContainingInAnyOrder.containsInAnyOrder(
 						Amount.valueOf(0, Power.UNIT),
-						Amount.valueOf(20000, Power.UNIT),
-						Amount.valueOf(-20000, Power.UNIT)));
+						Amount.valueOf(10000, Power.UNIT),
+						Amount.valueOf(-10000, Power.UNIT),
+						Amount.valueOf(5000, Power.UNIT),
+						Amount.valueOf(-5000, Power.UNIT),
+						Amount.valueOf(2000, Power.UNIT),
+						Amount.valueOf(-2000, Power.UNIT)));
 	}
 }

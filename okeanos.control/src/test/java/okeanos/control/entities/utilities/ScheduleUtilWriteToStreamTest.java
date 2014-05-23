@@ -17,6 +17,8 @@ import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
 import okeanos.data.services.Constants;
+import okeanos.data.services.PricingService;
+import okeanos.data.services.entities.Price;
 
 import org.hamcrest.core.IsEqual;
 import org.joda.time.DateTime;
@@ -73,6 +75,9 @@ public class ScheduleUtilWriteToStreamTest {
 	/** The reference date time. */
 	private DateTime referenceDateTime;
 
+	@Mock
+	private PricingService pricingService;
+
 	/**
 	 * Data.
 	 * 
@@ -128,7 +133,8 @@ public class ScheduleUtilWriteToStreamTest {
 					}
 				});
 
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
+		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider,
+				pricingService);
 	}
 
 	/**
@@ -257,7 +263,8 @@ public class ScheduleUtilWriteToStreamTest {
 		Map<String, Schedule> deviceSchedules = new HashMap<>();
 		deviceSchedules.put("mydevice-name2", schedule2);
 
-		scheduleUtil.writeScheduleToStream(schedule1, deviceSchedules, out);
+		scheduleUtil.writeScheduleToStream(schedule1, deviceSchedules, null,
+				out);
 
 		Assert.assertThat(
 				out.toString("UTF-8"),
@@ -289,7 +296,7 @@ public class ScheduleUtilWriteToStreamTest {
 		devicesSchedulesDays.put(referenceDateTime, deviceSchedules);
 
 		scheduleUtil.writeScheduleToStream(scheduleMap, devicesSchedulesDays,
-				out);
+				new HashMap<DateTime, Map<DateTime, Price>>(), out);
 
 		Assert.assertThat(
 				out.toString("UTF-8"),

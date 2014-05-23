@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.measure.quantity.Power;
 
+import junit.framework.Assert;
 import okeanos.control.entities.OptimizedRun;
 import okeanos.control.entities.Schedule;
 import okeanos.control.entities.Slot;
@@ -19,10 +20,12 @@ import okeanos.control.entities.impl.OptimizedRunImpl;
 import okeanos.control.entities.impl.ScheduleImpl;
 import okeanos.control.entities.impl.SlotImpl;
 import okeanos.control.entities.provider.ControlEntitiesProvider;
+import okeanos.data.services.PricingService;
 
 import org.joda.time.DateTime;
 import org.jscience.physics.amount.Amount;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -62,6 +65,8 @@ public class ScheduleUtilTest {
 	/** The control entities provider. */
 	@Mock
 	private ControlEntitiesProvider controlEntitiesProvider;
+	@Mock
+	private PricingService pricingService;
 
 	/** The schedule util. */
 	private ScheduleUtil scheduleUtil;
@@ -351,7 +356,8 @@ public class ScheduleUtilTest {
 					}
 				});
 
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
+		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider,
+				pricingService);
 	}
 
 	/**
@@ -362,6 +368,12 @@ public class ScheduleUtilTest {
 		int result = scheduleUtil.compare(schedule1, schedule2);
 
 		assertThat(result, is(equalTo(this.resultCompare)));
+	}
+
+	@Ignore
+	@Test
+	public void testComparePrices() {
+		Assert.fail("not yet implemented");
 	}
 
 	/**

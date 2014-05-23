@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import okeanos.control.services.agentbeans.ScheduleHandlerServiceAgentBean;
 import okeanos.core.entities.Entity;
 import okeanos.core.entities.Group;
 import okeanos.core.entities.builder.EntityBuilder;
@@ -108,14 +109,20 @@ public class EntityImpl implements Entity {
 
 	}
 
-	/** The logger. */
-	private Logger log = LoggerFactory.getLogger(EntityImpl.class);
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory.getLogger(EntityImpl.class);
 
 	/** The agent. */
 	private transient IAgent agent;
 
 	/** The id. */
 	private String id;
+
+	/** The logger. */
+	private Logger log = LoggerFactory.getLogger(EntityImpl.class);
+
+	/** The schedule handler service agent bean. */
+	private ScheduleHandlerServiceAgentBean scheduleHandlerServiceAgentBean;
 
 	/**
 	 * Instantiates a new entity.
@@ -136,26 +143,8 @@ public class EntityImpl implements Entity {
 	 *            the entity builder
 	 */
 	private EntityImpl(final EntityBuilderImpl entityBuilder) {
-		this.id = entityBuilder.id;
+		this(entityBuilder.id);
 		this.agent = entityBuilder.agent;
-	}
-
-	@Override
-	public void joinGroup(final Group group) {
-		log.debug("Entity [entity={}] joining group [group={}]", this, group);
-		Agent agent = ((Agent) this.agent);
-		IMemory memory = agent.getMemory();
-		GroupFact groupFact = new GroupFact(group.getId());
-		memory.write(groupFact);
-	}
-
-	@Override
-	public void leaveGroup(final Group group) {
-		log.debug("Entity [entity={}] leaving group [group={}]", this, group);
-		Agent agent = ((Agent) this.agent);
-		IMemory memory = agent.getMemory();
-		GroupFact groupFact = new GroupFact(group.getId());
-		memory.remove(groupFact);
 	}
 
 	/*
@@ -198,6 +187,83 @@ public class EntityImpl implements Entity {
 			log.debug("Finished adding {} functionalities to entity [{}]",
 					functionality.length, this);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.core.entities.Entity#getAgent()
+	 */
+	@Override
+	public IAgent getAgent() {
+		return agent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.core.entities.Entity#getId()
+	 */
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	/* (non-Javadoc)
+	 * @see okeanos.core.entities.Entity#joinGroup(okeanos.core.entities.Group)
+	 */
+	@Override
+	public void joinGroup(final Group group) {
+		log.debug("Entity [entity={}] joining group [group={}]", this, group);
+		Agent agent = ((Agent) this.agent);
+		IMemory memory = agent.getMemory();
+		GroupFact groupFact = new GroupFact(group.getId());
+		memory.write(groupFact);
+
+		group.addEntity(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see okeanos.core.entities.Entity#leaveGroup(okeanos.core.entities.Group)
+	 */
+	@Override
+	public void leaveGroup(final Group group) {
+		log.debug("Entity [entity={}] leaving group [group={}]", this, group);
+		Agent agent = ((Agent) this.agent);
+		IMemory memory = agent.getMemory();
+		GroupFact groupFact = new GroupFact(group.getId());
+		memory.remove(groupFact);
+
+		group.removeEntity(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see okeanos.core.entities.Entity#reset()
+	 */
+	@Override
+	public void reset() {
+		scheduleHandlerServiceAgentBean.reset(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.core.entities.Entity#setAgent(de.dailab.jiactng.agentcore.IAgent)
+	 */
+	@Override
+	public void setAgent(final IAgent agent) {
+		this.agent = agent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("EntityImpl [id=%s]", id);
 	}
 
 	/**
@@ -253,6 +319,8 @@ public class EntityImpl implements Entity {
 		if (exceptions.size() > 0) {
 			throw exceptions.get(0);
 		}
+
+		this.scheduleHandlerServiceAgentBean = agent.findAgentBean(ScheduleHandlerServiceAgentBean.class);
 	}
 
 	/**
@@ -279,46 +347,5 @@ public class EntityImpl implements Entity {
 		if (exceptions.size() > 0) {
 			throw exceptions.get(0);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.core.entities.Entity#getAgent()
-	 */
-	@Override
-	public IAgent getAgent() {
-		return agent;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see okeanos.core.entities.Entity#getId()
-	 */
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * okeanos.core.entities.Entity#setAgent(de.dailab.jiactng.agentcore.IAgent)
-	 */
-	@Override
-	public void setAgent(final IAgent agent) {
-		this.agent = agent;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return String.format("EntityImpl [id=%s]", id);
 	}
 }

@@ -42,6 +42,13 @@ import org.springframework.stereotype.Component;
 @Component("Tesla_Model_S_85kWh")
 public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 
+	/** The Constant NUM_RUNS. */
+	public static final int NUM_RUNS = 96;
+
+	/** The Constant FIVE_KWH_CHARGE. */
+	private static final Amount<Power> FIVE_KWH_CHARGE = Amount.valueOf(5000,
+			Power.UNIT);
+
 	/** The Constant MAXIMUM_CAPACITY. */
 	private static final Amount<Power> MAXIMUM_CAPACITY = Amount.valueOf(85001,
 			Power.UNIT);
@@ -50,19 +57,12 @@ public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 	private static final Amount<Power> MINIMUM_CAPACITY = Amount.valueOf(-1,
 			Power.UNIT);
 
-	/** The Constant NUM_RUNS. */
-	private static final int NUM_RUNS = 48;
-
 	/** The Constant START_CAPACITY. */
 	private static final Amount<Power> START_CAPACITY = Amount.valueOf(0,
 			Power.UNIT);
 
 	/** The Constant TEN_KWH_CHARGE. */
 	private static final Amount<Power> TEN_KWH_CHARGE = Amount.valueOf(10000,
-			Power.UNIT);
-
-	/** The Constant FIVE_KWH_CHARGE. */
-	private static final Amount<Power> FIVE_KWH_CHARGE = Amount.valueOf(5000,
 			Power.UNIT);
 
 	/** The Constant TWENTY_KWH_CHARGE. */

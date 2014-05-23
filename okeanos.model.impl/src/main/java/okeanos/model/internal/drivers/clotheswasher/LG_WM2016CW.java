@@ -163,7 +163,6 @@ public class LG_WM2016CW implements RegulableLoad {
 						.withTimeAtStartOfDay()
 						.equals(DateTime.now(DateTimeZone.UTC)
 								.withTimeAtStartOfDay())) {
-			System.out.println("recalculate possible runs");
 			possibleRuns = createPossibleRunsFromLoadProfile(loadProfile,
 					trendLine);
 		}

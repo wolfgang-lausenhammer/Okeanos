@@ -7,4 +7,7 @@ package okeanos.core.entities;
  * @author Wolfgang Lausenhammer
  */
 public interface Group extends Entity {
+	boolean addEntity(Entity entity);
+
+	boolean removeEntity(Entity entity);
 }

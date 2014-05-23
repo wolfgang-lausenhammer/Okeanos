@@ -25,6 +25,7 @@ import okeanos.control.services.agentbeans.callbacks.EquilibriumFoundCallback;
 import okeanos.control.services.agentbeans.callbacks.OptimizedRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback;
 import okeanos.control.services.agentbeans.callbacks.SchedulesReceivedCallback;
+import okeanos.data.services.PricingService;
 import okeanos.data.services.agentbeans.CommunicationServiceAgentBean;
 import okeanos.data.services.entities.MessageScope;
 
@@ -155,6 +156,13 @@ public class LocalSumScheduleHandlerServiceAgentBean extends
 			return (List<OptimizedRun>) result.getResults()[0];
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * okeanos.control.services.agentbeans.callbacks.PossibleRunsCallback
+		 * #getPossibleRunsConfiguration()
+		 */
 		@Override
 		public PossibleRunsConfiguration getPossibleRunsConfiguration() {
 			if (actionGetPossibleRunsConfiguration == null) {
@@ -674,14 +682,18 @@ public class LocalSumScheduleHandlerServiceAgentBean extends
 	 *            the control entities provider
 	 * @param taskScheduler
 	 *            the task scheduler
+	 * @param pricingService
+	 *            the pricing service
 	 */
 	@Inject
 	public LocalSumScheduleHandlerServiceAgentBean(
 			final ControlEntitiesProvider controlEntitiesProvider,
-			final TaskScheduler taskScheduler) {
+			final TaskScheduler taskScheduler,
+			final PricingService pricingService) {
 		this.controlEntitiesProvider = controlEntitiesProvider;
 		this.taskScheduler = taskScheduler;
-		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider);
+		this.scheduleUtil = new ScheduleUtil(controlEntitiesProvider,
+				pricingService);
 		state = State.STOPPED;
 	}
 

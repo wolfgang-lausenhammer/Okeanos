@@ -11,3 +11,4 @@
 #Spring-Context: classpath:sample-configurations/light-and-dishwasher-setdate.xml
 #Spring-Context: classpath:sample-configurations/complex/household.xml
 Spring-Context: classpath:sample-configurations/complex/pev.xml
+#Spring-Context: classpath:sample-configurations/complex/multiplehouseholds.xml
