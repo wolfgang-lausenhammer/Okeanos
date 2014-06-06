@@ -40,7 +40,7 @@ public class PriceDeserializer implements JsonDeserializer<Price> {
 
 		for (int i = 0; i < NUMBERS_TO_APPROXIMATE; i++) {
 			x[i] = (i + 1) * DISTANCE_BETWEEN_X;
-			y[i] = Math.exp(x[i] * slope);
+			y[i] = priceFor1kWh * (x[i]);// + Math.exp(x[i] * slope));
 		}
 
 		return new PriceImpl(x, y);

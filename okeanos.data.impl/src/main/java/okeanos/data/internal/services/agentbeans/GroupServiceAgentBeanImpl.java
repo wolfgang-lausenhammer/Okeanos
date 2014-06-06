@@ -93,7 +93,7 @@ public class GroupServiceAgentBeanImpl extends AbstractMethodExposingBean
 	public void notify(final SpaceEvent<? extends IFact> event) {
 		if (event instanceof WriteCallEvent<?>) {
 			WriteCallEvent<GroupFact> wce = (WriteCallEvent<GroupFact>) event;
-			LOG.info(
+			LOG.debug(
 					"GroupServiceAgentBeanImpl [{}] - Group join event raised [{}]",
 					thisAgent.getAgentName(), wce);
 
@@ -105,7 +105,7 @@ public class GroupServiceAgentBeanImpl extends AbstractMethodExposingBean
 
 		} else if (event instanceof RemoveCallEvent<?>) {
 			RemoveCallEvent<GroupFact> rce = (RemoveCallEvent<GroupFact>) event;
-			LOG.info(
+			LOG.debug(
 					"GroupServiceAgentBeanImpl [{}] - Group leave event raised [{}]",
 					thisAgent.getAgentName(), rce);
 

@@ -3,6 +3,7 @@ package okeanos.data.internal.services.agentbeans;
 import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_CORRELATION_ID;
 import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_RECEIVER;
 import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_SENDER;
+import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_SENDER_AGENT_NAME;
 
 import java.util.Collections;
 import java.util.List;
@@ -115,7 +116,8 @@ public class CommunicationServiceAgentBeanImpl extends
 			for (GroupFact group : groups) {
 				ICommunicationAddress receiver = CommunicationAddressFactory
 						.createGroupAddress(group.getGroupId());
-				LOG.trace("Broadcasting to [groupAddress={}]", receiver);
+				LOG.trace("{} - Broadcasting to [groupAddress={}]",
+						thisAgent.getAgentName(), receiver);
 				sendAsync(receiver, message, options);
 			}
 			break;
@@ -123,7 +125,8 @@ public class CommunicationServiceAgentBeanImpl extends
 			GridFact grid = memory.read(new GridFact(null));
 			ICommunicationAddress gridAddress = CommunicationAddressFactory
 					.createGroupAddress(grid.getGroupId());
-			LOG.trace("Broadcasting to [gridAddress={}]", gridAddress);
+			LOG.trace("{} - Broadcasting to [gridAddress={}]",
+					thisAgent.getAgentName(), gridAddress);
 			sendAsync(gridAddress, message, options);
 			break;
 		default:
@@ -346,6 +349,8 @@ public class CommunicationServiceAgentBeanImpl extends
 		jiacMessage.setHeader(COMMUNICATION_CORRELATION_ID, messageId);
 		jiacMessage.setHeader(COMMUNICATION_SENDER, getAddressOfAgent()
 				.toString());
+		jiacMessage.setHeader(COMMUNICATION_SENDER_AGENT_NAME,
+				thisAgent.getAgentName());
 		jiacMessage.setHeader(COMMUNICATION_RECEIVER, receiver.toString());
 		jiacMessage.setSender(getAddressOfAgent());
 		for (Entry<String, String> entry : options.entrySet()) {

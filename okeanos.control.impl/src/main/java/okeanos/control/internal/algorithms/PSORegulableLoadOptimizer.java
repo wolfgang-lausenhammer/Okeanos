@@ -375,13 +375,13 @@ class PSORegulableLoadOptimizer implements ControlAlgorithm {
 							.getSchedule();
 					if (schedule == null || schedule.get(currentTime) == null) {
 						fitness += costFunction.getPrice()
-								.getCostAtConsumption(slot.getLoad());
+								.getCostAtConsumption(slot.getLoad().divide(1000));
 					} else {
 						fitness += costFunction.getPrice()
 								.getCostAtConsumption(
 										slot.getLoad().plus(
 												schedule.get(currentTime)
-														.getLoad()));
+														.getLoad()).divide(1000));
 					}
 				}
 				currentTime = currentTime.plusMinutes(Constants.SLOT_INTERVAL);

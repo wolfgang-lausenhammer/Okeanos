@@ -43,7 +43,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	 */
 	@Inject
 	public PlatformManagementServiceImpl(
-			Provider<OkeanosBasicAgentNode> agentNodeProvider) {
+			final Provider<OkeanosBasicAgentNode> agentNodeProvider) {
 		this.agentNodeProvider = agentNodeProvider;
 	}
 
@@ -55,7 +55,7 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	 * .lang.String)
 	 */
 	@Override
-	public IAgentNode getAgentNode(String id) {
+	public IAgentNode getAgentNode(final String id) {
 		return managedAgentNodes.get(id);
 	}
 
@@ -107,7 +107,8 @@ public class PlatformManagementServiceImpl implements PlatformManagementService 
 	 * .dailab.jiactng.agentcore.IAgentNode)
 	 */
 	@Override
-	public void stopAgentNode(IAgentNode agentNode) throws LifecycleException {
+	public void stopAgentNode(final IAgentNode agentNode)
+			throws LifecycleException {
 		managedAgentNodes.remove(agentNode.getUUID());
 
 		if (agentNode instanceof SimpleAgentNode) {

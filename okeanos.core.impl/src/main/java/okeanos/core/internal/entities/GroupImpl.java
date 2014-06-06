@@ -85,6 +85,7 @@ public class GroupImpl extends EntityImpl implements Group {
 		}
 
 	}
+
 	/**
 	 * The Class ProxyScheduleHandlerServiceAgentBean.
 	 */
@@ -192,7 +193,7 @@ public class GroupImpl extends EntityImpl implements Group {
 	/** The logger. */
 	@Logging
 	private Logger log;
-	
+
 	/** The schedule handler service agent bean. */
 	private ScheduleHandlerServiceAgentBean scheduleHandlerServiceAgentBean;
 
@@ -220,28 +221,35 @@ public class GroupImpl extends EntityImpl implements Group {
 		setAgent(groupBuilder.entity.getAgent());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see okeanos.core.entities.Group#addEntity(okeanos.core.entities.Entity)
 	 */
 	@Override
-	public boolean addEntity(Entity entity) {
+	public boolean addEntity(final Entity entity) {
 		return entities.add(entity);
 	}
 
-	/* (non-Javadoc)
-	 * @see okeanos.core.entities.Group#removeEntity(okeanos.core.entities.Entity)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.core.entities.Group#removeEntity(okeanos.core.entities.Entity)
 	 */
 	@Override
-	public boolean removeEntity(Entity entity) {
+	public boolean removeEntity(final Entity entity) {
 		return entities.remove(entity);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see okeanos.core.internal.entities.EntityImpl#reset()
 	 */
 	@Override
 	public void reset() {
-		LOG.info("RESET ON GROUP {} called", getId());
+		LOG.debug("RESET ON GROUP {} called", getId());
 		scheduleHandlerServiceAgentBean.reset(true);
 	}
 }

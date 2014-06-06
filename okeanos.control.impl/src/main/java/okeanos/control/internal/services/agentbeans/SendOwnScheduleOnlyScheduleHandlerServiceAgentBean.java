@@ -1,8 +1,10 @@
 package okeanos.control.internal.services.agentbeans;
 
 import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_SENDER;
+import static okeanos.data.services.agentbeans.CommunicationServiceAgentBean.Header.COMMUNICATION_SENDER_AGENT_NAME;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,8 +71,6 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	private DateTime startScheduling;
 
 	public boolean cancelRequested;
-
-	private static final Period MAX_TIME_FOR_NEW_SCHEDULES = Period.seconds(20);
 
 	/**
 	 * Provides a transparent proxy for calling the callback methods.
@@ -157,14 +157,19 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 						"{} - No action called {} available",
 						SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.thisAgent,
 						ACTION_FIND_BEST_CONFIGURATION);
-				return null;
+				return Collections.emptyList();
 			}
 
 			ActionResult result = SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this
 					.invokeAndWaitForResult(actionFindBestConfiguration,
 							new Serializable[] { currentConfiguration });
 
-			return (List<OptimizedRun>) result.getResults()[0];
+			if (result.getResults() != null) {
+				return (List<OptimizedRun>) result.getResults()[0];
+			} else {
+				LOG.warn("Got nothing as a return value @ findBestConfiguration");
+				return Collections.emptyList();
+			}
 		}
 
 		/*
@@ -180,7 +185,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 				actionGetPossibleRunsConfiguration = getAction(ACTION_GET_POSSIBLE_RUNS_CONFIGURATION);
 			}
 			if (actionGetPossibleRunsConfiguration == null) {
-				LOG.info(
+				LOG.warn(
 						"{} - No action called {} available",
 						SendOwnScheduleOnlyScheduleHandlerServiceAgentBean.this.thisAgent,
 						ACTION_GET_POSSIBLE_RUNS_CONFIGURATION);
@@ -191,7 +196,12 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					.invokeAndWaitForResult(actionGetPossibleRunsConfiguration,
 							new Serializable[] {});
 
-			return (PossibleRunsConfiguration) result.getResults()[0];
+			if (result.getResults() != null) {
+				return (PossibleRunsConfiguration) result.getResults()[0];
+			} else {
+				LOG.warn("Got nothing as a return value @ getPossibleRunsConfiguration");
+				return null;
+			}
 		}
 
 		/*
@@ -225,7 +235,12 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					.invokeAndWaitForResult(actionOptimizedRunsCallback,
 							new Serializable[] { list });
 
-			return (List<OptimizedRun>) result.getResults()[0];
+			if (result.getResults() != null) {
+				return (List<OptimizedRun>) result.getResults()[0];
+			} else {
+				LOG.warn("Got nothing as a return value @ optimizedRunsCallback");
+				return list;
+			}
 		}
 
 		/*
@@ -260,7 +275,12 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					.invokeAndWaitForResult(actionSchedulesReceivedCallback,
 							new Serializable[] { allSchedules, list });
 
-			return (Schedule) result.getResults()[0];
+			if (result.getResults() != null) {
+				return (Schedule) result.getResults()[0];
+			} else {
+				LOG.warn("Got nothing as a return value @ schedulesReceivedCallback");
+				return allSchedules;
+			}
 		}
 
 		/**
@@ -375,12 +395,25 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 					}
 				} else if (startScheduling.plusSeconds(
 						MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE)
+						.isBeforeNow()
+						&& latestOptimizedRuns != null) {
+					// do no more announcements, even if it would be cheaper --
+					// prevent an endless loop
+					LOG.debug(
+							"{} - stopping announcements now, {} have passed since {}",
+							thisAgent.getAgentName(), new Period(
+									startScheduling, DateTime.now())
+									.toStandardSeconds(), startScheduling);
+				} else if (startScheduling.plusSeconds(
+						MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE * 2)
 						.isBeforeNow()) {
 					// do no more announcements, even if it would be cheaper --
 					// prevent an endless loop
-					LOG.info(
+					LOG.debug(
 							"{} - stopping announcements now, {} have passed since {}",
-							thisAgent.getAgentName(), startScheduling);
+							thisAgent.getAgentName(), new Period(
+									startScheduling, DateTime.now())
+									.toStandardSeconds(), startScheduling);
 				} else {
 					LOG.trace(
 							"{} - SendOwnScheduleOnlyScheduleHandlerServiceAgentBean changing state from {} to {}",
@@ -401,7 +434,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 					if (!cancelRequested) {
 						invoke(actionBroadcastOptions, new Serializable[] {
-								MessageScope.GROUP, schedule, headers });
+								MessageScope.GRID, schedule, headers });
 						LOG.trace("{} - Announced schedule",
 								thisAgent.getAgentName());
 						latestOptimizedRuns = optimizedRuns;
@@ -537,13 +570,15 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			if (isEquilibriumReached()) {
 				return;
 			}
-			LOG.trace("{} - [event={}]", thisAgent.getAgentName(), event);
+			//LOG.trace("{} - [event={}]", thisAgent.getAgentName(), event);
 			if (event instanceof WriteCallEvent<?>) {
 				synchronized (lastUpdateMonitor) {
 					WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;
 
 					// consume message
 					IJiacMessage message = memory.remove(wce.getObject());
+					LOG.trace("{} - {}", thisAgent.getAgentName(),
+							message.getHeader(COMMUNICATION_SENDER_AGENT_NAME));
 
 					// check if message was sent by current agent, if so, ignore
 					// it
@@ -861,7 +896,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 	@Expose(name = ACTION_RESET)
 	@Override
 	public void reset(final boolean cancelRunningOperation) {
-		LOG.info("{} - reset called!", thisAgent.getAgentName());
+		LOG.debug("{} - reset called!", thisAgent.getAgentName());
 		scheduleOfEntities.clear();
 		latestOptimizedRuns.clear();
 

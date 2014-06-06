@@ -79,7 +79,11 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 	@Override
 	public void setValues(final double[] y, final double[] x) {
 		trendLine.setValues(y, x);
-		referenceStartOfDay = new DateTime((long) x[0], DateTimeZone.UTC);
+		if (x.length > 0) {
+			referenceStartOfDay = new DateTime((long) x[0], DateTimeZone.UTC);
+		} else {
+			referenceStartOfDay = DateTime.now(DateTimeZone.UTC);
+		}
 		DateTime nextDay = referenceStartOfDay.plusHours(TWENTY_FOUR);
 		int numberOfItemsToCopy = 0;
 		for (double item : x) {

@@ -1,6 +1,7 @@
 package okeanos.control.entities;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.measure.quantity.Power;
 
@@ -26,7 +27,15 @@ public interface RunConstraint extends IFact {
 
 	Amount<Power> getStartCharge();
 
+	Map<DateTime, Amount<Power>> getLossOfEnergyAtPointsInTime();
+
+	Set<DateTime> getNoActionAtPointsInTime();
+
 	void setChargesAtPointsInTime(Map<DateTime, Amount<Power>> charges);
+
+	void setLossOfEnergyAtPointsInTime(Map<DateTime, Amount<Power>> losses);
+
+	void setNoActionsInPointInTime(Set<DateTime> noActions);
 
 	void setMaximumCapacity(Amount<Power> maximumCapacity);
 

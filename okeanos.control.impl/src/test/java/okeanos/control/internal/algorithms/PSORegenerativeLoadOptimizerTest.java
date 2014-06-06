@@ -108,6 +108,10 @@ public class PSORegenerativeLoadOptimizerTest {
 
 	/** The Constant CLOCK_15. */
 	private static final DateTime CLOCK_15 = DateTime
+			.parse("2014-04-15T15:00:00Z");
+
+	/** The Constant CLOCK_16. */
+	private static final DateTime CLOCK_16 = DateTime
 			.parse("2014-04-15T16:00:00Z");
 
 	/** The Constant CLOCK_18. */
@@ -164,8 +168,8 @@ public class PSORegenerativeLoadOptimizerTest {
 	private static final Amount<Power> WATTS_200 = Amount.valueOf(200,
 			Power.UNIT);
 
-	/** The Constant WATTS_401. */
-	private static final Amount<Power> WATTS_401 = Amount.valueOf(1201,
+	/** The Constant WATTS_1201. */
+	private static final Amount<Power> WATTS_1201 = Amount.valueOf(1201,
 			Power.UNIT);
 
 	/** The Constant WATTS_MINUS_1. */
@@ -281,6 +285,24 @@ public class PSORegenerativeLoadOptimizerTest {
 		Configuration currentConfiguration = createConfiguration(numRuns,
 				Period.hours(THREE));
 
+		Map<DateTime, Amount<Power>> charges = new ConcurrentSkipListMap<>();
+		charges.put(CLOCK_9, WATTS_1201);
+		charges.put(CLOCK_18, WATTS_1201);
+
+		Map<DateTime, Amount<Power>> losses = new ConcurrentSkipListMap<>();
+		losses.put(DateTime.parse("2014-04-15T09:00:00Z"), WATTS_200);
+		losses.put(DateTime.parse("2014-04-15T09:15:00Z"), WATTS_200);
+		losses.put(DateTime.parse("2014-04-15T09:30:00Z"), WATTS_200);
+		losses.put(DateTime.parse("2014-04-15T09:45:00Z"), WATTS_200);
+		losses.put(DateTime.parse("2014-04-15T18:00:00Z"), WATTS_200);
+		losses.put(DateTime.parse("2014-04-15T18:15:00Z"), WATTS_200);
+		losses.put(DateTime.parse("2014-04-15T18:30:00Z"), WATTS_200);
+		losses.put(DateTime.parse("2014-04-15T18:45:00Z"), WATTS_200);
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setChargesAtPointsInTime(charges);
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setLossOfEnergyAtPointsInTime(losses);
+
 		List<OptimizedRun> result = pso
 				.findBestConfiguration(currentConfiguration);
 
@@ -292,7 +314,7 @@ public class PSORegenerativeLoadOptimizerTest {
 		assertThat(result.get(ZERO).getNeededSlots().get(0).getLoad(),
 				isOneOf(WATTS_0, WATTS_200));
 		assertThat(result.get(ONE).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 		assertThat(result.get(TWO).getNeededSlots().get(0).getLoad(),
 				isOneOf(WATTS_0, WATTS_200));
 		assertThat(result.get(THREE).getNeededSlots().get(0).getLoad(),
@@ -363,6 +385,13 @@ public class PSORegenerativeLoadOptimizerTest {
 		Configuration currentConfiguration = createConfiguration(numRuns,
 				Period.hours(1));
 
+		Map<DateTime, Amount<Power>> charges = new ConcurrentSkipListMap<>();
+		Map<DateTime, Amount<Power>> losses = new ConcurrentSkipListMap<>();
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setChargesAtPointsInTime(charges);
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setLossOfEnergyAtPointsInTime(losses);
+
 		List<OptimizedRun> result = pso
 				.findBestConfiguration(currentConfiguration);
 
@@ -374,19 +403,19 @@ public class PSORegenerativeLoadOptimizerTest {
 		assertThat(result.get(ZERO).getNeededSlots().get(0).getLoad(),
 				isOneOf(WATTS_0, WATTS_200));
 		assertThat(result.get(ONE).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 		assertThat(result.get(TWO).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 		assertThat(result.get(THREE).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 		assertThat(result.get(FOUR).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 		assertThat(result.get(FIVE).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 		assertThat(result.get(SIX).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 		assertThat(result.get(SEVEN).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 
 		for (OptimizedRun run : result) {
 			if (!run.getNeededSlots().get(0).getLoad().equals(WATTS_0)) {
@@ -434,6 +463,13 @@ public class PSORegenerativeLoadOptimizerTest {
 		Configuration currentConfiguration = createConfiguration(numRuns,
 				Period.hours(1));
 
+		Map<DateTime, Amount<Power>> charges = new ConcurrentSkipListMap<>();
+		Map<DateTime, Amount<Power>> losses = new ConcurrentSkipListMap<>();
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setChargesAtPointsInTime(charges);
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setLossOfEnergyAtPointsInTime(losses);
+
 		List<OptimizedRun> result = pso
 				.findBestConfiguration(currentConfiguration);
 
@@ -447,11 +483,11 @@ public class PSORegenerativeLoadOptimizerTest {
 		assertThat(result.get(ZERO).getNeededSlots().get(0).getLoad(),
 				isOneOf(WATTS_0, WATTS_200));
 		assertThat(result.get(ONE).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_200));
+				isOneOf(WATTS_0, WATTS_MINUS_200, WATTS_200));
 		assertThat(result.get(TWO).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_MINUS_200, WATTS_200));
 		assertThat(result.get(THREE).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_MINUS_200, WATTS_200));
 
 		for (OptimizedRun run : result) {
 			if (!run.getNeededSlots().get(0).getLoad().equals(WATTS_0)) {
@@ -492,6 +528,13 @@ public class PSORegenerativeLoadOptimizerTest {
 		Configuration currentConfiguration = createConfiguration(numRuns,
 				Period.hours(1));
 
+		Map<DateTime, Amount<Power>> charges = new ConcurrentSkipListMap<>();
+		Map<DateTime, Amount<Power>> losses = new ConcurrentSkipListMap<>();
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setChargesAtPointsInTime(charges);
+		currentConfiguration.getPossibleRunsConfiguration().getRunConstraint()
+				.setLossOfEnergyAtPointsInTime(losses);
+
 		List<OptimizedRun> result = pso
 				.findBestConfiguration(currentConfiguration);
 
@@ -503,7 +546,7 @@ public class PSORegenerativeLoadOptimizerTest {
 		assertThat(result.get(0).getNeededSlots().get(0).getLoad(),
 				isOneOf(WATTS_0, WATTS_200));
 		assertThat(result.get(1).getNeededSlots().get(0).getLoad(),
-				isOneOf(WATTS_0, WATTS_MINUS_200));
+				isOneOf(WATTS_0, WATTS_200, WATTS_MINUS_200));
 
 		for (OptimizedRun run : result) {
 			if (!run.getNeededSlots().get(0).getLoad().equals(WATTS_0)) {
@@ -546,7 +589,7 @@ public class PSORegenerativeLoadOptimizerTest {
 		RunConstraint runConstraint = new RunConstraintImpl(
 				"my-run-constraint-id");
 		runConstraint.setStartCharge(WATTS_0);
-		runConstraint.setMaximumCapacity(WATTS_401);
+		runConstraint.setMaximumCapacity(WATTS_1201);
 		runConstraint.setMinimumCapacity(WATTS_MINUS_1);
 
 		PossibleRunsConfiguration possibleRunsConfiguration = new PossibleRunsConfigurationImpl(

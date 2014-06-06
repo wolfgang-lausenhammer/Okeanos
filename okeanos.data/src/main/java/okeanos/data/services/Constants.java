@@ -19,6 +19,8 @@ public final class Constants {
 	 */
 	public static final int PRICING_SERVICE_RESOURCE_REFRESH_RATE_MS = 1000;
 
+	public static final double FEEDBACK_TARIFF_PERCENTAGE = 0.5;
+
 	/**
 	 * Instantiates a new constants.
 	 */

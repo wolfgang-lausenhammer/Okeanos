@@ -1,6 +1,7 @@
 package okeanos.control.entities.impl;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.measure.quantity.Power;
 
@@ -25,11 +26,17 @@ public class RunConstraintImpl implements RunConstraint {
 	/** The id. */
 	private String id;
 
+	/** The losses. */
+	private Map<DateTime, Amount<Power>> losses;
+
 	/** The maximum capacity. */
 	private Amount<Power> maximumCapacity;
 
 	/** The minimum capacity. */
 	private Amount<Power> minimumCapacity;
+
+	/** The no action at points in time. */
+	private Set<DateTime> noActionAtPointsInTime;
 
 	/** The start charge. */
 	private Amount<Power> startCharge;
@@ -67,6 +74,17 @@ public class RunConstraintImpl implements RunConstraint {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see
+	 * okeanos.control.entities.RunConstraint#getLossOfEnergyAtPointsInTime()
+	 */
+	@Override
+	public Map<DateTime, Amount<Power>> getLossOfEnergyAtPointsInTime() {
+		return losses;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see okeanos.control.entities.RunConstraint#getMaximumCapacity()
 	 */
 	@Override
@@ -82,6 +100,16 @@ public class RunConstraintImpl implements RunConstraint {
 	@Override
 	public Amount<Power> getMinimumCapacity() {
 		return minimumCapacity;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see okeanos.control.entities.RunConstraint#getNoActionAtPointsInTime()
+	 */
+	@Override
+	public Set<DateTime> getNoActionAtPointsInTime() {
+		return noActionAtPointsInTime;
 	}
 
 	/*
@@ -111,6 +139,19 @@ public class RunConstraintImpl implements RunConstraint {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * okeanos.control.entities.RunConstraint#setLossOfEnergyAtPointsInTime(
+	 * java.util.Map)
+	 */
+	@Override
+	public void setLossOfEnergyAtPointsInTime(
+			final Map<DateTime, Amount<Power>> losses) {
+		this.losses = losses;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * okeanos.control.entities.RunConstraint#setMaximumCapacity(org.jscience
 	 * .physics.amount.Amount)
 	 */
@@ -129,6 +170,18 @@ public class RunConstraintImpl implements RunConstraint {
 	@Override
 	public void setMinimumCapacity(final Amount<Power> minimumCapacity) {
 		this.minimumCapacity = minimumCapacity;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * okeanos.control.entities.RunConstraint#setNoActionsInPointInTime(java
+	 * .util.Set)
+	 */
+	@Override
+	public void setNoActionsInPointInTime(final Set<DateTime> noActions) {
+		noActionAtPointsInTime = noActions;
 	}
 
 	/*

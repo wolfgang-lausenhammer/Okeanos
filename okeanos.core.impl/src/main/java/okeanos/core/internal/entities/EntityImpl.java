@@ -144,7 +144,7 @@ public class EntityImpl implements Entity {
 	 */
 	private EntityImpl(final EntityBuilderImpl entityBuilder) {
 		this(entityBuilder.id);
-		this.agent = entityBuilder.agent;
+		setAgent(entityBuilder.agent);
 	}
 
 	/*

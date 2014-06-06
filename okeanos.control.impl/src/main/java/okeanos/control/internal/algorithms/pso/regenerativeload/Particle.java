@@ -25,7 +25,7 @@ public class Particle {
 	private double fitness;
 
 	/** The velocity. */
-	private Map<DateTime, Position> velocity;
+	private Map<DateTime, Velocity> velocity;
 
 	/**
 	 * Instantiates a new particle.
@@ -42,7 +42,7 @@ public class Particle {
 	 *            the best fitness
 	 */
 	public Particle(final Map<DateTime, Position> position,
-			final double fitness, final Map<DateTime, Position> velocity,
+			final double fitness, final Map<DateTime, Velocity> velocity,
 			final Map<DateTime, Position> bestPosition, final double bestFitness) {
 		this.currentPosition = new ConcurrentSkipListMap<>(position);
 		this.fitness = fitness;
@@ -92,7 +92,7 @@ public class Particle {
 	 * 
 	 * @return the velocity
 	 */
-	public Map<DateTime, Position> getVelocity() {
+	public Map<DateTime, Velocity> getVelocity() {
 		return velocity;
 	}
 
@@ -142,7 +142,7 @@ public class Particle {
 	 * @param velocity
 	 *            the new velocity
 	 */
-	public void setVelocity(final Map<DateTime, Position> velocity) {
+	public void setVelocity(final Map<DateTime, Velocity> velocity) {
 		this.velocity = velocity;
 	}
 }

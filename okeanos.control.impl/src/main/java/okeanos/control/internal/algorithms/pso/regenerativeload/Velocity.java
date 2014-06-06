@@ -1,6 +1,10 @@
 package okeanos.control.internal.algorithms.pso.regenerativeload;
 
+import javax.measure.quantity.Power;
+
 import okeanos.control.entities.PossibleRun;
+
+import org.jscience.physics.amount.Amount;
 
 /**
  * The velocity in PSO.
@@ -9,17 +13,11 @@ import okeanos.control.entities.PossibleRun;
  */
 public class Velocity {
 
-	/** The delta. */
-	private double delta;
+	/** The chosen value. */
+	private Amount<Power> chosenValue;
 
 	/** The possible run. */
 	private PossibleRun possibleRun;
-
-	/**
-	 * Instantiates a new velocity.
-	 */
-	public Velocity() {
-	}
 
 	/**
 	 * Instantiates a new velocity.
@@ -27,18 +25,10 @@ public class Velocity {
 	 * @param velocity
 	 *            the velocity
 	 */
-	public Velocity(final Velocity velocity) {
-		this.delta = velocity.delta;
-		this.possibleRun = velocity.possibleRun;
-	}
-
-	/**
-	 * Gets the delta.
-	 * 
-	 * @return the delta
-	 */
-	public double getDelta() {
-		return delta;
+	public Velocity(final PossibleRun possibleRun,
+			final Amount<Power> chosenValue) {
+		this.possibleRun = possibleRun;
+		this.chosenValue = chosenValue;
 	}
 
 	/**
@@ -50,14 +40,12 @@ public class Velocity {
 		return possibleRun;
 	}
 
-	/**
-	 * Sets the delta.
-	 * 
-	 * @param delta
-	 *            the new delta
-	 */
-	public void setDelta(final double delta) {
-		this.delta = delta;
+	public Amount<Power> getChosenValue() {
+		return chosenValue;
+	}
+
+	public void setChosenValue(Amount<Power> chosenValue) {
+		this.chosenValue = chosenValue;
 	}
 
 	/**

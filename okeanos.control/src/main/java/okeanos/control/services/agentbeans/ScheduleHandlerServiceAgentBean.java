@@ -26,7 +26,7 @@ public interface ScheduleHandlerServiceAgentBean extends IEffector {
 	int WAIT_FOR_EQUILIBRIUM_TIMEOUT = 5000;
 
 	/** The Constant MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE. */
-	int MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE = 10;
+	int MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE = 20;
 
 	/**
 	 * Resets the current schedule handler to make it ready for the next round.

@@ -25,6 +25,10 @@ public class PreviousValueTrendLine implements TrendLine {
 	 */
 	@Override
 	public double predict(final double x) {
+		if (y.length == 0) {
+			return 0;
+		}
+
 		for (int i = 1; i < this.x.length; i++) {
 			if (this.x[i] > x) {
 				return y[i - 1];

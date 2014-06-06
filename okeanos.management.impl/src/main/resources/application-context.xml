@@ -14,6 +14,29 @@
 	<context:annotation-config />
 	<context:component-scan base-package="okeanos" />
 
+	<bean name="MyJMSBroker" parent="ActiveMQBroker" scope="prototype"
+		lazy-init="true">
+		<property name="connectors">
+			<set>
+				<ref bean="MyTCPConnector" />
+			</set>
+		</property>
+	</bean>
+	
+   <bean name="MyNodeWithDirectory" parent="Node" abstract="true">
+		<property name="agentNodeBeans">
+			<list>
+				<ref bean="MyJMSBroker"/>
+				<ref bean="IDirectory"/>
+			</list>
+		</property>
+   </bean>
+
+	<bean name="MyTCPConnector" parent="ActiveMQTransportConnector"
+		scope="prototype" lazy-init="true">
+		<property name="transportURI" value="tcp://0.0.0.0:0" />
+	</bean>
+
 	<!-- OSGi published services -->
 	<osgi:service id="entityManagementServiceOsgi" ref="entityManagementServiceImpl"
 		interface="okeanos.management.services.EntityManagementService" />

@@ -7,7 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import okeanos.core.entities.Entity;
+import okeanos.core.entities.Grid;
 import okeanos.core.entities.builder.EntityBuilder;
+import okeanos.data.services.agentbeans.entities.GridFact;
 import okeanos.data.services.agentbeans.provider.DataServicesProvider;
 import okeanos.management.internal.services.entitymanagement.EntitySerializer;
 import okeanos.management.internal.services.entitymanagement.OkeanosBasicAgent;
@@ -24,6 +26,7 @@ import com.google.gson.GsonBuilder;
 import de.dailab.jiactng.agentcore.Agent;
 import de.dailab.jiactng.agentcore.IAgent;
 import de.dailab.jiactng.agentcore.IAgentNode;
+import de.dailab.jiactng.agentcore.knowledge.IMemory;
 import de.dailab.jiactng.agentcore.lifecycle.LifecycleException;
 
 /**
@@ -48,6 +51,9 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	/** The entity builder provider. */
 	private Provider<EntityBuilder> entityBuilderProvider;
 
+	/** The entity builder provider. */
+	private Provider<Grid> gridProvider;
+
 	/** The gson (de)serializer. */
 	private Gson gson = new GsonBuilder()
 			.registerTypeAdapter(Entity.class, new EntitySerializer())
@@ -68,6 +74,8 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 
 	/** The platform management service. */
 	private PlatformManagementService platformManagementService;
+
+	private static Grid grid;
 
 	/**
 	 * Instantiates a new entity management service.
@@ -101,7 +109,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 * .String)
 	 */
 	@Override
-	public Entity getEntity(String id) {
+	public Entity getEntity(final String id) {
 		return managedEntitiesByEntityId.get(id);
 	}
 
@@ -140,7 +148,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 * (java.lang.String)
 	 */
 	@Override
-	public Entity loadEntityFromJson(String entityAsJson) {
+	public Entity loadEntityFromJson(final String entityAsJson) {
 		if (entityAsJson == null) {
 			throw new NullPointerException("Json string must not be null");
 		}
@@ -161,7 +169,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 * okeanos.core.entities.Entity)
 	 */
 	@Override
-	public String saveEntityToJson(Entity entity) {
+	public String saveEntityToJson(final Entity entity) {
 		return gson.toJson(entity, Entity.class);
 	}
 
@@ -173,7 +181,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 * .core.entities.Entity)
 	 */
 	@Override
-	public Entity startEntity(Entity entity) throws LifecycleException {
+	public Entity startEntity(final Entity entity) throws LifecycleException {
 		return startEntity(entity,
 				platformManagementService.getDefaultAgentNode());
 	}
@@ -186,7 +194,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 * .core.entities.Entity, de.dailab.jiactng.agentcore.IAgentNode)
 	 */
 	@Override
-	public Entity startEntity(Entity entity, IAgentNode node)
+	public Entity startEntity(final Entity entity, final IAgentNode node)
 			throws LifecycleException {
 		if (entity == null) {
 			throw new NullPointerException("Entity entity must not be null");
@@ -201,6 +209,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		node.addAgent(agent);
 		agent.init();
 		agent.start();
+		joinGrid(agent);
 		entity.addFunctionality(dataServicesProvider
 				.getNewCommunicationServiceAgentBean());
 		entity.addFunctionality(dataServicesProvider
@@ -213,6 +222,16 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 		return entity;
 	}
 
+	private void joinGrid(IAgent agent) {
+		LOG.debug("Entity [entity={}] joining grid [grid={}]", this, "mygrid");
+		try {
+			IMemory memory = ((Agent) agent).getMemory();
+			GridFact gridFact = new GridFact("mygrid");
+			memory.write(gridFact);
+		} catch (ClassCastException e) {
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -221,7 +240,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 * .core.entities.Entity)
 	 */
 	@Override
-	public Entity stopEntity(Entity entity) throws LifecycleException {
+	public Entity stopEntity(final Entity entity) throws LifecycleException {
 		LOG.debug("Sopping entity [{}]", entity);
 		entity.getAgent().stop();
 		LOG.debug("Successfully stopped entity [{}]", entity);
@@ -237,7 +256,7 @@ public class EntityManagementServiceImpl implements EntityManagementService {
 	 * .core.entities.Entity)
 	 */
 	@Override
-	public void unloadEntity(Entity entity) throws LifecycleException {
+	public void unloadEntity(final Entity entity) throws LifecycleException {
 		LOG.debug("Unloading entity [{}]", entity);
 		IAgent agent = entity.getAgent();
 

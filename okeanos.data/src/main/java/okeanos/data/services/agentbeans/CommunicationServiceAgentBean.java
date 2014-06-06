@@ -41,6 +41,9 @@ public interface CommunicationServiceAgentBean extends IEffector {
 		/** The Constant COMMUNICATION_SENDER. */
 		public static final String COMMUNICATION_SENDER = "OkeanosCommunicationSender";
 
+		/** The Constant COMMUNICATION_SENDER_AGENT_NAME. */
+		public static final String COMMUNICATION_SENDER_AGENT_NAME = "OkeanosCommunicationSenderAgentName";
+
 		/**
 		 * Private constructor to prevent instantiation.
 		 */

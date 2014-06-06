@@ -5,7 +5,9 @@ import static javax.measure.unit.SI.WATT;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.inject.Inject;
@@ -66,12 +68,22 @@ public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 			Power.UNIT);
 
 	/** The Constant TWENTY_KWH_CHARGE. */
+	private static final Amount<Power> TWENTY_KWH_CHARGE = Amount.valueOf(
+			20000, Power.UNIT);
+
+	/** The Constant TWO_KWH_CHARGE. */
 	private static final Amount<Power> TWO_KWH_CHARGE = Amount.valueOf(2000,
 			Power.UNIT);
 
 	/** The Constant ZERO_CHARGE. */
 	private static final Amount<Power> ZERO_CHARGE = Amount.valueOf(0,
 			Power.UNIT);
+
+	private static final Amount<Power> CHARGE_FOR_DRIVING = Amount.valueOf(
+			20000, Power.UNIT);
+
+	private static final Amount<Power> FIFTEEN_KWH_CHARGE = Amount.valueOf(
+			15000, Power.UNIT);
 
 	/** The control entities provider. */
 	private ControlEntitiesProvider controlEntitiesProvider;
@@ -165,9 +177,27 @@ public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 		possibleLoads.add(FIVE_KWH_CHARGE.opposite());
 		possibleLoads.add(TEN_KWH_CHARGE);
 		possibleLoads.add(TEN_KWH_CHARGE.opposite());
+//		possibleLoads.add(TWENTY_KWH_CHARGE);
+//		possibleLoads.add(TWENTY_KWH_CHARGE.opposite());
 
 		DateTime currentTime = DateTime.now(DateTimeZone.UTC)
 				.withTimeAtStartOfDay();
+
+		// setting constraint to be able to drive to and from work
+		Map<DateTime, Amount<Power>> charges = new ConcurrentSkipListMap<>();
+//		charges.put(currentTime.withTime(9, 0, 0, 0), CHARGE_FOR_DRIVING);
+//		charges.put(currentTime.withTime(17, 0, 0, 0), CHARGE_FOR_DRIVING);
+
+		// driving to work and home
+		Map<DateTime, Amount<Power>> losses = new ConcurrentSkipListMap<>();
+//		losses.put(currentTime.withTime(9, 0, 0, 0), TWENTY_KWH_CHARGE);
+//		losses.put(currentTime.withTime(9, 15, 0, 0), TWENTY_KWH_CHARGE);
+//		losses.put(currentTime.withTime(9, 30, 0, 0), TWENTY_KWH_CHARGE);
+//		losses.put(currentTime.withTime(9, 45, 0, 0), TWENTY_KWH_CHARGE);
+//		losses.put(currentTime.withTime(17, 0, 0, 0), TWENTY_KWH_CHARGE);
+//		losses.put(currentTime.withTime(17, 15, 0, 0), TWENTY_KWH_CHARGE);
+//		losses.put(currentTime.withTime(17, 30, 0, 0), TWENTY_KWH_CHARGE);
+//		losses.put(currentTime.withTime(17, 45, 0, 0), TWENTY_KWH_CHARGE);
 
 		List<PossibleRun> runs = new LinkedList<>();
 		Period lengthOfRuns = Period
@@ -185,11 +215,21 @@ public class Tesla_Model_S_85kWh implements RegenerativeLoad {
 			currentTime = currentTime.plus(lengthOfRuns);
 		}
 
+		// // no charges between 8 and 16:45!
+		// Set<DateTime> noActions = new ConcurrentSkipListSet<>();
+		// for (DateTime thisTime = currentTime.withTime(8, 0, 0, 0); thisTime
+		// .isBefore(currentTime.withTime(17, 0, 0, 0)); thisTime = thisTime
+		// .plusMinutes(Constants.SLOT_INTERVAL)) {
+		// noActions.add(thisTime);
+		// }
+
 		RunConstraint runConstraint = controlEntitiesProvider
 				.getNewRunConstraint();
 		runConstraint.setStartCharge(START_CAPACITY);
 		runConstraint.setMinimumCapacity(MINIMUM_CAPACITY);
 		runConstraint.setMaximumCapacity(MAXIMUM_CAPACITY);
+		runConstraint.setChargesAtPointsInTime(charges);
+		runConstraint.setLossOfEnergyAtPointsInTime(losses);
 
 		PossibleRunsConfiguration possibleRunsConfiguration = controlEntitiesProvider
 				.getNewPossibleRunsConfiguration();
