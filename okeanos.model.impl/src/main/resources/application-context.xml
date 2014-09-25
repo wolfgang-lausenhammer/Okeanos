@@ -48,6 +48,78 @@
 		</osgi:service-properties>
 	</osgi:service>
 
+	<osgi:service ref="Maytag_MSD2641KEW" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="maytag" />
+			<entry key="name" value="Maytag_MSD2641KEW" />
+			<entry key="description" value="Maytag MSD2641KEW refrigerator" />
+			<entry key="category" value="refrigerator" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="household10kWh" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="name" value="Household_10kWh" />
+			<entry key="description" value="Household 10kWh daily consumption" />
+			<entry key="category" value="household" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="household25kWh" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="name" value="Household_25kWh" />
+			<entry key="description" value="Household 25kWh daily consumption" />
+			<entry key="category" value="household" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="household28kWh" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="name" value="Household_28kWh" />
+			<entry key="description" value="Household 28kWh daily consumption" />
+			<entry key="category" value="household" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="household30kWh" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="name" value="Household_30kWh" />
+			<entry key="description" value="Household 30kWh daily consumption" />
+			<entry key="category" value="household" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="household33kWh" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="name" value="Household_33kWh" />
+			<entry key="description" value="Household 33kWh daily consumption" />
+			<entry key="category" value="household" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="household35kWh" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="name" value="Household_35kWh" />
+			<entry key="description" value="Household 35kWh daily consumption" />
+			<entry key="category" value="household" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="household50kWh" interface="okeanos.model.entities.Load">
+		<osgi:service-properties>
+			<entry key="brand" value="general" />
+			<entry key="name" value="Household_50kWh" />
+			<entry key="description" value="Household 50kWh daily consumption" />
+			<entry key="category" value="household" />
+		</osgi:service-properties>
+	</osgi:service>
+
 	<osgi:service ref="Kenmore_665_13242K900">
 		<osgi:interfaces>
 			<value>okeanos.model.entities.Load</value>

@@ -349,48 +349,22 @@ public class ScheduleUtil implements Comparator<Schedule> {
 				sb.append(String.format(
 						"\t%.5f",
 						prices.get(time).getCostAtConsumption(
-								schedule.getSchedule().get(time).getLoad()
-										.divide(1000))));
+								schedule.getSchedule().get(time).getLoad())));
 
 				sb.append(String.format("\t%.5f", prices.get(time)
-						.getCostAtConsumption(Amount.valueOf(1, Power.UNIT))));
+						.getCostAtConsumption(Amount.valueOf(1000, Power.UNIT))));
 			} else {
 				sb.append("\t0\t0");
 			}
 
 			for (String currentDevice : deviceNames) {
 				Schedule scheduleOfDevice = deviceSchedules.get(currentDevice);
-				try {
+				if (scheduleOfDevice.getSchedule().isEmpty()) {
+					sb.append("\t0");
+				} else {
 					sb.append(String.format("\t%.1f",
 							scheduleOfDevice.getSchedule().get(time).getLoad()
 									.doubleValue(Power.UNIT)));
-				} catch (NullPointerException e) {
-					LOG.warn(
-							"NullPointerException @ deviceSchedulesOfDay @ {}",
-							currentDevice);
-					
-					LOG.warn("starting new process, exiting current one");
-					ProcessBuilder builder = new ProcessBuilder("cmd.exe",
-							"/c",
-							"cd \"C:\\Users\\wlausen\\Dropbox\\Studium_Master\\Semester_4\\Masterarbeit\\workspace\\Okeanos\" && mvn pax:provision");
-					Process p = builder.start();
-					
-					System.exit(0);
-					if (scheduleOfDevice.getSchedule() != null) {
-						LOG.warn("{} getSchedule {}", currentDevice,
-								scheduleOfDevice.getSchedule());
-						if (scheduleOfDevice.getSchedule().get(time) != null) {
-							LOG.warn("{} get {}", currentDevice,
-									scheduleOfDevice.getSchedule().get(time));
-							if (scheduleOfDevice.getSchedule().get(time)
-									.getLoad() != null) {
-								LOG.warn("{} getLoad {}", currentDevice,
-										scheduleOfDevice.getSchedule()
-												.get(time).getLoad());
-							}
-						}
-					}
-					sb.append("\tInf");
 				}
 			}
 

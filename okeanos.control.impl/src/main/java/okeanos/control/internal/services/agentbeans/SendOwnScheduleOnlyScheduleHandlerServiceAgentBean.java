@@ -72,6 +72,8 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 
 	public boolean cancelRequested;
 
+	public boolean noRunsToday;
+
 	/**
 	 * Provides a transparent proxy for calling the callback methods.
 	 * 
@@ -351,6 +353,11 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 				state = State.CALLING_POSSIBLE_RUNS_CALLBACK;
 				PossibleRunsConfiguration possibleRunsConfigurationToday = possibleRunsCallback
 						.getPossibleRunsConfiguration();
+				if (possibleRunsConfigurationToday.getPossibleRuns().isEmpty()) {
+					noRunsToday = true;
+				} else {
+					noRunsToday = false;
+				}
 
 				Configuration configuration = controlEntitiesProvider
 						.getNewConfiguration();
@@ -496,6 +503,29 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 									WAIT_FOR_EQUILIBRIUM_TIMEOUT).isAfter(now)) {
 						return;
 					}
+
+					if (!noRunsToday
+							&& (latestOptimizedRuns == null || latestOptimizedRuns
+									.isEmpty())) {
+						LOG.warn("{} - is empty! state: {}",
+								thisAgent.getAgentName(), state);
+
+						startScheduling = DateTime.now(DateTimeZone.UTC);
+						scheduledBroadcast = taskScheduler
+								.schedule(
+										new ScheduleMessageBroadcaster(
+												currentId),
+										new DateTime(System.currentTimeMillis())
+												.plusMillis(
+														random.nextInt(MAXIMUM_TIME_TO_WAIT_FOR_ANNOUNCE_SCHEDULE))
+												.toDate());
+
+						// LOG.warn("{} - scheduleOfEntities: {}",
+						// thisAgent.getAgentName(),
+						// scheduleOfEntities);
+						return;
+					}
+
 					LOG.trace("{} - lastUpdate {}, now {}",
 							thisAgent.getAgentName(), lastUpdate, now);
 
@@ -570,7 +600,7 @@ public class SendOwnScheduleOnlyScheduleHandlerServiceAgentBean extends
 			if (isEquilibriumReached()) {
 				return;
 			}
-			//LOG.trace("{} - [event={}]", thisAgent.getAgentName(), event);
+			// LOG.trace("{} - [event={}]", thisAgent.getAgentName(), event);
 			if (event instanceof WriteCallEvent<?>) {
 				synchronized (lastUpdateMonitor) {
 					WriteCallEvent<IJiacMessage> wce = (WriteCallEvent<IJiacMessage>) event;

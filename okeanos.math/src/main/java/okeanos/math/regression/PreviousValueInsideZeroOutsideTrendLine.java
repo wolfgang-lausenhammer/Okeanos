@@ -33,11 +33,19 @@ public class PreviousValueInsideZeroOutsideTrendLine implements TrendLine {
 			return 0;
 		}
 
+		if (this.x[0] == x) {
+			return y[0];
+		}
+
 		// value in the middle of other values, get the previous value
 		for (int i = 1; i < this.x.length; i++) {
 			if (this.x[i] > x) {
 				return y[i - 1];
 			}
+		}
+
+		if (this.x[this.x.length - 1] == x) {
+			return y[y.length - 1];
 		}
 
 		// value bigger than last value

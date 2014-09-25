@@ -7,10 +7,12 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.Collection;
 
+import okeanos.math.regression.PreviousValueInsideZeroOutsideTrendLine;
 import okeanos.math.regression.PreviousValueTrendLine;
 import okeanos.math.regression.TrendLine;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,15 +28,16 @@ import org.junit.runners.Parameterized.Parameters;
 public class Periodic24hTrendlineTest {
 
 	/** The Constant START_OF_DAY. */
-	private static final DateTime START_OF_DAY = DateTime.now()
+	private static final DateTime START_OF_DAY = DateTime.now(DateTimeZone.UTC)
 			.withTimeAtStartOfDay();
 	/** The Constant X. */
 	private static final double[] X = new double[] { START_OF_DAY.getMillis(),
 			START_OF_DAY.plusHours(1).getMillis(),
-			START_OF_DAY.plusHours(2).getMillis() };
+			START_OF_DAY.plusHours(2).getMillis(),
+			START_OF_DAY.withTime(23, 45, 0, 0).getMillis() };
 
 	/** The Constant Y. */
-	private static final double[] Y = new double[] { 0, 1, 2 };
+	private static final double[] Y = new double[] { 1, 2, 3, 4 };
 
 	/**
 	 * Data.
@@ -44,20 +47,22 @@ public class Periodic24hTrendlineTest {
 	@Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-				{ START_OF_DAY.getMillis(), 0 },
-				{ START_OF_DAY.plusMinutes(10).getMillis(), 0 },
-				{ START_OF_DAY.plusHours(1).plusMinutes(10).getMillis(), 1 },
-				{ START_OF_DAY.plusHours(2).plusMinutes(10).getMillis(), 2 },
-				{ START_OF_DAY.plusHours(3).plusMinutes(10).getMillis(), 2 },
-				{ START_OF_DAY.plusHours(4).plusMinutes(10).getMillis(), 2 },
-				{ START_OF_DAY.plusHours(5).plusMinutes(10).getMillis(), 2 },
-				{ START_OF_DAY.plusDays(1).plusMinutes(10).getMillis(), 0 },
+				{ START_OF_DAY.getMillis(), 1 },
+				{ START_OF_DAY.plusMinutes(10).getMillis(), 1 },
+				{ START_OF_DAY.plusHours(1).plusMinutes(10).getMillis(), 2 },
+				{ START_OF_DAY.plusHours(2).plusMinutes(10).getMillis(), 3 },
+				{ START_OF_DAY.plusHours(3).plusMinutes(10).getMillis(), 3 },
+				{ START_OF_DAY.plusHours(4).plusMinutes(10).getMillis(), 3 },
+				{ START_OF_DAY.plusHours(5).plusMinutes(10).getMillis(), 3 },
+				{ START_OF_DAY.withTime(23, 45, 0, 0).getMillis(), 4 },
+				{ START_OF_DAY.withTime(23, 50, 0, 0).getMillis(), 4 },
+				{ START_OF_DAY.plusDays(1).plusMinutes(10).getMillis(), 1 },
 				{
 						START_OF_DAY.plusDays(1).plusHours(1).plusMinutes(10)
-								.getMillis(), 1 },
+								.getMillis(), 2 },
 				{
 						START_OF_DAY.plusDays(1).plusHours(2).plusMinutes(10)
-								.getMillis(), 2 } });
+								.getMillis(), 3 } });
 	}
 
 	/** The trend line. */
@@ -88,7 +93,7 @@ public class Periodic24hTrendlineTest {
 	 */
 	@Before
 	public void setUp() {
-		trendLine = new PreviousValueTrendLine();
+		trendLine = new PreviousValueInsideZeroOutsideTrendLine();
 		trendLine = new Periodic24hTrendline(trendLine);
 		trendLine.setValues(Y, X);
 	}

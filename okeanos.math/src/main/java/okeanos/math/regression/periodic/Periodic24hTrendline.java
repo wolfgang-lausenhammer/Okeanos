@@ -84,7 +84,8 @@ public class Periodic24hTrendline implements PeriodicTrendLine {
 		} else {
 			referenceStartOfDay = DateTime.now(DateTimeZone.UTC);
 		}
-		DateTime nextDay = referenceStartOfDay.plusHours(TWENTY_FOUR);
+		DateTime nextDay = referenceStartOfDay.plusHours(TWENTY_FOUR)
+				.minusMillis(1);
 		int numberOfItemsToCopy = 0;
 		for (double item : x) {
 			if (new DateTime((long) item).isAfter(nextDay)) {

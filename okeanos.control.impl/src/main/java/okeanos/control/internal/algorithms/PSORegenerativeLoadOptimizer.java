@@ -558,10 +558,10 @@ public class PSORegenerativeLoadOptimizer implements ControlAlgorithm {
 				minXThisDim = Amount.valueOf(0, Power.UNIT);
 				maxXThisDim = Amount.valueOf(possibleRun.getPossibleLoads()
 						.size() - 1, Power.UNIT);
-				LOG.trace(
-						"There are {} possibilities for run with start date {}",
-						possibleRun.getPossibleLoads().size(),
-						possibleRun.getEarliestStartTime());
+//				LOG.trace(
+//						"There are {} possibilities for run with start date {}",
+//						possibleRun.getPossibleLoads().size(),
+//						possibleRun.getEarliestStartTime());
 				break;
 			case RANGE:
 				minXThisDim = possibleRun.getRangeOfPossibleLoads()

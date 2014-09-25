@@ -11,4 +11,17 @@
 #Spring-Context: classpath:sample-configurations/light-and-dishwasher-setdate.xml
 #Spring-Context: classpath:sample-configurations/complex/household.xml
 #Spring-Context: classpath:sample-configurations/complex/pev.xml
-Spring-Context: classpath:sample-configurations/complex/multiplehouseholds.xml
+#Spring-Context: classpath:sample-configurations/complex/multiplehouseholds.xml
+
+# ------------- Evaluation ---------------
+#Spring-Context: classpath:sample-configurations/evaluation/single-load-shifting-device.xml
+
+#Spring-Context: classpath:sample-configurations/evaluation/single-household-multiple-load-shifting-devices-same.xml
+#Spring-Context: classpath:sample-configurations/evaluation/single-household-multiple-load-shifting-devices-different.xml
+
+#Spring-Context: classpath:sample-configurations/evaluation/multiple-households-multiple-load-shifting-devices-same.xml
+#Spring-Context: classpath:sample-configurations/evaluation/multiple-households-multiple-load-shifting-devices-different.xml
+
+#Spring-Context: classpath:sample-configurations/evaluation/single-household-multiple-devices.xml
+#Spring-Context: classpath:sample-configurations/evaluation/multiple-households-multiple-devices-same-households.xml
+Spring-Context: classpath:sample-configurations/evaluation/multiple-households-multiple-devices-different-households.xml

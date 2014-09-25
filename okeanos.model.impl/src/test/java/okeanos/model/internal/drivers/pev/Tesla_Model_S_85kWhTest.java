@@ -160,9 +160,7 @@ public class Tesla_Model_S_85kWhTest {
 						Amount.valueOf(5000, Power.UNIT),
 						Amount.valueOf(-5000, Power.UNIT),
 						Amount.valueOf(2000, Power.UNIT),
-						Amount.valueOf(-2000, Power.UNIT),
-						Amount.valueOf(20000, Power.UNIT),
-						Amount.valueOf(-20000, Power.UNIT)));
+						Amount.valueOf(-2000, Power.UNIT)));
 
 		PossibleRun run2 = possibleRunsConfiguration.getPossibleRuns().get(1);
 		assertThat(run2.getEarliestStartTime(),
@@ -182,8 +180,6 @@ public class Tesla_Model_S_85kWhTest {
 						Amount.valueOf(5000, Power.UNIT),
 						Amount.valueOf(-5000, Power.UNIT),
 						Amount.valueOf(2000, Power.UNIT),
-						Amount.valueOf(-2000, Power.UNIT),
-						Amount.valueOf(20000, Power.UNIT),
-						Amount.valueOf(-20000, Power.UNIT)));
+						Amount.valueOf(-2000, Power.UNIT)));
 	}
 }

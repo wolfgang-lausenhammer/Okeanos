@@ -71,10 +71,11 @@ public class CostFunctionDeserializer implements JsonDeserializer<CostFunction> 
 
 		for (int i = 0; i < POINTS_TO_APPROXIMATE; i++) {
 			x[i] = i * DISTANCE_BETWEEN_X + 1;
-			y[i] = priceFor1kWh * Math.exp(x[i] * slope);
+			y[i] = priceFor1kWh * (x[i] + Math.exp(x[i] * slope));
 		}
 
-		Price pricesAtDateTime = new PriceImpl(x, y);
+		Price pricesAtDateTime = new PriceImpl(new double[] { 1000 },
+				new double[] { priceFor1kWh });
 
 		return new CostFunctionImpl(validAtDateTime, validThroughDateTime,
 				pricesAtDateTime);

@@ -8,7 +8,8 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<context:annotation-config />
-	<context:component-scan base-package="okeanos.runner.internal.samples.complex.multiplehouseholds" />
+	<context:component-scan
+		base-package="okeanos.runner.internal.evaluation.singlehouseholdmultipleloadshiftingdevices.same" />
 
 	<osgi:reference id="platformManagementService"
 		interface="okeanos.management.services.PlatformManagementService"
@@ -43,8 +44,20 @@
 	<osgi:reference id="household10kWh" interface="okeanos.model.entities.Load"
 		filter="(&amp;(name=Household_10kWh)(brand=general))" availability="mandatory" />
 
+	<osgi:reference id="household25kWh" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=Household_25kWh)(brand=general))" availability="mandatory" />
+
+	<osgi:reference id="household28kWh" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=Household_28kWh)(brand=general))" availability="mandatory" />
+
 	<osgi:reference id="household30kWh" interface="okeanos.model.entities.Load"
 		filter="(&amp;(name=Household_30kWh)(brand=general))" availability="mandatory" />
+
+	<osgi:reference id="household33kWh" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=Household_33kWh)(brand=general))" availability="mandatory" />
+
+	<osgi:reference id="household35kWh" interface="okeanos.model.entities.Load"
+		filter="(&amp;(name=Household_35kWh)(brand=general))" availability="mandatory" />
 
 	<osgi:reference id="household50kWh" interface="okeanos.model.entities.Load"
 		filter="(&amp;(name=Household_50kWh)(brand=general))" availability="mandatory" />
